@@ -11,10 +11,17 @@ interface Message {
 
 interface ChatboxProps {
   selectedConversation: string;
+  messages: Message[];
+  onSendMessage: (conversation: string, message: Message) => void;
+  onUpdateLastMessage: (conversation: string, message: Message) => void;
 }
 
-const Chatbox: React.FC<ChatboxProps> = ({ selectedConversation }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+const Chatbox: React.FC<ChatboxProps> = ({
+  selectedConversation,
+  messages,
+  onSendMessage,
+  onUpdateLastMessage,
+}) => {
   const [userMessage, setUserMessage] = useState<string>("");
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -27,7 +34,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedConversation }) => {
   const handleSend = async () => {
     if (userMessage.trim()) {
       const newUserMessage: Message = { type: "user", text: userMessage };
-      setMessages((prevMessages) => [...prevMessages, newUserMessage]);
+      onSendMessage(selectedConversation, newUserMessage);
 
       setUserMessage("");
 
@@ -52,7 +59,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedConversation }) => {
 
         // Add a placeholder AI message to update while streaming
         const aiMessage: Message = { type: "ai", text: "" };
-        setMessages((prevMessages) => [...prevMessages, aiMessage]);
+        onSendMessage(selectedConversation, aiMessage);
 
         // Read the stream and update the message with each chunk
         while (!done) {
@@ -61,24 +68,16 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedConversation }) => {
           value += decoder.decode(chunk, { stream: true });
 
           // Update the AI message in progress
-          setMessages((prevMessages) => {
-            const updatedMessages = [...prevMessages];
-            updatedMessages[updatedMessages.length - 1] = {
-              ...aiMessage,
-              text: value,
-            };
-            return updatedMessages;
+          onUpdateLastMessage(selectedConversation, {
+            ...aiMessage,
+            text: value,
           });
         }
 
         // Finalize the response by appending the full AI message
-        setMessages((prevMessages) => {
-          const updatedMessages = [...prevMessages];
-          updatedMessages[updatedMessages.length - 1] = {
-            ...aiMessage,
-            text: value,
-          };
-          return updatedMessages;
+        onUpdateLastMessage(selectedConversation, {
+          ...aiMessage,
+          text: value,
         });
       } catch (error) {
         console.error("Error fetching AI response:", error);
