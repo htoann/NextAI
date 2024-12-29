@@ -51,12 +51,12 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedConversation }) => {
         maxWidth: "600px",
         margin: "0 auto",
         padding: "20px",
-        height: "600px",
+        height: "700px",
       }}
     >
       <h3>{selectedConversation}</h3>
 
-      <div style={{ flexGrow: 1, overflowY: "auto" }}>
+      <div style={{ flexGrow: 1, overflowY: "auto", padding: "0 10px" }}>
         <List
           dataSource={messages}
           renderItem={(item) => (
@@ -67,7 +67,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedConversation }) => {
                 justifyContent:
                   item.type === "user" ? "flex-end" : "flex-start",
                 padding: "5px 0",
-                border: "none", // Remove border
+                border: "none",
               }}
             >
               <div
