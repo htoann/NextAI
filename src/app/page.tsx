@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Chatbox from "./components/chatbox/Chatbox";
+import Sidebar from "./components/sidebar/Sidebar";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -8,6 +10,12 @@ export default function Home() {
     []
   );
   const [input, setInput] = useState("");
+  const [conversations, setConversations] = useState<
+    { id: number; messages: { sender: string; text: string }[] }[]
+  >([]);
+  const [currentConversationId, setCurrentConversationId] = useState<
+    number | null
+  >(null);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -26,6 +34,26 @@ export default function Home() {
     const data = await response.json();
     const aiMessage = { sender: "AI", text: data.response };
     setMessages((prevMessages) => [...prevMessages, aiMessage]);
+
+    if (currentConversationId !== null) {
+      setConversations((prevConversations) =>
+        prevConversations.map((conv) =>
+          conv.id === currentConversationId
+            ? { ...conv, messages: [...conv.messages, userMessage, aiMessage] }
+            : conv
+        )
+      );
+    } else {
+      const newConversation = {
+        id: conversations.length + 1,
+        messages: [userMessage, aiMessage],
+      };
+      setConversations((prevConversations) => [
+        ...prevConversations,
+        newConversation,
+      ]);
+      setCurrentConversationId(newConversation.id);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -35,28 +63,44 @@ export default function Home() {
     }
   };
 
+  const selectConversation = (id: number) => {
+    const conversation = conversations.find((conv) => conv.id === id);
+    if (conversation) {
+      setMessages(conversation.messages);
+      setCurrentConversationId(id);
+    }
+  };
+
+  const createNewConversation = () => {
+    setMessages([]);
+    setCurrentConversationId(null);
+  };
+
+  const deleteConversation = (id: number) => {
+    setConversations((prevConversations) =>
+      prevConversations.filter((conv) => conv.id !== id)
+    );
+    if (currentConversationId === id) {
+      setMessages([]);
+      setCurrentConversationId(null);
+    }
+  };
+
   return (
     <div className={styles.container}>
-      <div className={styles.chatBox}>
-        <ul className={styles.messageList}>
-          {messages.map((message, index) => (
-            <li key={index} className={styles.messageItem}>
-              <strong>{message.sender}:</strong> {message.text}
-            </li>
-          ))}
-        </ul>
-        <textarea
-          className={styles.textArea}
-          rows={4}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyPress}
-          placeholder="Type your message here..."
-        />
-        <button className={styles.sendButton} onClick={sendMessage}>
-          Send
-        </button>
-      </div>
+      <Sidebar
+        conversations={conversations}
+        selectConversation={selectConversation}
+        deleteConversation={deleteConversation}
+        createNewConversation={createNewConversation}
+      />
+      <Chatbox
+        messages={messages}
+        input={input}
+        setInput={setInput}
+        sendMessage={sendMessage}
+        handleKeyPress={handleKeyPress}
+      />
     </div>
   );
 }
