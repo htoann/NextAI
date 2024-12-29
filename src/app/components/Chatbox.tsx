@@ -2,7 +2,7 @@
 
 import { SendOutlined } from "@ant-design/icons";
 import { Button, Col, Input, List, Row } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface Message {
   type: "user" | "ai";
@@ -16,11 +16,20 @@ interface ChatboxProps {
 const Chatbox: React.FC<ChatboxProps> = ({ selectedConversation }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [userMessage, setUserMessage] = useState<string>("");
+  const chatEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const handleSend = async () => {
     if (userMessage.trim()) {
       const newUserMessage: Message = { type: "user", text: userMessage };
       setMessages((prevMessages) => [...prevMessages, newUserMessage]);
+
+      setUserMessage("");
 
       try {
         const response = await fetch("/api/chat", {
@@ -31,14 +40,49 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedConversation }) => {
           body: JSON.stringify({ message: userMessage }),
         });
 
-        const data = await response.json();
-        const newAIMessage: Message = { type: "ai", text: data.response };
-        setMessages((prevMessages) => [...prevMessages, newAIMessage]);
+        if (!response.body) {
+          console.error("No response body from AI");
+          return;
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+        let value = "";
+
+        // Add a placeholder AI message to update while streaming
+        const aiMessage: Message = { type: "ai", text: "" };
+        setMessages((prevMessages) => [...prevMessages, aiMessage]);
+
+        // Read the stream and update the message with each chunk
+        while (!done) {
+          const { done: isDone, value: chunk } = await reader.read();
+          done = isDone;
+          value += decoder.decode(chunk, { stream: true });
+
+          // Update the AI message in progress
+          setMessages((prevMessages) => {
+            const updatedMessages = [...prevMessages];
+            updatedMessages[updatedMessages.length - 1] = {
+              ...aiMessage,
+              text: value,
+            };
+            return updatedMessages;
+          });
+        }
+
+        // Finalize the response by appending the full AI message
+        setMessages((prevMessages) => {
+          const updatedMessages = [...prevMessages];
+          updatedMessages[updatedMessages.length - 1] = {
+            ...aiMessage,
+            text: value,
+          };
+          return updatedMessages;
+        });
       } catch (error) {
         console.error("Error fetching AI response:", error);
       }
-
-      setUserMessage("");
     }
   };
 
@@ -85,6 +129,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedConversation }) => {
             </List.Item>
           )}
         />
+        <div ref={chatEndRef} />
       </div>
 
       {/* Input area */}
