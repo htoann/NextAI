@@ -27,7 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         width: "250px",
         borderRight: "1px solid #ccc",
         padding: "20px",
-        maxHeight: "100vh",
+        maxHeight: "calc(100vh - 64px)",
         overflowY: "auto",
       }}
     >

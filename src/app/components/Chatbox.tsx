@@ -94,7 +94,7 @@ const Chatbox: React.FC<ChatboxProps> = ({
         maxWidth: "600px",
         margin: "0 auto",
         padding: "20px",
-        height: "700px",
+        height: "600px",
       }}
     >
       <h3>{selectedConversation}</h3>
@@ -148,8 +148,7 @@ const Chatbox: React.FC<ChatboxProps> = ({
             onChange={(e) => setUserMessage(e.target.value)}
             onPressEnter={handleSend}
             placeholder="Type your message..."
-            style={{ width: "100%" }}
-            size="large"
+            style={{ width: "100%", height: 40 }}
           />
         </Col>
         <Col span={4}>
@@ -158,8 +157,7 @@ const Chatbox: React.FC<ChatboxProps> = ({
             icon={<SendOutlined />}
             onClick={handleSend}
             disabled={!userMessage.trim()}
-            style={{ width: "100%" }}
-            size="large"
+            style={{ width: "100%", height: 40 }}
           />
         </Col>
       </Row>

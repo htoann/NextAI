@@ -32,8 +32,8 @@ const Home: React.FC = () => {
     }
 
     setConversations((prevConversations) => [
-      ...prevConversations,
       conversation,
+      ...prevConversations,
     ]);
 
     setMessages((prevMessages) => ({
@@ -69,7 +69,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <div style={{ display: "flex" }}>
       <Sidebar
         conversations={conversations}
         onSelectConversation={handleSelectConversation}
