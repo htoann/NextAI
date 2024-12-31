@@ -10,6 +10,13 @@
   }
 }
 
+*,
+html,
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Helvetica,
+    Apple Color Emoji, Arial, sans-serif, Segoe UI Emoji, Segoe UI Symbol;
+}
+
 html,
 body {
   max-width: 100vw;
@@ -21,8 +28,6 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Helvetica,
-    Apple Color Emoji, Arial, sans-serif, Segoe UI Emoji, Segoe UI Symbol;
 }
 
 ::-webkit-scrollbar {

@@ -1,5 +1,6 @@
 "use client";
 
+import withTheme from "@/theme";
 import { message as antdMessage } from "antd";
 import React, { useState } from "react";
 import Chatbox from "./components/Chatbox";
@@ -68,7 +69,7 @@ const Home: React.FC = () => {
     });
   };
 
-  return (
+  return withTheme(
     <div style={{ display: "flex" }}>
       <Sidebar
         conversations={conversations}
