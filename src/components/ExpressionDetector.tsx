@@ -22,7 +22,9 @@ const ExpressionDetector = ({ onExpressionDetected }: { onExpressionDetected: (e
       }
     };
 
-    startVideo();
+    if (videoRef.current?.srcObject === null) {
+      startVideo();
+    }
 
     // Function to detect face expressions
     const detectExpression = async () => {
