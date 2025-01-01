@@ -1,8 +1,8 @@
 'use client';
 
-import { Greeting } from '@/components/greeting';
 import { ChatLayout } from '@/components/layout/chat-layout';
-import { ListMessages } from '@/components/list-messages';
+import { Greeting } from '@/components/layout/greeting';
+import { ListMessages } from '@/components/layout/list-messages';
 import { useAppContext } from '@/context/AppContext';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';

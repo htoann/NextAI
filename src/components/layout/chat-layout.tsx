@@ -2,8 +2,8 @@
 
 import withTheme from '@/theme';
 import { ReactNode } from 'react';
-import { ChatInput } from '../chat-input';
-import { Sidebar } from './sidebar';
+import { ChatInput } from './chat-input';
+import { Sidebar } from './sidebar/sidebar';
 
 export const ChatLayout = ({ children }: { children: ReactNode }) => {
   return withTheme(
