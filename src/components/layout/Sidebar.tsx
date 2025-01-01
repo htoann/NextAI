@@ -13,6 +13,7 @@ export const Sidebar = () => {
   const { setMessages, conversations, setConversations } = useAppContext();
 
   const [hoveredConversation, setHoveredConversation] = useState<string | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const handleCreateConversation = () => {
     let conversationName = newConversation.trim();
@@ -121,9 +122,19 @@ export const Sidebar = () => {
             onMouseLeave={() => setHoveredConversation(null)}
           >
             <span>{item.charAt(0).toUpperCase() + item.slice(1)}</span>
-            {(item === chatId || hoveredConversation === item) && (
-              <Dropdown trigger={['click']} placement="bottomRight" overlay={menu(item)}>
-                <EllipsisOutlined style={{ fontSize: '20px', marginLeft: '10px' }} />
+            {(item === chatId || hoveredConversation === item || openDropdown === item) && (
+              <Dropdown
+                trigger={['click']}
+                placement="bottomRight"
+                onOpenChange={(visible) => {
+                  setOpenDropdown(visible ? item : null);
+                }}
+                overlay={menu(item)}
+              >
+                <EllipsisOutlined
+                  onClick={(e) => e.stopPropagation()}
+                  style={{ fontSize: '20px', marginLeft: '10px' }}
+                />
               </Dropdown>
             )}
           </List.Item>
