@@ -34,54 +34,48 @@ export const ChatInput = () => {
   };
 
   const handleSend = async (chatName: string) => {
-    if (userMessage.trim()) {
-      setChats((prevChats) => [chatName, ...prevChats]);
+    if (!userMessage.trim()) return;
 
-      const newUserMessage: Message = { type: 'user', text: userMessage };
-      handleSetMessages(chatName, newUserMessage);
+    setChats((prevChats) => [chatName, ...prevChats]);
 
-      setUserMessage('');
+    const newUserMessage: Message = { type: 'user', text: userMessage };
+    handleSetMessages(chatName, newUserMessage);
 
-      try {
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ message: userMessage }),
-        });
+    setUserMessage('');
 
-        if (!response.body) {
-          console.error('No response body from AI');
-          return;
-        }
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userMessage }),
+      });
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let done = false;
-        let value = '';
-
-        const aiMessage: Message = { type: 'ai', text: '' };
-        handleSetMessages(chatName, aiMessage);
-
-        while (!done) {
-          const { done: isDone, value: chunk } = await reader.read();
-          done = isDone;
-          value += decoder.decode(chunk, { stream: true });
-
-          handleUpdateLastMessage(chatName, {
-            ...aiMessage,
-            text: value,
-          });
-        }
-
-        handleUpdateLastMessage(chatName, {
-          ...aiMessage,
-          text: value,
-        });
-      } catch (error) {
-        console.error('Error fetching AI response:', error);
+      if (!response.body) {
+        console.error('No response body from AI');
+        return;
       }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+      let value = '';
+
+      const aiMessage: Message = { type: 'ai', text: '' };
+      handleSetMessages(chatName, aiMessage);
+
+      while (!done) {
+        const { done: isDone, value: chunk } = await reader.read();
+        done = isDone;
+        value += decoder.decode(chunk, { stream: true });
+
+        handleUpdateLastMessage(chatName, { ...aiMessage, text: value });
+      }
+
+      handleUpdateLastMessage(chatName, { ...aiMessage, text: value });
+    } catch (error) {
+      console.error('Error fetching AI response:', error);
     }
   };
 
