@@ -35,7 +35,6 @@ const SilentChatMode = () => {
             backgroundColor: '#f7f7f7',
             padding: '15px',
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-            fontFamily: "'Roboto', sans-serif",
           }}
         >
           <p
@@ -53,18 +52,7 @@ const SilentChatMode = () => {
               maxWidth: '80%',
               transition: 'transform 0.3s ease, background-color 0.3s ease',
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.backgroundColor = '#f1f1f1';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.backgroundColor = expression.includes('You look') ? '#d3e1ff' : '#fff';
-            }}
           >
-            <span role="img" style={{ marginRight: '8px' }}>
-              {expression.includes('You look') ? '😊' : ''}
-            </span>
             {expression}
           </p>
         </div>
