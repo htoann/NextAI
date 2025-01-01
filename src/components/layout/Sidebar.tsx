@@ -2,7 +2,8 @@
 
 import { useAppContext } from '@/context/AppContext';
 import { generateChatName } from '@/lib/utils';
-import { Button, Input, List, message } from 'antd';
+import { EllipsisOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Input, List, Menu, message, Popconfirm } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -39,6 +40,36 @@ const Sidebar: React.FC = () => {
   const handleSelectConversation = (conversation: string) => {
     router.push(`/chat/${conversation}`);
   };
+
+  const handleDeleteConversation = (conversation: string) => {
+    setConversations((prevConversations) => prevConversations.filter((item) => item !== conversation));
+
+    setMessages((prevMessages) => {
+      const newMessages = { ...prevMessages };
+      delete newMessages[conversation];
+      return newMessages;
+    });
+
+    message.success('Conversation deleted');
+    router.push('/');
+  };
+
+  const menu = (conversation: string) => (
+    <Menu>
+      <Menu.Item>
+        <Popconfirm
+          title="Are you sure?"
+          onConfirm={() => handleDeleteConversation(conversation)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button type="link" danger>
+            Delete
+          </Button>
+        </Popconfirm>
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <div
@@ -89,7 +120,10 @@ const Sidebar: React.FC = () => {
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = item === chatId ? '#e6f7ff' : '#f5f5f5')}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = item === chatId ? '#e6f7ff' : 'transparent')}
           >
-            {item.charAt(0).toUpperCase() + item.slice(1)}
+            <span>{item.charAt(0).toUpperCase() + item.slice(1)}</span>
+            <Dropdown overlay={menu(item)} trigger={['click']} placement="bottomRight">
+              <EllipsisOutlined style={{ fontSize: '20px', marginLeft: '10px' }} />
+            </Dropdown>
           </List.Item>
         )}
       />
