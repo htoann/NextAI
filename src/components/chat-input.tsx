@@ -12,7 +12,7 @@ export const ChatInput = () => {
   const { chatId } = useParams() as { chatId: string };
   const router = useRouter();
   const [userMessage, setUserMessage] = useState<string>('');
-  const { setMessages } = useAppContext();
+  const { setMessages, setLoading } = useAppContext();
 
   const handleUpdateLastMessage = (chatName: string, message: Message) => {
     setMessages((prevMessages) => {
@@ -83,7 +83,9 @@ export const ChatInput = () => {
     }
   };
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
+    setLoading(true);
+
     let chatName = chatId;
 
     if (!chatName) {
@@ -91,7 +93,9 @@ export const ChatInput = () => {
       router.push(`/chat/${chatName}`);
     }
 
-    handleSend(chatName);
+    await handleSend(chatName);
+
+    setLoading(false);
   };
 
   const handlePressEnter = () => {

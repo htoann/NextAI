@@ -3,14 +3,13 @@
 import { ChatLayout } from '@/components/layout/chat-layout';
 import { useAppContext } from '@/context/AppContext';
 import { List } from 'antd';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
-// import { useRouter } from 'next/router';
 
 const Chatbox = () => {
-  // const router = useRouter();
+  const router = useRouter();
   const { chatId } = useParams() as { chatId: string };
-  const { messages } = useAppContext();
+  const { messages, loading } = useAppContext();
 
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -20,11 +19,11 @@ const Chatbox = () => {
     }
   }, [messages]);
 
-  // useEffect(() => {
-  //   if (!messages[chatId]) {
-  //     router.push('/');
-  //   }
-  // });
+  useEffect(() => {
+    if (!loading && !messages[chatId]) {
+      router.push('/');
+    }
+  });
 
   return (
     <ChatLayout>
