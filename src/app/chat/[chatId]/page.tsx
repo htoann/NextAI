@@ -1,5 +1,6 @@
 'use client';
 
+import { ChatInput } from '@/components/layout/chat-input';
 import { ChatLayout } from '@/components/layout/chat-layout';
 import { Greeting } from '@/components/layout/greeting';
 import { ListMessages } from '@/components/layout/list-messages';
@@ -30,6 +31,8 @@ const Chatbox = () => {
     <ChatLayout>
       {!!messages[chatId]?.length ? <ListMessages /> : <Greeting />}
       <div ref={chatEndRef} />
+
+      <ChatInput />
     </ChatLayout>
   );
 };

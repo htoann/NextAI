@@ -36,7 +36,9 @@ export const ChatInput = () => {
   const handleSend = async (chatName: string) => {
     if (!userMessage.trim()) return;
 
-    setChats((prevChats) => [chatName, ...prevChats]);
+    if (!chatId) {
+      setChats((prevChats) => [chatName, ...prevChats]);
+    }
 
     const newUserMessage: Message = { type: 'user', text: userMessage };
     handleSetMessages(chatName, newUserMessage);

@@ -15,6 +15,7 @@ export const ListMessages = () => {
         width: '100%',
         margin: '0 auto',
         marginBottom: 30,
+        flexGrow: 1,
       }}
     >
       <List

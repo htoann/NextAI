@@ -2,7 +2,6 @@
 
 import withTheme from '@/theme';
 import { ReactNode } from 'react';
-import { ChatInput } from './chat-input';
 import { Sidebar } from './sidebar/sidebar';
 
 export const ChatLayout = ({ children }: { children: ReactNode }) => {
@@ -20,8 +19,18 @@ export const ChatLayout = ({ children }: { children: ReactNode }) => {
             height: '100vh',
           }}
         >
-          <div style={{ flexGrow: 1, padding: '0 10px', overflow: 'auto' }}>{children}</div>
-          <ChatInput />
+          <div
+            style={{
+              flexGrow: 1,
+              padding: '0 10px',
+              overflow: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+            }}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </div>,
