@@ -1,16 +1,17 @@
-// src/components/layout/Sidebar.tsx
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
 import { generateChatName } from '@/lib/utils';
 import { Button, Input, List, message } from 'antd';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 const Sidebar: React.FC = () => {
+  const router = useRouter();
+  const { chatId } = useParams() as { chatId: string };
+
   const [newConversation, setNewConversation] = useState<string>('');
   const { setMessages, conversations, setConversations } = useAppContext();
-  const router = useRouter();
 
   const handleCreateConversation = () => {
     let conversationName = newConversation.trim();
@@ -49,24 +50,46 @@ const Sidebar: React.FC = () => {
         overflowY: 'auto',
       }}
     >
-      <h3 style={{ marginBottom: 15 }}>Conversations</h3>
+      <h3 style={{ marginBottom: 15, color: '#8231D3' }}>Conversations</h3>
       <Input
         value={newConversation}
         onChange={(e) => setNewConversation(e.target.value)}
         placeholder="New conversation"
         onPressEnter={handleCreateConversation}
-        style={{ marginBottom: 10 }}
+        style={{
+          marginBottom: 10,
+        }}
       />
-      <Button type="primary" onClick={handleCreateConversation} style={{ marginBottom: 20, width: '100%' }}>
+      <Button
+        type="primary"
+        onClick={handleCreateConversation}
+        style={{
+          marginBottom: 30,
+          width: '100%',
+        }}
+      >
         Create
       </Button>
       <List
         size="small"
-        bordered
         dataSource={conversations}
         renderItem={(item) => (
-          <List.Item onClick={() => handleSelectConversation(item)} style={{ cursor: 'pointer' }}>
-            {item}
+          <List.Item
+            onClick={() => handleSelectConversation(item)}
+            style={{
+              cursor: 'pointer',
+              backgroundColor: item === chatId ? '#e6f7ff' : 'transparent',
+              fontWeight: item === chatId ? 'bold' : 'normal',
+              padding: '10px 15px',
+              borderRadius: '8px',
+              marginBottom: '8px',
+              transition: 'background-color 0.2s ease, transform 0.1s ease',
+              border: 'none',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = item === chatId ? '#e6f7ff' : '#f5f5f5')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = item === chatId ? '#e6f7ff' : 'transparent')}
+          >
+            {item.charAt(0).toUpperCase() + item.slice(1)}
           </List.Item>
         )}
       />
