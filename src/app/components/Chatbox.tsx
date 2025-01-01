@@ -97,8 +97,6 @@ const Chatbox: React.FC<ChatboxProps> = ({
         height: "600px",
       }}
     >
-      <h3>{selectedConversation}</h3>
-
       <div style={{ flexGrow: 1, overflowY: "auto", padding: "0 10px" }}>
         <List
           dataSource={messages}
@@ -121,6 +119,7 @@ const Chatbox: React.FC<ChatboxProps> = ({
                   padding: "10px",
                   borderRadius: "10px",
                   maxWidth: "70%",
+                  fontSize: "16px",
                 }}
               >
                 {item.text}
