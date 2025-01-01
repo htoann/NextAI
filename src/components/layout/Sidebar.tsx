@@ -1,3 +1,4 @@
+// src/components/layout/Sidebar.tsx
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
@@ -7,26 +8,28 @@ import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 const Sidebar: React.FC = () => {
-  const [conversations, setConversations] = useState<string[]>([]);
   const [newConversation, setNewConversation] = useState<string>('');
-  const { setMessages } = useAppContext();
+  const { setMessages, conversations, setConversations } = useAppContext();
   const router = useRouter();
 
   const handleCreateConversation = () => {
-    if (!newConversation.trim()) {
-      setNewConversation(generateChatName());
+    let conversationName = newConversation.trim();
+
+    if (!conversationName) {
+      conversationName = generateChatName();
+      setNewConversation(conversationName);
     }
 
-    if (conversations.includes(newConversation)) {
+    if (conversations.includes(conversationName)) {
       message.error('Conversation name already exists!');
       return;
     }
 
-    setConversations((prevConversations) => [newConversation, ...prevConversations]);
+    setConversations((prevConversations) => [conversationName, ...prevConversations]);
 
     setMessages((prevMessages) => ({
       ...prevMessages,
-      [newConversation]: [],
+      [conversationName]: [],
     }));
 
     setNewConversation('');
@@ -54,7 +57,7 @@ const Sidebar: React.FC = () => {
         onPressEnter={handleCreateConversation}
         style={{ marginBottom: 10 }}
       />
-      <Button type="primary" onClick={handleCreateConversation} style={{ marginBottom: 20 }}>
+      <Button type="primary" onClick={handleCreateConversation} style={{ marginBottom: 20, width: '100%' }}>
         Create
       </Button>
       <List

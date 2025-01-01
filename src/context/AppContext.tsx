@@ -7,6 +7,8 @@ interface AppContextProps {
   setMessages: React.Dispatch<React.SetStateAction<Messages>>;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  conversations: string[];
+  setConversations: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
@@ -17,9 +19,8 @@ interface Messages {
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<Messages>({
-    'General Chat': [],
-  });
+  const [messages, setMessages] = useState<Messages>({ 'General Chat': [] });
+  const [conversations, setConversations] = useState<string[]>([]);
 
   return (
     <AppContext.Provider
@@ -28,6 +29,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setMessages,
         loading,
         setLoading,
+        conversations,
+        setConversations,
       }}
     >
       {children}
