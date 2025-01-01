@@ -1,18 +1,18 @@
-'use client';
-
 import { useAppContext } from '@/context/AppContext';
 import { generateChatName } from '@/lib/utils';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Input, List, Menu, message, Popconfirm } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-const Sidebar: React.FC = () => {
+export const Sidebar = () => {
   const router = useRouter();
   const { chatId } = useParams() as { chatId: string };
 
   const [newConversation, setNewConversation] = useState<string>('');
   const { setMessages, conversations, setConversations } = useAppContext();
+
+  const [hoveredConversation, setHoveredConversation] = useState<string | null>(null);
 
   const handleCreateConversation = () => {
     let conversationName = newConversation.trim();
@@ -117,18 +117,18 @@ const Sidebar: React.FC = () => {
               transition: 'background-color 0.2s ease, transform 0.1s ease',
               border: 'none',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = item === chatId ? '#e6f7ff' : '#f5f5f5')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = item === chatId ? '#e6f7ff' : 'transparent')}
+            onMouseEnter={() => setHoveredConversation(item)}
+            onMouseLeave={() => setHoveredConversation(null)}
           >
             <span>{item.charAt(0).toUpperCase() + item.slice(1)}</span>
-            <Dropdown overlay={menu(item)} trigger={['click']} placement="bottomRight">
-              <EllipsisOutlined style={{ fontSize: '20px', marginLeft: '10px' }} />
-            </Dropdown>
+            {(item === chatId || hoveredConversation === item) && (
+              <Dropdown trigger={['click']} placement="bottomRight" overlay={menu(item)}>
+                <EllipsisOutlined style={{ fontSize: '20px', marginLeft: '10px' }} />
+              </Dropdown>
+            )}
           </List.Item>
         )}
       />
     </div>
   );
 };
-
-export default Sidebar;
