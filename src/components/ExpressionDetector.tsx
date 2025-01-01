@@ -22,7 +22,7 @@ const ExpressionDetector = ({ onExpressionDetected }: { onExpressionDetected: (e
       }
     };
 
-    if (videoRef.current?.srcObject === null) {
+    if (!videoRef.current?.srcObject) {
       startVideo();
     }
 
