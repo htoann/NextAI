@@ -1,8 +1,9 @@
 'use client';
 
+import { Greeting } from '@/components/greeting';
 import { ChatLayout } from '@/components/layout/chat-layout';
+import { ListMessages } from '@/components/list-messages';
 import { useAppContext } from '@/context/AppContext';
-import { List } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
@@ -27,35 +28,7 @@ const Chatbox = () => {
 
   return (
     <ChatLayout>
-      <List
-        dataSource={messages[chatId]}
-        renderItem={(item) => (
-          <List.Item
-            style={{
-              textAlign: item.type === 'user' ? 'right' : 'left',
-              display: 'flex',
-              justifyContent: item.type === 'user' ? 'flex-end' : 'flex-start',
-              padding: '5px 0',
-              border: 'none',
-            }}
-          >
-            <div
-              style={{
-                display: 'inline-block',
-                backgroundColor: item.type === 'user' ? '#1890ff' : '#f0f0f0',
-                color: item.type === 'user' ? '#fff' : '#000',
-                padding: '10px',
-                borderRadius: '10px',
-                maxWidth: '70%',
-                fontSize: '16px',
-              }}
-            >
-              {item.text}
-            </div>
-          </List.Item>
-        )}
-      />
-
+      {!!messages[chatId]?.length ? <ListMessages /> : <Greeting />}
       <div ref={chatEndRef} />
     </ChatLayout>
   );

@@ -106,11 +106,14 @@ export const ChatInput = () => {
     <Row
       gutter={8}
       style={{
-        marginTop: '10px',
+        padding: 15,
         position: 'sticky',
         bottom: 0,
-        backgroundColor: '#fff',
+        backgroundColor: '#f4f4f4',
         zIndex: 1,
+        width: '750px',
+        margin: '0 auto',
+        borderRadius: 20,
       }}
     >
       <Col span={20}>
@@ -119,7 +122,8 @@ export const ChatInput = () => {
           onChange={(e) => setUserMessage(e.target.value)}
           onPressEnter={handlePressEnter}
           placeholder="Type your message..."
-          style={{ width: '100%', height: 40 }}
+          style={{ width: '100%', height: 40, fontSize: 16 }}
+          variant="borderless"
         />
       </Col>
       <Col span={4}>
