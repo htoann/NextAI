@@ -9,33 +9,33 @@ export const Sidebar = () => {
   const router = useRouter();
   const { chatId } = useParams() as { chatId: string };
 
-  const [newConversation, setNewConversation] = useState<string>('');
-  const { setMessages, conversations, setConversations } = useAppContext();
+  const [newChat, setNewChat] = useState<string>('');
+  const { setMessages, chats, setChats } = useAppContext();
 
   const [hoveredConversation, setHoveredConversation] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const handleCreateConversation = () => {
-    let conversationName = newConversation.trim();
+    let chatName = newChat.trim();
 
-    if (!conversationName) {
-      conversationName = generateChatName();
-      setNewConversation(conversationName);
+    if (!chatName) {
+      chatName = generateChatName();
+      setNewChat(chatName);
     }
 
-    if (conversations.includes(conversationName)) {
+    if (chats.includes(chatName)) {
       message.error('Conversation name already exists!');
       return;
     }
 
-    setConversations((prevConversations) => [conversationName, ...prevConversations]);
+    setChats((prevChats) => [chatName, ...prevChats]);
 
     setMessages((prevMessages) => ({
       ...prevMessages,
-      [conversationName]: [],
+      [chatName]: [],
     }));
 
-    setNewConversation('');
+    setNewChat('');
   };
 
   const handleSelectConversation = (conversation: string) => {
@@ -43,7 +43,7 @@ export const Sidebar = () => {
   };
 
   const handleDeleteConversation = (conversation: string) => {
-    setConversations((prevConversations) => prevConversations.filter((item) => item !== conversation));
+    setChats((prevChats) => prevChats.filter((item) => item !== conversation));
 
     setMessages((prevMessages) => {
       const newMessages = { ...prevMessages };
@@ -84,8 +84,8 @@ export const Sidebar = () => {
     >
       <h3 style={{ marginBottom: 15, color: '#8231D3' }}>Conversations</h3>
       <Input
-        value={newConversation}
-        onChange={(e) => setNewConversation(e.target.value)}
+        value={newChat}
+        onChange={(e) => setNewChat(e.target.value)}
         placeholder="New conversation"
         onPressEnter={handleCreateConversation}
         style={{
@@ -104,7 +104,7 @@ export const Sidebar = () => {
       </Button>
       <List
         size="small"
-        dataSource={conversations}
+        dataSource={chats}
         renderItem={(item) => (
           <List.Item
             onClick={() => handleSelectConversation(item)}

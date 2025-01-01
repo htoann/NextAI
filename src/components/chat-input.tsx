@@ -12,12 +12,12 @@ export const ChatInput = () => {
   const { chatId } = useParams() as { chatId: string };
   const router = useRouter();
   const [userMessage, setUserMessage] = useState<string>('');
-  const { setMessages, setLoading } = useAppContext();
+  const { setMessages, setLoading, setChats } = useAppContext();
 
   const handleUpdateLastMessage = (chatName: string, message: Message) => {
     setMessages((prevMessages) => {
-      const conversationMessages = prevMessages[chatName] || [];
-      const updatedMessages = [...conversationMessages];
+      const chatMessages = prevMessages[chatName] || [];
+      const updatedMessages = [...chatMessages];
       updatedMessages[updatedMessages.length - 1] = message;
       return {
         ...prevMessages,
@@ -35,6 +35,8 @@ export const ChatInput = () => {
 
   const handleSend = async (chatName: string) => {
     if (userMessage.trim()) {
+      setChats((prevChats) => [chatName, ...prevChats]);
+
       const newUserMessage: Message = { type: 'user', text: userMessage };
       handleSetMessages(chatName, newUserMessage);
 

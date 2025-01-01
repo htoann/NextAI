@@ -9,33 +9,42 @@ export const ListMessages = () => {
   const { messages } = useAppContext();
 
   return (
-    <List
-      dataSource={messages[chatId]}
-      renderItem={(item) => (
-        <List.Item
-          style={{
-            textAlign: item.type === 'user' ? 'right' : 'left',
-            display: 'flex',
-            justifyContent: item.type === 'user' ? 'flex-end' : 'flex-start',
-            padding: '5px 0',
-            border: 'none',
-          }}
-        >
-          <div
+    <div
+      style={{
+        maxWidth: '700px',
+        width: '100%',
+        margin: '0 auto',
+        marginBottom: 30,
+      }}
+    >
+      <List
+        dataSource={messages[chatId]}
+        renderItem={(item) => (
+          <List.Item
             style={{
-              display: 'inline-block',
-              backgroundColor: item.type === 'user' ? '#1890ff' : '#f0f0f0',
-              color: item.type === 'user' ? '#fff' : '#000',
-              padding: '10px',
-              borderRadius: '10px',
-              maxWidth: '70%',
-              fontSize: '16px',
+              textAlign: item.type === 'user' ? 'right' : 'left',
+              display: 'flex',
+              justifyContent: item.type === 'user' ? 'flex-end' : 'flex-start',
+              padding: '5px 0',
+              border: 'none',
             }}
           >
-            {item.text}
-          </div>
-        </List.Item>
-      )}
-    />
+            <div
+              style={{
+                display: 'inline-block',
+                backgroundColor: item.type === 'user' ? '#1890ff' : '#f0f0f0',
+                color: item.type === 'user' ? '#fff' : '#000',
+                padding: '10px',
+                borderRadius: '10px',
+                maxWidth: '70%',
+                fontSize: '16px',
+              }}
+            >
+              {item.text}
+            </div>
+          </List.Item>
+        )}
+      />
+    </div>
   );
 };
