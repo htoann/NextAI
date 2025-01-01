@@ -58,12 +58,12 @@ const Sidebar: React.FC = () => {
     <Menu>
       <Menu.Item>
         <Popconfirm
-          title="Are you sure?"
+          title="Are you sure want to delete?"
           onConfirm={() => handleDeleteConversation(conversation)}
           okText="Yes"
           cancelText="No"
         >
-          <Button type="link" danger>
+          <Button type="link" danger size="small">
             Delete
           </Button>
         </Popconfirm>
