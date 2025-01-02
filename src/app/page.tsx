@@ -3,7 +3,7 @@
 import { ChatInput } from '@/components/layout/chat-input';
 import { ChatLayout } from '@/components/layout/chat-layout';
 import { Greeting } from '@/components/layout/greeting';
-import SilentChatMode from '@/components/SilentChatMode';
+import { SilentChatMode } from '@/components/silent-mode/SilentChatMode';
 import { Button } from 'antd';
 import { useState } from 'react';
 

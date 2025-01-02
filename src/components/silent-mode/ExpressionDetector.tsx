@@ -26,7 +26,6 @@ const ExpressionDetector = ({ onExpressionDetected }: { onExpressionDetected: (e
       startVideo();
     }
 
-    // Function to detect face expressions
     const detectExpression = async () => {
       if (videoRef.current) {
         const detections = await faceapi
@@ -49,7 +48,14 @@ const ExpressionDetector = ({ onExpressionDetected }: { onExpressionDetected: (e
     };
   }, [onExpressionDetected]);
 
-  return <video ref={videoRef} autoPlay muted style={{ width: '100%', borderRadius: '8px', marginBottom: '15px' }} />;
+  return (
+    <video
+      ref={videoRef}
+      autoPlay
+      muted
+      style={{ width: '100%', borderRadius: '8px', marginBottom: '15px', height: 300 }}
+    />
+  );
 };
 
 export default ExpressionDetector;

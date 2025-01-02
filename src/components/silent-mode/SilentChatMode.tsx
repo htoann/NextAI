@@ -1,22 +1,31 @@
 'use client';
+import { getEmojiForExpression } from '@/lib/utils';
 import { Card, Typography } from 'antd';
 import { useState } from 'react';
 import ExpressionDetector from './ExpressionDetector';
+import ExpressionHistory from './ExpressionHistory';
 
 const { Title } = Typography;
 
-const SilentChatMode = () => {
+export const SilentChatMode = () => {
   const [expression, setExpression] = useState('');
+  const [history, setHistory] = useState<{ expression: string; timestamp: string }[]>([]);
 
   const handleExpression = (expression: string) => {
-    setExpression(`🤖 AI: You look ${expression}!`);
+    const emoji = getEmojiForExpression(expression);
+    setExpression(`🤖 AI: You look ${expression} ${emoji}`);
+
+    setHistory((prev) => [
+      ...prev,
+      { expression: `${expression} ${emoji}`, timestamp: new Date().toLocaleTimeString() },
+    ]);
   };
 
   return (
     <Card
       title={<Title level={3}>Silent Chat Mode 🧘‍♂️💬</Title>}
       bordered
-      style={{ maxWidth: 600, margin: '20px auto', padding: '20px' }}
+      style={{ maxWidth: 600, margin: '20px auto', padding: '20px', paddingBottom: 0 }}
     >
       <>
         <ExpressionDetector
@@ -38,9 +47,8 @@ const SilentChatMode = () => {
         >
           {expression}
         </div>
+        <ExpressionHistory history={history} />
       </>
     </Card>
   );
 };
-
-export default SilentChatMode;
