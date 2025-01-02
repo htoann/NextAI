@@ -9,8 +9,8 @@ const ExpressionDetector = ({ onExpressionDetected }: { onExpressionDetected: (e
     const startVideo = async () => {
       try {
         // Load face-api models
-        await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
-        await faceapi.nets.faceExpressionNet.loadFromUri('/models');
+        await faceapi.nets.tinyFaceDetector.loadFromUri('/models/expression');
+        await faceapi.nets.faceExpressionNet.loadFromUri('/models/expression');
 
         // Start video stream
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
