@@ -27,7 +27,7 @@ const ExpressionHistory = ({ history }: HistoryProps) => {
         style={{
           marginTop: '10px',
           overflowY: 'auto',
-          height: 120,
+          height: 100,
           border: '1px solid #ddd',
           borderRadius: '4px',
         }}
