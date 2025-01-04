@@ -1,4 +1,5 @@
 import { AppProvider } from '@/context/AppContext';
+import { ChatProvider } from '@/hooks/useChat';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import './globals.css';
 
@@ -12,7 +13,9 @@ export default async function RootLayout({ children }: React.PropsWithChildren) 
     <html lang="en" suppressHydrationWarning>
       <body>
         <AntdRegistry>
-          <AppProvider>{children}</AppProvider>
+          <AppProvider>
+            <ChatProvider>{children}</ChatProvider>
+          </AppProvider>
         </AntdRegistry>
       </body>
     </html>
