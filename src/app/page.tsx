@@ -52,14 +52,12 @@ export default function Home() {
             {chatMode === ChatMode.Normal && <Greeting />}
             {chatMode === ChatMode.Silent && <SilentChatMode />}
 
-            {/* {chatMode !== ChatMode.VR && (
-              <ChatModeButton
-                currentMode={chatMode}
-                targetMode={ChatMode.Silent}
-                onClick={() => toggleChatMode(ChatMode.Silent)}
-                label="Silent Chat Mode 🧘‍♂️💬"
-              />
-            )} */}
+            <ChatModeButton
+              currentMode={chatMode}
+              targetMode={ChatMode.Silent}
+              onClick={() => toggleChatMode(ChatMode.Silent)}
+              label="Silent Chat Mode 🧘‍♂️💬"
+            />
 
             {chatMode !== ChatMode.Silent && (
               <ChatModeButton
