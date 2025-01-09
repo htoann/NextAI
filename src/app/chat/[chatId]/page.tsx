@@ -3,7 +3,7 @@
 import { ChatInput } from '@/components/layout/chat-input';
 import { ChatLayout } from '@/components/layout/chat-layout';
 import { Greeting } from '@/components/layout/greeting';
-import { ListMessages } from '@/components/layout/list-messages';
+import { ListMessages } from '@/components/layout/list-messages/ListMessage';
 import { useAppContext } from '@/context/AppContext';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';

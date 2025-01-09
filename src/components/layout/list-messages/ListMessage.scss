@@ -1,0 +1,16 @@
+.list-message {
+  ul,
+  ol {
+    margin-left: 2.3rem;
+
+    &::marker {
+      margin-right: 1rem;
+    }
+  }
+
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  flex-grow: 1;
+}

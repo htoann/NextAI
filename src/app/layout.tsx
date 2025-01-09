@@ -1,7 +1,7 @@
 import { AppProvider } from '@/context/AppContext';
 import { ChatProvider } from '@/hooks/useChat';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
-import './globals.css';
+import './globals.scss';
 
 export const metadata = {
   title: 'Next.js 15 Gemini AI',

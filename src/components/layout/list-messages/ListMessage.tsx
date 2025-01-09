@@ -3,21 +3,15 @@
 import { useAppContext } from '@/context/AppContext';
 import { List } from 'antd';
 import { useParams } from 'next/navigation';
+import Markdown from 'react-markdown';
+import './ListMessage.scss';
 
 export const ListMessages = () => {
   const { chatId } = useParams() as { chatId: string };
   const { messages } = useAppContext();
 
   return (
-    <div
-      style={{
-        maxWidth: '700px',
-        width: '100%',
-        margin: '0 auto',
-        marginBottom: 30,
-        flexGrow: 1,
-      }}
-    >
+    <div className="list-message">
       <List
         dataSource={messages[chatId]}
         renderItem={(item) => (
@@ -35,13 +29,13 @@ export const ListMessages = () => {
                 display: 'inline-block',
                 backgroundColor: item.type === 'user' ? '#1890ff' : '#f0f0f0',
                 color: item.type === 'user' ? '#fff' : '#000',
-                padding: '10px',
+                padding: '10px 20px',
                 borderRadius: '10px',
                 maxWidth: '70%',
                 fontSize: '16px',
               }}
             >
-              {item.text}
+              <Markdown>{item.text}</Markdown>
             </div>
           </List.Item>
         )}
