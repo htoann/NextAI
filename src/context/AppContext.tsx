@@ -1,17 +1,21 @@
 'use client';
 
-import React, { createContext, useContext, useState } from 'react';
+import { EChatMode, TMessage } from '@/type';
+import React, { createContext, useContext, useState, Dispatch, SetStateAction } from 'react';
 
-interface AppContextProps {
-  messages: Messages;
-  setMessages: React.Dispatch<React.SetStateAction<Messages>>;
+interface AppContextType {
+  messages: Record<string, TMessage[]>;
+  setMessages: Dispatch<SetStateAction<Record<string, TMessage[]>>>;
   loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setLoading: Dispatch<SetStateAction<boolean>>;
   chats: string[];
-  setChats: React.Dispatch<React.SetStateAction<string[]>>;
+  setChats: Dispatch<SetStateAction<string[]>>;
+  chatMode: EChatMode;
+  setChatMode: Dispatch<SetStateAction<EChatMode>>;
+  toggleChatMode: (mode: EChatMode) => void;
 }
 
-const AppContext = createContext<AppContextProps | undefined>(undefined);
+const AppContext = createContext<AppContextType | undefined>(undefined);
 
 interface Messages {
   [conversation: string]: { type: 'user' | 'ai'; text: string }[];
@@ -21,6 +25,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Messages>({ 'General Chat': [] });
   const [chats, setChats] = useState<string[]>([]);
+  const [chatMode, setChatMode] = useState(EChatMode.Normal);
+
+  const toggleChatMode = (mode: EChatMode) => {
+    setChatMode(chatMode === mode ? EChatMode.Normal : mode);
+  };
 
   return (
     <AppContext.Provider
@@ -31,6 +40,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setLoading,
         chats,
         setChats,
+        chatMode,
+        setChatMode,
+        toggleChatMode,
       }}
     >
       {children}

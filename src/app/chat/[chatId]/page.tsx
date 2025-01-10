@@ -1,14 +1,11 @@
 'use client';
 
-import { ChatInput } from '@/components/layout/chat-input';
-import { ChatLayout } from '@/components/layout/chat-layout';
-import { Greeting } from '@/components/layout/greeting';
-import { ListMessages } from '@/components/layout/list-messages/ListMessage';
+import { Chatbox } from '@/components/layout/chat-box';
 import { useAppContext } from '@/context/AppContext';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
-const Chatbox = () => {
+const ChatDetail = () => {
   const router = useRouter();
   const { chatId } = useParams() as { chatId: string };
   const { messages, loading } = useAppContext();
@@ -27,14 +24,7 @@ const Chatbox = () => {
     }
   });
 
-  return (
-    <ChatLayout>
-      {!!messages[chatId]?.length ? <ListMessages /> : <Greeting />}
-      <div ref={chatEndRef} />
-
-      <ChatInput />
-    </ChatLayout>
-  );
+  return <Chatbox />;
 };
 
-export default Chatbox;
+export default ChatDetail;

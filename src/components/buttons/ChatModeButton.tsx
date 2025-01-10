@@ -1,4 +1,4 @@
-import { ChatMode } from '@/type';
+import { EChatMode } from '@/type';
 import { Button } from 'antd';
 
 export const ChatModeButton = ({
@@ -7,8 +7,8 @@ export const ChatModeButton = ({
   onClick,
   label,
 }: {
-  currentMode: ChatMode;
-  targetMode: ChatMode;
+  currentMode: EChatMode;
+  targetMode: EChatMode;
   onClick: () => void;
   label: string;
 }) => (
