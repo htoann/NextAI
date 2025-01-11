@@ -3,8 +3,8 @@ import { generateChatName } from '@/lib/utils';
 import { List, message } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { ConversationItem } from './conversation-item';
-import { NewConversationInput } from './new-conversation';
+import { ConversationItem } from './ConversationItem';
+import { NewConversationInput } from './NewConversationInput';
 
 export const Sidebar = () => {
   const router = useRouter();

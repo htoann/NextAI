@@ -7,11 +7,11 @@ import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 import { ChatModeButton } from '../buttons/ChatModeButton';
 import { SilentChatMode } from '../silent-mode/SilentChatMode';
-import { ChatInput } from './chat-input';
-import { Greeting } from './greeting';
+import { ChatInput } from './ChatInput';
+import { Greeting } from './Greeting';
 import { ListMessages } from './list-messages/ListMessage';
 import { NavBar } from './Navbar';
-import { Sidebar } from './sidebar/sidebar';
+import { Sidebar } from './sidebar/Sidebar';
 
 export const Chatbox = () => {
   const { data: session } = useSession();

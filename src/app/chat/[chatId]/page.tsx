@@ -1,6 +1,6 @@
 'use client';
 
-import { Chatbox } from '@/components/layout/chat-box';
+import { Chatbox } from '@/components/layout/Chatbox';
 import { useAppContext } from '@/context/AppContext';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
