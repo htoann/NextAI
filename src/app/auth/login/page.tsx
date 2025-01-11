@@ -4,25 +4,27 @@ import Loading from '@/app/feed/loading';
 import { Button, Card, Col, Form, Input, notification, Row, Typography } from 'antd';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const { Title, Text } = Typography;
 
 export default function Login() {
   const router = useRouter();
-  const { status } = useSession();
-
+  const { status, data: session } = useSession();
   const [loading, setLoading] = useState(false);
 
-  if (status === 'loading') {
+  useEffect(() => {
+    if (session) {
+      router.push('/');
+    }
+  }, [session, router]);
+
+  if (status === 'loading' || session) {
     return <Loading />;
-  } else if (status !== 'unauthenticated') {
-    router.push('/');
   }
 
   const handleSubmit = async (values: { username: string; password: string }) => {
     setLoading(true);
-
     const { username, password } = values;
 
     const res = await signIn('credentials', {
@@ -37,8 +39,6 @@ export default function Login() {
         message: 'Login',
         description: res?.error,
       });
-    } else {
-      router.push('/');
     }
   };
 
