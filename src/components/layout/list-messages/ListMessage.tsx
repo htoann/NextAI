@@ -30,7 +30,7 @@ export const ListMessages = () => {
                 display: 'inline-block',
                 backgroundColor: message.type === 'user' ? '#1890ff' : '#f0f0f0',
                 color: message.type === 'user' ? '#fff' : '#000',
-                padding: '5px 20px',
+                padding: '5px 15px',
                 borderRadius: '10px',
                 maxWidth: '70%',
                 fontSize: '16px',
