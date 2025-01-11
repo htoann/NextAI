@@ -104,7 +104,13 @@ export const ChatInput = () => {
 
     if (!chatName) {
       chatName = generateChatName();
-      router.push(`/chat/${chatName}`);
+
+      const response = await axios.post('/api/conversations', {
+        user: session?.user?.email,
+        title: chatName,
+      });
+
+      router.push(`/chat/${response.data._id}`);
     }
 
     await handleSend(chatName);

@@ -65,7 +65,6 @@ export const Sidebar = () => {
       return newMessages;
     });
 
-    if (chatId === oldName) router.push(`/chat/${newName}`);
     message.success('Conversation renamed');
   };
 
