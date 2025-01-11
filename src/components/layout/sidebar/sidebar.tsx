@@ -70,7 +70,15 @@ export const Sidebar = () => {
   };
 
   return (
-    <div style={{ width: '250px', borderRight: '1px solid #ccc', padding: '20px', height: '100vh', overflowY: 'auto' }}>
+    <div
+      style={{
+        width: '250px',
+        borderRight: '1px solid #ccc',
+        padding: '20px',
+        height: 'calc(100vh - 56px)',
+        overflowY: 'auto',
+      }}
+    >
       <h3 style={{ marginBottom: 15, color: '#8231D3' }}>Conversations</h3>
 
       <NewConversationInput

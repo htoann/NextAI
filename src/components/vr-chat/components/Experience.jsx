@@ -1,12 +1,12 @@
 'use client';
 
-import { useChat } from '@/hooks/useChat';
+import { useAppContext } from '@/context/AppContext';
 import { CameraControls, ContactShadows, Environment, Text } from '@react-three/drei';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { Avatar } from './Avatar';
 
 const Dots = (props) => {
-  const { loading } = useChat();
+  const { loading } = useAppContext();
 
   const [loadingText, setLoadingText] = useState('');
 
@@ -40,7 +40,7 @@ const Dots = (props) => {
 
 export const Experience = () => {
   const cameraControls = useRef();
-  const { cameraZoomed } = useChat();
+  const { cameraZoomed } = useAppContext();
 
   useEffect(() => {
     cameraControls.current?.setLookAt(0, 2, 5, 0, 1.5, 0);

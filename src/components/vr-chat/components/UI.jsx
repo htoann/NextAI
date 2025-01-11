@@ -1,9 +1,9 @@
 'use client';
 
-import { useChat } from '@/hooks/useChat';
+import { useAppContext } from '@/context/AppContext';
 
 export const UI = ({ hidden }) => {
-  const { cameraZoomed, setCameraZoomed } = useChat();
+  const { cameraZoomed, setCameraZoomed } = useAppContext();
 
   if (hidden) {
     return null;

@@ -1,7 +1,7 @@
 'use client';
 
 import { EChatMode, TMessage } from '@/type';
-import React, { createContext, useContext, useState, Dispatch, SetStateAction } from 'react';
+import React, { createContext, Dispatch, SetStateAction, useContext, useState } from 'react';
 
 interface AppContextType {
   messages: Record<string, TMessage[]>;
@@ -13,6 +13,10 @@ interface AppContextType {
   chatMode: EChatMode;
   setChatMode: Dispatch<SetStateAction<EChatMode>>;
   toggleChatMode: (mode: EChatMode) => void;
+  cameraZoomed: boolean;
+  setCameraZoomed: Dispatch<SetStateAction<boolean>>;
+  chat: (message: string) => Promise<void>;
+  onMessagePlayed: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -26,6 +30,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [messages, setMessages] = useState<Messages>({ 'General Chat': [] });
   const [chats, setChats] = useState<string[]>([]);
   const [chatMode, setChatMode] = useState(EChatMode.Normal);
+  const [cameraZoomed, setCameraZoomed] = useState(true);
+
+  const chat = async (message: string) => {
+    setLoading(true);
+    const backendUrl = 'http://localhost:3000';
+    const data = await fetch(`${backendUrl}/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message }),
+    });
+    const resp = (await data.json()).messages;
+    setMessages((prevMessages) => ({
+      ...prevMessages,
+      'General Chat': [...(prevMessages['General Chat'] || []), ...resp],
+    }));
+    setLoading(false);
+  };
+
+  const onMessagePlayed = () => {
+    setMessages((prevMessages) => {
+      const updatedMessages = { ...prevMessages };
+      updatedMessages['General Chat'] = updatedMessages['General Chat'].slice(1);
+      return updatedMessages;
+    });
+  };
 
   const toggleChatMode = (mode: EChatMode) => {
     setChatMode(chatMode === mode ? EChatMode.Normal : mode);
@@ -43,6 +74,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         chatMode,
         setChatMode,
         toggleChatMode,
+        cameraZoomed,
+        setCameraZoomed,
+        chat,
+        onMessagePlayed,
       }}
     >
       {children}

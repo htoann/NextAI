@@ -1,20 +1,24 @@
+'use client';
+
 import { AppProvider } from '@/context/AppContext';
-import { ChatProvider } from '@/hooks/useChat';
+import { metadata } from '@/lib/metadata';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
+import '@ant-design/v5-patch-for-react-19';
+import { SessionProvider } from 'next-auth/react';
+
 import './globals.scss';
 
-export const metadata = {
-  title: 'Next.js 15 Gemini AI',
-  description: 'Chat with Gemini AI',
-};
-
-export default async function RootLayout({ children }: React.PropsWithChildren) {
+export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="description" content={metadata.description} />
+        <title>{metadata.title}</title>
+      </head>
       <body>
         <AntdRegistry>
           <AppProvider>
-            <ChatProvider>{children}</ChatProvider>
+            <SessionProvider>{children}</SessionProvider>
           </AppProvider>
         </AntdRegistry>
       </body>

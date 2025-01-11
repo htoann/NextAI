@@ -10,6 +10,16 @@ import { UI } from './../components/vr-chat/components/UI';
 
 export default function Home() {
   const { chatMode } = useAppContext();
+  // const router = useRouter();
+  // const { data: session, status } = useSession();
+
+  // if (status === 'loading') {
+  //   return <Spin fullscreen percent="auto" />;
+  // }
+
+  // if (!session) {
+  //   return router.push('/auth/login');
+  // }
 
   return (
     <>
