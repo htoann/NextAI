@@ -1,16 +1,24 @@
 'use client';
 
+import Loading from '@/app/feed/loading';
 import { Button, Card, Col, Form, Input, notification, Row, Typography } from 'antd';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 const { Title, Text } = Typography;
 
 export default function Login() {
-  // const { data: session } = useSession();
   const router = useRouter();
+  const { status } = useSession();
+
   const [loading, setLoading] = useState(false);
+
+  if (status === 'loading') {
+    return <Loading />;
+  } else if (status !== 'unauthenticated') {
+    router.push('/');
+  }
 
   const handleSubmit = async (values: { username: string; password: string }) => {
     setLoading(true);

@@ -1,8 +1,8 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { NextRequest, NextResponse } from "next/server";
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { NextRequest, NextResponse } from 'next/server';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 export async function POST(req: NextRequest) {
   const { message } = await req.json();
@@ -14,12 +14,11 @@ export async function POST(req: NextRequest) {
       async start(controller) {
         try {
           for await (const chunk of result.stream) {
-            const chunkText = await chunk.text(); // Extract the text from each chunk
-            controller.enqueue(new TextEncoder().encode(chunkText)); // Send the chunk to the client
+            const chunkText = await chunk.text();
+            controller.enqueue(new TextEncoder().encode(chunkText));
           }
           controller.close();
         } catch (error) {
-          console.error("Error while streaming:", error);
           controller.error(error);
         }
       },
@@ -27,15 +26,11 @@ export async function POST(req: NextRequest) {
 
     return new NextResponse(stream, {
       headers: {
-        "Content-Type": "text/plain", // The response will be text-based
-        "Transfer-Encoding": "chunked", // Indicate that this is a streamed response
+        'Content-Type': 'text/plain',
+        'Transfer-Encoding': 'chunked',
       },
     });
   } catch (error) {
-    console.error("Error generating content:", error);
-    return new NextResponse(
-      JSON.stringify({ error: "Failed to generate response" }),
-      { status: 500 }
-    );
+    return new NextResponse(JSON.stringify({ error: 'Failed to generate response' }), { status: 500 });
   }
 }

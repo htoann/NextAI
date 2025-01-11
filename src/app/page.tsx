@@ -5,21 +5,18 @@ import { useAppContext } from '@/context/AppContext';
 import { EChatMode } from '@/type';
 import { Canvas } from '@react-three/fiber';
 import { Leva } from 'leva';
+import { useSession } from 'next-auth/react';
 import { Experience } from './../components/vr-chat/components/Experience';
 import { UI } from './../components/vr-chat/components/UI';
+import Loading from './feed/loading';
 
 export default function Home() {
   const { chatMode } = useAppContext();
-  // const router = useRouter();
-  // const { data: session, status } = useSession();
+  const { status } = useSession();
 
-  // if (status === 'loading') {
-  //   return <Spin fullscreen percent="auto" />;
-  // }
-
-  // if (!session) {
-  //   return router.push('/auth/login');
-  // }
+  if (status === 'loading') {
+    return <Loading />;
+  }
 
   return (
     <>
