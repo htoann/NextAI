@@ -71,7 +71,8 @@ export const Sidebar = () => {
   return (
     <div
       style={{
-        width: '250px',
+        minWidth: 250,
+        maxWidth: 250,
         borderRight: '1px solid #ccc',
         padding: '20px',
         height: 'calc(100vh - 56px)',
