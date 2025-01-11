@@ -1,7 +1,6 @@
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
-import withTheme from '@/theme';
 import { EChatMode } from '@/type';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
@@ -18,7 +17,7 @@ export const Chatbox = () => {
   const { chatId } = useParams() as { chatId: string };
   const { chatMode, toggleChatMode, messages } = useAppContext();
 
-  return withTheme(
+  return (
     <>
       <NavBar />
 
@@ -88,6 +87,6 @@ export const Chatbox = () => {
           </div>
         </div>
       </div>
-    </>,
+    </>
   );
 };

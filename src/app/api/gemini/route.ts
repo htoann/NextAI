@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
         'Transfer-Encoding': 'chunked',
       },
     });
-  } catch (error) {
+  } catch {
     return new NextResponse(JSON.stringify({ error: 'Failed to generate response' }), { status: 500 });
   }
 }

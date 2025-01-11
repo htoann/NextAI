@@ -6,6 +6,8 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import '@ant-design/v5-patch-for-react-19';
 import { SessionProvider } from 'next-auth/react';
 import './globals.scss';
+import { ConfigProvider } from 'antd';
+import { theme } from '@/lib/theme';
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
@@ -17,7 +19,9 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       <body>
         <AntdRegistry>
           <AppProvider>
-            <SessionProvider>{children}</SessionProvider>
+            <SessionProvider>
+              <ConfigProvider theme={theme}>{children}</ConfigProvider>
+            </SessionProvider>
           </AppProvider>
         </AntdRegistry>
       </body>
