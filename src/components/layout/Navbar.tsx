@@ -1,19 +1,23 @@
 'use client';
 
+import { useAppContext } from '@/context/AppContext';
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown, Layout, Menu, Typography, Space, Button } from 'antd';
-import { signOut, useSession, signIn } from 'next-auth/react';
+import { Avatar, Button, Dropdown, Layout, Menu, Space, Typography } from 'antd';
+import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 const { Header } = Layout;
 const { Title, Text } = Typography;
 
 export const NavBar = () => {
+  const { setLoading } = useAppContext();
   const { data: session } = useSession();
   const router = useRouter();
 
-  const handleLogout = () => {
-    signOut();
+  const handleLogout = async () => {
+    setLoading(true);
+    await signOut();
+    setLoading(true);
   };
 
   const menu = (

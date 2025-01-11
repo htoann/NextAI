@@ -39,6 +39,8 @@ export default function Login() {
         message: 'Login',
         description: res?.error,
       });
+    } else {
+      router.push('/');
     }
   };
 

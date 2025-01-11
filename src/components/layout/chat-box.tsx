@@ -3,6 +3,7 @@
 import { useAppContext } from '@/context/AppContext';
 import withTheme from '@/theme';
 import { EChatMode } from '@/type';
+import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 import { ChatModeButton } from '../buttons/ChatModeButton';
 import { SilentChatMode } from '../silent-mode/SilentChatMode';
@@ -13,6 +14,7 @@ import { NavBar } from './Navbar';
 import { Sidebar } from './sidebar/sidebar';
 
 export const Chatbox = () => {
+  const { data: session } = useSession();
   const { chatId } = useParams() as { chatId: string };
   const { chatMode, toggleChatMode, messages } = useAppContext();
 
@@ -21,7 +23,7 @@ export const Chatbox = () => {
       <NavBar />
 
       <div style={{ display: 'flex' }}>
-        <Sidebar />
+        {session && <Sidebar />}
 
         <div style={{ flex: 1 }}>
           <div

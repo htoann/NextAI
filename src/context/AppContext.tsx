@@ -1,12 +1,14 @@
 'use client';
 
 import { EChatMode, TMessage } from '@/type';
+import { Spin } from 'antd';
 import React, { createContext, Dispatch, SetStateAction, useContext, useState } from 'react';
 
 interface AppContextType {
   messages: Record<string, TMessage[]>;
   setMessages: Dispatch<SetStateAction<Record<string, TMessage[]>>>;
-  loading: boolean;
+  sending: boolean;
+  setSending: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
   chats: string[];
   setChats: Dispatch<SetStateAction<string[]>>;
@@ -15,7 +17,6 @@ interface AppContextType {
   toggleChatMode: (mode: EChatMode) => void;
   cameraZoomed: boolean;
   setCameraZoomed: Dispatch<SetStateAction<boolean>>;
-  chat: (message: string) => Promise<void>;
   onMessagePlayed: () => void;
 }
 
@@ -26,29 +27,12 @@ interface Messages {
 }
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Messages>({ 'General Chat': [] });
   const [chats, setChats] = useState<string[]>([]);
   const [chatMode, setChatMode] = useState(EChatMode.Normal);
   const [cameraZoomed, setCameraZoomed] = useState(true);
-
-  const chat = async (message: string) => {
-    setLoading(true);
-    const backendUrl = 'http://localhost:3000';
-    const data = await fetch(`${backendUrl}/chat`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ message }),
-    });
-    const resp = (await data.json()).messages;
-    setMessages((prevMessages) => ({
-      ...prevMessages,
-      'General Chat': [...(prevMessages['General Chat'] || []), ...resp],
-    }));
-    setLoading(false);
-  };
+  const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onMessagePlayed = () => {
     setMessages((prevMessages) => {
@@ -67,8 +51,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       value={{
         messages,
         setMessages,
-        loading,
-        setLoading,
+        sending,
+        setSending,
         chats,
         setChats,
         chatMode,
@@ -76,11 +60,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         toggleChatMode,
         cameraZoomed,
         setCameraZoomed,
-        chat,
         onMessagePlayed,
+        setLoading,
       }}
     >
       {children}
+      {loading && <Spin fullscreen percent="auto" size="large" />}
     </AppContext.Provider>
   );
 };

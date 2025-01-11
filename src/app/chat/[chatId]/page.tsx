@@ -8,7 +8,7 @@ import { useEffect, useRef } from 'react';
 const ChatDetail = () => {
   const router = useRouter();
   const { chatId } = useParams() as { chatId: string };
-  const { messages, loading } = useAppContext();
+  const { messages, sending } = useAppContext();
 
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -19,7 +19,7 @@ const ChatDetail = () => {
   }, [messages]);
 
   useEffect(() => {
-    if (!loading && !messages[chatId]) {
+    if (!sending && !messages[chatId]) {
       router.push('/');
     }
   });
