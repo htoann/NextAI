@@ -13,7 +13,7 @@ const ChatDetail = () => {
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (chatEndRef.current) {
+    if (!!messages?.length && chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);

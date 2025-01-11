@@ -2,7 +2,7 @@
 
 import { useAppContext } from '@/context/AppContext';
 import { generateChatName } from '@/lib/utils';
-import { Message } from '@/type';
+import { TMessage } from '@/type';
 import { SendOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
@@ -14,7 +14,7 @@ export const ChatInput = () => {
   const [userMessage, setUserMessage] = useState<string>('');
   const { setMessages, setLoading, setChats } = useAppContext();
 
-  const handleUpdateLastMessage = (chatName: string, message: Message) => {
+  const handleUpdateLastMessage = (chatName: string, message: TMessage) => {
     setMessages((prevMessages) => {
       const chatMessages = prevMessages[chatName] || [];
       const updatedMessages = [...chatMessages];
@@ -26,7 +26,7 @@ export const ChatInput = () => {
     });
   };
 
-  const handleSetMessages = (chatName: string, message: Message) => {
+  const handleSetMessages = (chatName: string, message: TMessage) => {
     setMessages((prevMessages) => ({
       ...prevMessages,
       [chatName]: [...(prevMessages[chatName] || []), message],
@@ -40,7 +40,7 @@ export const ChatInput = () => {
       setChats((prevChats) => [chatName, ...prevChats]);
     }
 
-    const newUserMessage: Message = { type: 'user', text: userMessage };
+    const newUserMessage: TMessage = { type: 'user', text: userMessage };
     handleSetMessages(chatName, newUserMessage);
 
     setUserMessage('');
@@ -64,7 +64,7 @@ export const ChatInput = () => {
       let done = false;
       let value = '';
 
-      const aiMessage: Message = { type: 'ai', text: '' };
+      const aiMessage: TMessage = { type: 'ai', text: '' };
       handleSetMessages(chatName, aiMessage);
 
       while (!done) {
