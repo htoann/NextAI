@@ -15,7 +15,6 @@
     "@react-three/fiber": "^9.0.0-alpha.8",
     "@react-three/xr": "^6.4.12",
     "@tensorflow/tfjs-backend-webgl": "^4.22.0",
-    "@types/mongoose": "^5.11.97",
     "antd": "^5.22.7",
     "axios": "^1.7.9",
     "encoding": "^0.1.13",

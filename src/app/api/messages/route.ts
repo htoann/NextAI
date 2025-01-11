@@ -1,7 +1,7 @@
+import Message from '@/lib/api-models/Message';
+import connect from '@/lib/mongodb';
 import { NextResponse } from 'next/server';
-import connect from '../../../lib/mongodb';
 import { NextRequest } from 'next/server';
-import Message from '../models/Message';
 
 const handler = async (req: NextRequest) => {
   await connect();

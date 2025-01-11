@@ -1047,13 +1047,6 @@
   dependencies:
     "@types/unist" "*"
 
-"@types/mongoose@^5.11.97":
-  version "5.11.97"
-  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.11.97.tgz#80b0357f3de6807eb597262f52e49c3e13ee14d8"
-  integrity sha512-cqwOVYT3qXyLiGw7ueU2kX9noE8DPGRY6z8eUxudhXY8NZ7DMKYAxyZkLSevGfhCX3dO/AoX5/SO9lAzfjon0Q==
-  dependencies:
-    mongoose "*"
-
 "@types/ms@*":
   version "0.7.34"
   resolved "https://registry.yarnpkg.com/@types/ms/-/ms-0.7.34.tgz#10964ba0dee6ac4cd462e2795b6bebd407303433"
@@ -3472,7 +3465,7 @@ mongodb@^6.12.0, mongodb@~6.12.0:
     bson "^6.10.1"
     mongodb-connection-string-url "^3.0.0"
 
-mongoose@*, mongoose@^8.9.4:
+mongoose@^8.9.4:
   version "8.9.4"
   resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-8.9.4.tgz#de93b9ec27a9384d013312e835667e540fd1dcef"
   integrity sha512-DndoI01aV/q40P9DiYDXsYjhj8vZjmmuFwcC3Tro5wFznoE1z6Fe2JgMnbLR6ghglym5ziYizSfAJykp+UPZWg==

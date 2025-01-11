@@ -4,13 +4,14 @@ import Loading from '@/app/feed/loading';
 import { Button, Card, Col, Form, Input, notification, Row, Typography } from 'antd';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const { Title, Text } = Typography;
 
 export default function Login() {
   const router = useRouter();
   const { status, data: session } = useSession();
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

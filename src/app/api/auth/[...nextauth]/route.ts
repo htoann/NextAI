@@ -1,6 +1,5 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { NextRequest } from 'next/server';
 
 const authOptions: NextAuthOptions = {
   providers: [
@@ -43,5 +42,6 @@ const authOptions: NextAuthOptions = {
   },
 };
 
-export const GET = (req: NextRequest) => NextAuth(authOptions)(req);
-export const POST = (req: NextRequest) => NextAuth(authOptions)(req);
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
