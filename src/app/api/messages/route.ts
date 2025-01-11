@@ -11,7 +11,8 @@ const handler = async (req: NextRequest) => {
       try {
         const messages = await Message.find().populate('owner').populate('conversation');
         return NextResponse.json(messages);
-      } catch {
+      } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
       }
 
@@ -26,7 +27,8 @@ const handler = async (req: NextRequest) => {
         });
         await newMessage.save();
         return NextResponse.json(newMessage, { status: 201 });
-      } catch {
+      } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: 'Failed to create message' }, { status: 500 });
       }
 
@@ -40,7 +42,8 @@ const handler = async (req: NextRequest) => {
           return NextResponse.json({ error: 'Message not found' }, { status: 404 });
         }
         return NextResponse.json(updatedMessage);
-      } catch {
+      } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: 'Failed to update message' }, { status: 500 });
       }
 
@@ -52,7 +55,8 @@ const handler = async (req: NextRequest) => {
           return NextResponse.json({ error: 'Message not found' }, { status: 404 });
         }
         return NextResponse.json({ message: 'Message deleted' });
-      } catch {
+      } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: 'Failed to delete message' }, { status: 500 });
       }
 

@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 interface IMessage extends Document {
-  owner: mongoose.Types.ObjectId;
+  owner: string;
   content: string;
   conversation: mongoose.Types.ObjectId;
   createdAt: Date;
@@ -11,9 +11,10 @@ interface IMessage extends Document {
 const MessageSchema: Schema = new Schema(
   {
     owner: {
-      type: Schema.Types.ObjectId,
+      type: String,
       ref: 'User',
       required: true,
+      index: true,
     },
     content: { type: String, required: true },
     conversation: {

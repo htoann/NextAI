@@ -18,6 +18,7 @@
     "@types/mongoose": "^5.11.97",
     "antd": "^5.22.7",
     "axios": "^1.7.9",
+    "encoding": "^0.1.13",
     "face-api.js": "^0.22.2",
     "leva": "^0.9.35",
     "mongodb": "^6.12.0",

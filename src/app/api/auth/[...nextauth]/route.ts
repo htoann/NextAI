@@ -1,7 +1,8 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { NextRequest } from 'next/server';
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -34,14 +35,13 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session?.user) {
-        session.user.email = token.email as string;
-        session.user.name = token.name as string;
+        session.user.email = token.email;
+        session.user.name = token.name;
       }
       return session;
     },
   },
 };
 
-const handler = NextAuth(authOptions);
-
-export { handler as GET, handler as POST };
+export const GET = (req: NextRequest) => NextAuth(authOptions)(req);
+export const POST = (req: NextRequest) => NextAuth(authOptions)(req);

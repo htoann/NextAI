@@ -5,14 +5,18 @@ import { generateChatName } from '@/lib/utils';
 import { TMessage } from '@/type';
 import { SendOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row } from 'antd';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export const ChatInput = () => {
-  const { chatId } = useParams() as { chatId: string };
   const router = useRouter();
+  const { data: session } = useSession();
+  const { chatId } = useParams() as { chatId: string };
+  const { setMessages, setSending, setChats } = useAppContext();
+
   const [userMessage, setUserMessage] = useState<string>('');
-  const { setMessages, setLoading, setChats } = useAppContext();
 
   const handleUpdateLastMessage = (chatName: string, message: TMessage) => {
     setMessages((prevMessages) => {
@@ -44,6 +48,19 @@ export const ChatInput = () => {
     handleSetMessages(chatName, newUserMessage);
 
     setUserMessage('');
+
+    if (session) {
+      try {
+        await axios.post('/api/messages', {
+          owner: session.user?.email,
+          content: userMessage,
+          conversation: chatName,
+          metadata: {},
+        });
+      } catch (error) {
+        console.error('Error saving message to database:', error);
+      }
+    }
 
     try {
       const response = await fetch('/api/gemini', {
@@ -82,8 +99,7 @@ export const ChatInput = () => {
   };
 
   const sendMessage = async () => {
-    setLoading(true);
-
+    setSending(true);
     let chatName = chatId;
 
     if (!chatName) {
@@ -92,8 +108,7 @@ export const ChatInput = () => {
     }
 
     await handleSend(chatName);
-
-    setLoading(false);
+    setSending(false);
   };
 
   const handlePressEnter = () => {

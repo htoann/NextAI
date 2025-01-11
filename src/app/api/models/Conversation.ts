@@ -1,16 +1,17 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 interface IConversation extends Document {
-  user: mongoose.Types.ObjectId;
+  user: string;
   title: string;
 }
 
 const conversationSchema: Schema<IConversation> = new Schema(
   {
     user: {
-      type: Schema.Types.ObjectId,
+      type: String,
       ref: 'User',
       required: true,
+      index: true,
     },
     title: {
       type: String,

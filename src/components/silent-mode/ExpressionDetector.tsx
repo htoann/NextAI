@@ -1,4 +1,5 @@
 'use client';
+
 import * as faceapi from 'face-api.js';
 import { useEffect, useRef } from 'react';
 

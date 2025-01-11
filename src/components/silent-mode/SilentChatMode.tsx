@@ -1,4 +1,5 @@
 'use client';
+
 import { getEmojiForExpression } from '@/lib/utils';
 import { Card, Typography } from 'antd';
 import { useState } from 'react';
