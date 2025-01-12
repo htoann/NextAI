@@ -20,13 +20,14 @@ export const NavBar = () => {
     setLoading(true);
   };
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
-        Logout
-      </Menu.Item>
-    </Menu>
-  );
+  const menuItems = [
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'Logout',
+      onClick: handleLogout,
+    },
+  ];
 
   return (
     <Header
@@ -52,7 +53,7 @@ export const NavBar = () => {
       </Title>
 
       {session ? (
-        <Dropdown overlay={menu} trigger={['click']}>
+        <Dropdown menu={{ items: menuItems }} trigger={['click']}>
           <Space style={{ cursor: 'pointer' }}>
             {session?.user?.name && (
               <Text

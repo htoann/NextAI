@@ -17,15 +17,19 @@ export const Sidebar = () => {
 
   const [newChatName, setNewChatName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [conversationsLoaded, setConversationsLoaded] = useState(false);
 
   useEffect(() => {
-    if (session) {
+    if (session && !conversationsLoaded) {
       setLoading(true);
       getConversations()
-        .then((conversations) => setChats(conversations))
+        .then((conversations) => {
+          setChats(conversations);
+          setConversationsLoaded(true);
+        })
         .finally(() => setLoading(false));
     }
-  }, [session]);
+  }, [session, conversationsLoaded]);
 
   const handleCreateConversation = () => {
     if (chats.find((chat) => chat.title === newChatName)) {

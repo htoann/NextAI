@@ -21,23 +21,26 @@ export const ConversationItem = ({ chatName, isActive, onSelect, onDelete, onRen
     }
   };
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="rename" onClick={() => setIsEditing(true)}>
-        Rename
-      </Menu.Item>
-      <Menu.Item key="delete" onClick={(e) => e.domEvent.stopPropagation()}>
+  const menuItems = [
+    {
+      key: 'rename',
+      label: 'Rename',
+      onClick: () => setIsEditing(true),
+    },
+    {
+      key: 'delete',
+      label: (
         <Popconfirm
           title="Are you sure you want to delete this conversation?"
           onConfirm={onDelete}
           okText="Yes"
           cancelText="No"
         >
-          Delete
+          <span>Delete</span>
         </Popconfirm>
-      </Menu.Item>
-    </Menu>
-  );
+      ),
+    },
+  ];
 
   return (
     <List.Item
@@ -75,7 +78,7 @@ export const ConversationItem = ({ chatName, isActive, onSelect, onDelete, onRen
           </Tooltip>
         </div>
       ) : (
-        <Dropdown overlay={menu} trigger={['click']}>
+        <Dropdown menu={{ items: menuItems }} trigger={['click']}>
           <EllipsisOutlined style={{ fontSize: 20, marginLeft: 10 }} onClick={(e) => e.stopPropagation()} />
         </Dropdown>
       )}
