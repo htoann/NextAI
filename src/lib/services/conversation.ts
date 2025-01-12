@@ -31,9 +31,3 @@ export const getConversationMessages = (conversationId: string) =>
     .get<TMessage[]>(['conversations', conversationId, 'messages'])
     .then((res) => res)
     .catch((err: AxiosError) => Promise.reject(err.response?.data));
-
-export const chat = (conversationId: string, message: Partial<TMessage>) =>
-  apiService
-    .post<TMessage>(['conversations', conversationId, 'chat'], { message })
-    .then((res) => res)
-    .catch((err: AxiosError) => Promise.reject(err.response?.data));

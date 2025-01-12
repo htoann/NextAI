@@ -31,7 +31,7 @@ export const Chatbox = () => {
     };
 
     fetchMessages();
-  }, [selectedChat, session]);
+  }, [selectedChat]);
 
   return (
     <>

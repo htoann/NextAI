@@ -7,12 +7,12 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 export async function POST(req: NextRequest) {
-  const { message, conversation } = await req.json();
+  const { message } = await req.json();
 
   await connect();
 
   try {
-    const result = await model.generateContentStream(message);
+    const result = await model.generateContentStream(message.content);
     const responseText: string[] = [];
 
     const stream = new ReadableStream({
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
           new Message({
             owner: 'AI',
             content: responseText.join(''),
-            conversation,
+            conversation: message.conversation,
           }).save();
         } catch (error) {
           controller.error(error);
@@ -42,7 +42,8 @@ export async function POST(req: NextRequest) {
         'Transfer-Encoding': 'chunked',
       },
     });
-  } catch {
+  } catch (err) {
+    console.error(err);
     return new NextResponse(JSON.stringify({ error: 'Failed to generate response' }), { status: 500 });
   }
 }

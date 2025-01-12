@@ -1,6 +1,7 @@
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
+import { chat } from '@/lib/services/messages';
 import { generateChatName } from '@/lib/utils';
 import { TMessage } from '@/type';
 import { SendOutlined } from '@ant-design/icons';
@@ -22,48 +23,44 @@ export const ChatInput = () => {
   };
 
   const handleUpdateLastMessage = (updatedMessage: TMessage) => {
-    setMessages((prevMessages) =>
-      prevMessages.map((msg) =>
-        msg.conversation === updatedMessage.conversation && msg.owner === 'AI' ? updatedMessage : msg,
-      ),
-    );
+    setMessages((prevMessages) => {
+      if (prevMessages.length > 0) {
+        const updatedMessages = [...prevMessages];
+        updatedMessages[prevMessages.length - 1] = { ...updatedMessages[prevMessages.length - 1], ...updatedMessage };
+        return updatedMessages;
+      }
+      return prevMessages;
+    });
   };
 
-  const handleSend = async (chatName: string, newChatId: string) => {
-    if (!userMessage.trim()) return;
-
-    if (!selectedChat) {
-      // setChats((prevChats) => [chatName, ...prevChats]);
-    }
-
-    const newUserMessage: TMessage = {
-      owner: session?.user?.email || 'unknown',
-      content: userMessage,
-      conversation: newChatId,
-    };
-
-    handleAddMessage(newUserMessage);
-    setUserMessage('');
-
+  const processChatStream = async (userMessage: string, newChatId: string) => {
     try {
-      if (session) {
-        await axios.post('/api/messages', newUserMessage);
+      // const response = await geminiChat({
+      //   content: userMessage,
+      //   conversation: newChatId,
+      // });
+
+      // const reader = response;
+
+      const response = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: {
+            content: userMessage,
+            conversation: newChatId,
+          },
+        }),
+      });
+
+      if (!response.body) {
+        return;
       }
 
-      const response = await axios.post(
-        '/api/gemini',
-        {
-          message: userMessage,
-          conversation: newChatId,
-        },
-        {
-          responseType: 'stream',
-        },
-      );
+      const reader = response.body.getReader();
 
-      console.log('response', response);
-
-      const reader = response.data.getReader();
       const decoder = new TextDecoder();
       let done = false;
       let value = '';
@@ -81,12 +78,37 @@ export const ChatInput = () => {
         done = isDone;
         value += decoder.decode(chunk, { stream: true });
 
-        console.log(value);
-
         handleUpdateLastMessage({ ...aiMessage, content: value });
       }
 
       handleUpdateLastMessage({ ...aiMessage, content: value });
+    } catch (error) {
+      console.error('Error in processChatStream:', error);
+    }
+  };
+
+  const handleSend = async (chatName: string, newChatId: string) => {
+    if (!userMessage.trim()) return;
+
+    if (!selectedChat) {
+      // setChats((prevChats) => [chatName, ...prevChats]);
+    }
+
+    const newUserMessage: TMessage = {
+      owner: session?.user?.email || 'unknown',
+      content: userMessage,
+      conversation: selectedChat?._id!,
+    };
+
+    handleAddMessage(newUserMessage);
+    setUserMessage('');
+
+    try {
+      if (session) {
+        await chat(newUserMessage);
+      }
+
+      processChatStream(userMessage, selectedChat?._id!);
     } catch (error) {
       console.error('Error during message handling:', error);
     }

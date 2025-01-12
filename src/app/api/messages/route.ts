@@ -9,13 +9,8 @@ const handler = async (req: NextRequest) => {
   switch (req.method) {
     case 'POST':
       try {
-        const { owner, content, conversation, metadata } = await req.json();
-        const newMessage = new Message({
-          owner,
-          content,
-          conversation,
-          metadata,
-        });
+        const { message } = await req.json();
+        const newMessage = new Message(message);
         await newMessage.save();
         return NextResponse.json(newMessage, { status: 201 });
       } catch (error) {
