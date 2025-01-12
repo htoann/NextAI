@@ -9,8 +9,9 @@ const authOptions: NextAuthOptions = {
         username: { label: 'Username', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials) {
-        const { username, password } = credentials || {};
+      async authorize() // credentials
+      {
+        // const { username, password } = credentials || {};
 
         // if (username === 'admin' && password === 'admin') {
         //   return { id: '1', name: 'Admin', email: 'admin@example.com' };

@@ -3,10 +3,10 @@ import connect from '@/lib/mongodb';
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
 
-const handler = async (req: NextRequest, { params }: { params: { conversationId: string } }) => {
-  await connect();
-
+const handler = async (req: NextRequest, { params }: { params: Promise<{ conversationId: string }> }) => {
   const { conversationId } = await params;
+
+  await connect();
 
   switch (req.method) {
     case 'PUT':

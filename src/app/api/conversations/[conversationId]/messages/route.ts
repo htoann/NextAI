@@ -1,11 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import connect from '@/lib/mongodb';
-import Message from '@/lib/api-models/Message';
 import Conversation from '@/lib/api-models/Conversation';
+import Message from '@/lib/api-models/Message';
+import connect from '@/lib/mongodb';
+import { NextRequest, NextResponse } from 'next/server';
 
-export const GET = async (req: NextRequest, { params }: { params: { conversationId: string } }) => {
-  await connect();
-
+export async function GET(req: NextRequest, { params }: { params: Promise<{ conversationId: string }> }) {
   const { conversationId } = await params;
 
   if (!conversationId) {
@@ -13,6 +11,8 @@ export const GET = async (req: NextRequest, { params }: { params: { conversation
   }
 
   try {
+    await connect();
+
     const conversation = await Conversation.findById(conversationId);
     if (!conversation) {
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
@@ -25,4 +25,4 @@ export const GET = async (req: NextRequest, { params }: { params: { conversation
     console.error(error);
     return NextResponse.json({ error: 'Failed to fetch conversation messages' }, { status: 500 });
   }
-};
+}
