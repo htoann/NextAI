@@ -1,11 +1,7 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import { TConversation } from '@/type';
+import mongoose, { Schema } from 'mongoose';
 
-interface IConversation extends Document {
-  user: string;
-  title: string;
-}
-
-const conversationSchema: Schema<IConversation> = new Schema(
+const conversationSchema: Schema = new Schema(
   {
     user: {
       type: String,
@@ -22,6 +18,6 @@ const conversationSchema: Schema<IConversation> = new Schema(
   { timestamps: true },
 );
 
-const Conversation = mongoose.model<IConversation>('Conversation', conversationSchema);
+const Conversation = mongoose.model<TConversation>('Conversation', conversationSchema);
 
 export default Conversation;

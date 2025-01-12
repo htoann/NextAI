@@ -1,13 +1,12 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { getField } from './localStorage';
 
-export const getAppToken = () => `Bearer ${getField('access-token')}`;
+// export const getAppToken = () => `Bearer ${getField('access-token')}`;
 
-axios.interceptors.request.use((config) => {
-  config.headers.authorization = getAppToken();
+// axios.interceptors.request.use((config) => {
+//   config.headers.authorization = getAppToken();
 
-  return config;
-});
+//   return config;
+// });
 
 enum HttpMethod {
   GET = 'GET',
@@ -54,7 +53,7 @@ class HttpRequest {
     return this.request<T>(HttpMethod.DELETE, path, data, headers);
   }
 
-  private request<T>(
+  private async request<T>(
     method: HttpMethod = HttpMethod.GET,
     path: string | string[],
     data: AxiosRequestConfig['data'],
@@ -76,7 +75,8 @@ class HttpRequest {
       requestConfig.data = data;
     }
 
-    return axios(requestConfig).then((res) => res.data);
+    const res = await axios(requestConfig);
+    return res.data;
   }
 }
 

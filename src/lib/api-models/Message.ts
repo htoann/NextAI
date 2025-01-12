@@ -1,12 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
-
-interface IMessage extends Document {
-  owner: string;
-  content: string;
-  conversation: mongoose.Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { TMessage } from '@/type';
+import mongoose, { Schema } from 'mongoose';
 
 const MessageSchema: Schema = new Schema(
   {
@@ -29,6 +22,6 @@ const MessageSchema: Schema = new Schema(
   },
 );
 
-const Message = mongoose.models.Message || mongoose.model<IMessage>('Message', MessageSchema);
+const Message = mongoose.models.Message || mongoose.model<TMessage>('Message', MessageSchema);
 
 export default Message;
