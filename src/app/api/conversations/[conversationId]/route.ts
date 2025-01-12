@@ -24,8 +24,6 @@ const handler = async (req: NextRequest, { params }: { params: Promise<{ convers
 
     case 'DELETE':
       try {
-        const conversationId = req.nextUrl.pathname.split('/').pop();
-
         if (!conversationId) {
           return NextResponse.json({ error: 'Conversation ID is required' }, { status: 400 });
         }
