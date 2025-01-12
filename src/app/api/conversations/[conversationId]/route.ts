@@ -1,4 +1,5 @@
 import Conversation from '@/lib/api-models/Conversation';
+import Message from '@/lib/api-models/Message';
 import connect from '@/lib/mongodb';
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
@@ -33,10 +34,12 @@ const handler = async (req: NextRequest, { params }: { params: Promise<{ convers
           return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
         }
 
-        return NextResponse.json({ message: 'Conversation deleted' });
+        await Message.deleteMany({ conversationId });
+
+        return NextResponse.json({ message: 'Conversation and associated messages deleted' });
       } catch (error) {
         console.error(error);
-        return NextResponse.json({ error: 'Failed to delete conversation' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to delete conversation and messages' }, { status: 500 });
       }
 
     default:
