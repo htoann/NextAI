@@ -18,11 +18,11 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       </head>
       <body>
         <AntdRegistry>
-          <AppProvider>
-            <SessionProvider>
+          <SessionProvider>
+            <AppProvider>
               <ConfigProvider theme={theme}>{children}</ConfigProvider>
-            </SessionProvider>
-          </AppProvider>
+            </AppProvider>
+          </SessionProvider>
         </AntdRegistry>
       </body>
     </html>

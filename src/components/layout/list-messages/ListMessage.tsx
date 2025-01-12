@@ -3,24 +3,30 @@
 import { useAppContext } from '@/context/AppContext';
 import { TMessage } from '@/type';
 import { List } from 'antd';
-import { useParams } from 'next/navigation';
 import Markdown from 'react-markdown';
 import './ListMessage.scss';
 
 export const ListMessages = () => {
-  const { chatId } = useParams() as { chatId: string };
   const { messages } = useAppContext();
 
+  // const chatEndRef = useRef<HTMLDivElement | null>(null);
+
+  // useEffect(() => {
+  //   if (!!messages?.length && chatEndRef.current) {
+  //     chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  //   }
+  // }, [messages]);
+
   return (
-    <div className="list-message">
+    <div className="list-message chatbox-center">
       <List
-        dataSource={messages[chatId]}
+        dataSource={messages}
         renderItem={(message: TMessage) => (
           <List.Item
             style={{
-              textAlign: message.type === 'user' ? 'right' : 'left',
+              textAlign: message.owner === 'AI' ? 'left' : 'right',
               display: 'flex',
-              justifyContent: message.type === 'user' ? 'flex-end' : 'flex-start',
+              justifyContent: message.owner === 'AI' ? 'flex-start' : 'flex-end',
               padding: '5px 0',
               border: 'none',
             }}
@@ -28,15 +34,15 @@ export const ListMessages = () => {
             <div
               style={{
                 display: 'inline-block',
-                backgroundColor: message.type === 'user' ? '#1890ff' : '#f0f0f0',
-                color: message.type === 'user' ? '#fff' : '#000',
+                backgroundColor: message.owner === 'AI' ? '#f0f0f0' : '#1890ff',
+                color: message.owner === 'AI' ? '#000' : '#fff',
                 padding: '5px 15px',
                 borderRadius: '10px',
                 maxWidth: '70%',
                 fontSize: '16px',
               }}
             >
-              <Markdown>{message.text}</Markdown>
+              <Markdown>{message.content}</Markdown>
             </div>
           </List.Item>
         )}

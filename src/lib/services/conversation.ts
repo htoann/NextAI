@@ -1,27 +1,39 @@
+import { TConversation, TMessage } from '@/type';
 import { AxiosError } from 'axios';
 import { apiService } from './apiService';
-import { TConversation, TMessage } from '@/type';
 
 export const getConversations = () =>
   apiService
-    .get<{ conversations: TConversation[] }>(['conversations'])
-    .then((res) => res.conversations)
+    .get<TConversation[]>(['conversations'])
+    .then((res) => res)
     .catch((err: AxiosError) => Promise.reject(err.response?.data));
 
 export const createConversation = () =>
   apiService
-    .post<{ conversation: TConversation }>(['conversations'])
-    .then((res) => res.conversation)
+    .post<TConversation>(['conversations'])
+    .then((res) => res)
+    .catch((err: AxiosError) => Promise.reject(err.response?.data));
+
+export const updateConversationTitle = (conversationId: string, newTitle: string) =>
+  apiService
+    .put<TConversation>(['conversations', conversationId], { title: newTitle })
+    .then((res) => res)
+    .catch((err: AxiosError) => Promise.reject(err.response?.data));
+
+export const deleteConversation = (conversationId: string) =>
+  apiService
+    .delete(['conversations', conversationId])
+    .then((res) => res)
     .catch((err: AxiosError) => Promise.reject(err.response?.data));
 
 export const getConversationMessages = (conversationId: string) =>
   apiService
-    .get<{ messages: TMessage[] }>(['conversations', conversationId, 'messages'])
-    .then((res) => res.messages)
+    .get<TMessage[]>(['conversations', conversationId, 'messages'])
+    .then((res) => res)
     .catch((err: AxiosError) => Promise.reject(err.response?.data));
 
 export const chat = (conversationId: string, message: Partial<TMessage>) =>
   apiService
-    .post<{ message: TMessage }>(['conversations', conversationId, 'chat'], { message })
-    .then((res) => res.message)
+    .post<TMessage>(['conversations', conversationId, 'chat'], { message })
+    .then((res) => res)
     .catch((err: AxiosError) => Promise.reject(err.response?.data));

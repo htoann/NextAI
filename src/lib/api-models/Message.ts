@@ -1,4 +1,3 @@
-import { TMessage } from '@/type';
 import mongoose, { Schema } from 'mongoose';
 
 const MessageSchema: Schema = new Schema(
@@ -22,6 +21,6 @@ const MessageSchema: Schema = new Schema(
   },
 );
 
-const Message = mongoose.models.Message || mongoose.model<TMessage>('Message', MessageSchema);
+const Message = mongoose.models.Message || mongoose.model('Message', MessageSchema);
 
 export default Message;

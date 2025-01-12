@@ -7,113 +7,116 @@ import { SendOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row } from 'antd';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export const ChatInput = () => {
   const router = useRouter();
   const { data: session } = useSession();
-  const { chatId } = useParams() as { chatId: string };
-  const { setMessages, setSending, setChats } = useAppContext();
+  const { setMessages, setSending, selectedChat } = useAppContext();
 
   const [userMessage, setUserMessage] = useState<string>('');
 
-  const handleUpdateLastMessage = (chatName: string, message: TMessage) => {
-    setMessages((prevMessages) => {
-      const chatMessages = prevMessages[chatName] || [];
-      const updatedMessages = [...chatMessages];
-      updatedMessages[updatedMessages.length - 1] = message;
-      return {
-        ...prevMessages,
-        [chatName]: updatedMessages,
-      };
-    });
+  const handleAddMessage = (newMessage: TMessage) => {
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
 
-  const handleSetMessages = (chatName: string, message: TMessage) => {
-    setMessages((prevMessages) => ({
-      ...prevMessages,
-      [chatName]: [...(prevMessages[chatName] || []), message],
-    }));
+  const handleUpdateLastMessage = (updatedMessage: TMessage) => {
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.conversation === updatedMessage.conversation && msg.owner === 'AI' ? updatedMessage : msg,
+      ),
+    );
   };
 
-  const handleSend = async (chatName: string) => {
+  const handleSend = async (chatName: string, newChatId: string) => {
     if (!userMessage.trim()) return;
 
-    if (!chatId) {
-      setChats((prevChats) => [chatName, ...prevChats]);
+    if (!selectedChat) {
+      // setChats((prevChats) => [chatName, ...prevChats]);
     }
 
-    const newUserMessage: TMessage = { type: 'user', text: userMessage };
-    handleSetMessages(chatName, newUserMessage);
+    const newUserMessage: TMessage = {
+      owner: session?.user?.email || 'unknown',
+      content: userMessage,
+      conversation: newChatId,
+    };
 
+    handleAddMessage(newUserMessage);
     setUserMessage('');
 
-    if (session) {
-      try {
-        await axios.post('/api/messages', {
-          owner: session.user?.email,
-          content: userMessage,
-          conversation: chatName,
-          metadata: {},
-        });
-      } catch (error) {
-        console.error('Error saving message to database:', error);
-      }
-    }
-
     try {
-      const response = await fetch('/api/gemini', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: userMessage }),
-      });
-
-      if (!response.body) {
-        console.error('No response body from AI');
-        return;
+      if (session) {
+        await axios.post('/api/messages', newUserMessage);
       }
 
-      const reader = response.body.getReader();
+      const response = await axios.post(
+        '/api/gemini',
+        {
+          message: userMessage,
+          conversation: newChatId,
+        },
+        {
+          responseType: 'stream',
+        },
+      );
+
+      console.log('response', response);
+
+      const reader = response.data.getReader();
       const decoder = new TextDecoder();
       let done = false;
       let value = '';
 
-      const aiMessage: TMessage = { type: 'ai', text: '' };
-      handleSetMessages(chatName, aiMessage);
+      const aiMessage: TMessage = {
+        owner: 'AI',
+        content: '',
+        conversation: newChatId,
+      };
+
+      handleAddMessage(aiMessage);
 
       while (!done) {
         const { done: isDone, value: chunk } = await reader.read();
         done = isDone;
         value += decoder.decode(chunk, { stream: true });
 
-        handleUpdateLastMessage(chatName, { ...aiMessage, text: value });
+        console.log(value);
+
+        handleUpdateLastMessage({ ...aiMessage, content: value });
       }
 
-      handleUpdateLastMessage(chatName, { ...aiMessage, text: value });
+      handleUpdateLastMessage({ ...aiMessage, content: value });
     } catch (error) {
-      console.error('Error fetching AI response:', error);
+      console.error('Error during message handling:', error);
     }
   };
 
   const sendMessage = async () => {
     setSending(true);
-    let chatName = chatId;
+    let chatName = selectedChat?.title;
+    let newChatId = selectedChat?.title;
 
     if (!chatName) {
       chatName = generateChatName();
 
-      const response = await axios.post('/api/conversations', {
-        user: session?.user?.email,
-        title: chatName,
-      });
+      try {
+        const response = await axios.post('/api/conversations', {
+          user: session?.user?.email,
+          title: chatName,
+        });
 
-      router.push(`/chat/${response.data._id}`);
+        newChatId = response.data._id;
+
+        router.push(`/chat/${newChatId}`);
+      } catch (error) {
+        console.error('Error creating conversation:', error);
+        setSending(false);
+        return;
+      }
     }
 
-    await handleSend(chatName);
+    await handleSend(chatName, newChatId!);
     setSending(false);
   };
 

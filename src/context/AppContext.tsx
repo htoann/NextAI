@@ -1,44 +1,45 @@
 'use client';
 
-import { EChatMode, TMessage } from '@/type';
+import { EChatMode, TConversation, TMessage } from '@/type';
 import { Spin } from 'antd';
 import React, { createContext, Dispatch, SetStateAction, useContext, useState } from 'react';
 
 interface AppContextType {
-  messages: Record<string, TMessage[]>;
-  setMessages: Dispatch<SetStateAction<Record<string, TMessage[]>>>;
+  messages: TMessage[];
+  setMessages: Dispatch<SetStateAction<TMessage[]>>;
   sending: boolean;
   setSending: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
-  chats: string[];
-  setChats: Dispatch<SetStateAction<string[]>>;
+  chats: TConversation[];
+  setChats: Dispatch<SetStateAction<TConversation[]>>;
   chatMode: EChatMode;
   setChatMode: Dispatch<SetStateAction<EChatMode>>;
   toggleChatMode: (mode: EChatMode) => void;
   cameraZoomed: boolean;
   setCameraZoomed: Dispatch<SetStateAction<boolean>>;
   onMessagePlayed: () => void;
+  selectedChat: TConversation | undefined;
+  setSelectedChat: Dispatch<React.SetStateAction<TConversation | undefined>>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-interface Messages {
-  [conversation: string]: { type: 'user' | 'ai'; text: string }[];
-}
-
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [messages, setMessages] = useState<Messages>({ 'General Chat': [] });
-  const [chats, setChats] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const [messages, setMessages] = useState<TMessage[]>([]);
+  const [chats, setChats] = useState<TConversation[] | []>([]);
   const [chatMode, setChatMode] = useState(EChatMode.Normal);
   const [cameraZoomed, setCameraZoomed] = useState(true);
   const [sending, setSending] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [selectedChat, setSelectedChat] = useState<TConversation | undefined>();
 
   const onMessagePlayed = () => {
     setMessages((prevMessages) => {
-      const updatedMessages = { ...prevMessages };
-      updatedMessages['General Chat'] = updatedMessages['General Chat'].slice(1);
-      return updatedMessages;
+      if (prevMessages.length > 0) {
+        return prevMessages.slice(1);
+      }
+      return prevMessages;
     });
   };
 
@@ -62,6 +63,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setCameraZoomed,
         onMessagePlayed,
         setLoading,
+        selectedChat,
+        setSelectedChat,
       }}
     >
       {children}

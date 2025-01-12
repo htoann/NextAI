@@ -7,15 +7,6 @@ const handler = async (req: NextRequest) => {
   await connect();
 
   switch (req.method) {
-    case 'GET':
-      try {
-        const messages = await Message.find().populate('owner').populate('conversation');
-        return NextResponse.json(messages);
-      } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
-      }
-
     case 'POST':
       try {
         const { owner, content, conversation, metadata } = await req.json();
@@ -30,34 +21,6 @@ const handler = async (req: NextRequest) => {
       } catch (error) {
         console.error(error);
         return NextResponse.json({ error: 'Failed to create message' }, { status: 500 });
-      }
-
-    case 'PUT':
-      try {
-        const { id, content, metadata } = await req.json();
-        const updatedMessage = await Message.findByIdAndUpdate(id, { content, metadata }, { new: true })
-          .populate('owner')
-          .populate('conversation');
-        if (!updatedMessage) {
-          return NextResponse.json({ error: 'Message not found' }, { status: 404 });
-        }
-        return NextResponse.json(updatedMessage);
-      } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: 'Failed to update message' }, { status: 500 });
-      }
-
-    case 'DELETE':
-      try {
-        const { id } = await req.json();
-        const deletedMessage = await Message.findByIdAndDelete(id);
-        if (!deletedMessage) {
-          return NextResponse.json({ error: 'Message not found' }, { status: 404 });
-        }
-        return NextResponse.json({ message: 'Message deleted' });
-      } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: 'Failed to delete message' }, { status: 500 });
       }
 
     default:

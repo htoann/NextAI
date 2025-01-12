@@ -1,4 +1,3 @@
-import { TConversation } from '@/type';
 import mongoose, { Schema } from 'mongoose';
 
 const conversationSchema: Schema = new Schema(
@@ -18,6 +17,6 @@ const conversationSchema: Schema = new Schema(
   { timestamps: true },
 );
 
-const Conversation = mongoose.model<TConversation>('Conversation', conversationSchema);
+const Conversation = mongoose.models.Conversation || mongoose.model('Conversation', conversationSchema);
 
 export default Conversation;

@@ -12,11 +12,13 @@ const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         const { username, password } = credentials || {};
 
-        if (username === 'admin' && password === 'admin') {
-          return { id: '1', name: 'Admin', email: 'admin@example.com' };
-        }
+        // if (username === 'admin' && password === 'admin') {
+        //   return { id: '1', name: 'Admin', email: 'admin@example.com' };
+        // }
 
-        throw new Error('Invalid username or password');
+        return { id: '1', name: 'Admin', email: 'admin@example.com' };
+
+        // throw new Error('Invalid username or password');
       },
     }),
   ],

@@ -1,9 +1,11 @@
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
+import { getConversationMessages } from '@/lib/services/conversation';
 import { EChatMode } from '@/type';
+import { Skeleton } from 'antd';
 import { useSession } from 'next-auth/react';
-import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { ChatModeButton } from '../buttons/ChatModeButton';
 import { SilentChatMode } from '../silent-mode/SilentChatMode';
 import { ChatInput } from './ChatInput';
@@ -14,8 +16,22 @@ import { Sidebar } from './sidebar/Sidebar';
 
 export const Chatbox = () => {
   const { data: session } = useSession();
-  const { chatId } = useParams() as { chatId: string };
-  const { chatMode, toggleChatMode, messages } = useAppContext();
+  const { chatMode, toggleChatMode, messages, setMessages, selectedChat } = useAppContext();
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!selectedChat) return;
+
+    const fetchMessages = async () => {
+      setLoading(true);
+      const messages = await getConversationMessages(selectedChat._id!);
+      setMessages(messages);
+      setLoading(false);
+    };
+
+    fetchMessages();
+  }, [selectedChat, session]);
 
   return (
     <>
@@ -56,7 +72,9 @@ export const Chatbox = () => {
                   flexGrow: 1,
                 }}
               >
-                {!!messages[chatId]?.length ? (
+                {loading ? (
+                  <Skeleton className="chatbox-center" paragraph />
+                ) : !!messages?.length ? (
                   <ListMessages />
                 ) : (
                   <>
