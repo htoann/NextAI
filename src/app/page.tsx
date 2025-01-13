@@ -22,8 +22,8 @@ export default function Home() {
     <>
       {chatMode === EChatMode.VR ? (
         <>
-          <Leva hidden={false} />
-          <UI hidden={false} />
+          <Leva />
+          <UI />
           <Canvas
             shadows
             camera={{ position: [0, 0, 5], fov: 40 }}
