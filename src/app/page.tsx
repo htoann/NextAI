@@ -1,6 +1,6 @@
 'use client';
 
-import { Chatbox } from '@/components/layout/Chatbox';
+import { Chatbox } from '@/components/layout/chatbox/Chatbox';
 import { useAppContext } from '@/context/AppContext';
 import { EChatMode } from '@/type';
 import { Canvas } from '@react-three/fiber';

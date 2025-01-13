@@ -55,6 +55,7 @@ export const ConversationItem = ({ chatName, isActive, onSelect, onDelete, onRen
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
+        border: 'none',
       }}
     >
       {isEditing ? (
@@ -69,9 +70,9 @@ export const ConversationItem = ({ chatName, isActive, onSelect, onDelete, onRen
       )}
 
       {isEditing ? (
-        <div>
+        <div style={{ width: 10 }}>
           <Tooltip title="Save">
-            <CheckOutlined onClick={handleRename} style={{ color: '#28a745', marginRight: 8, cursor: 'pointer' }} />
+            <CheckOutlined onClick={handleRename} style={{ color: '#28a745', cursor: 'pointer' }} />
           </Tooltip>
           <Tooltip title="Cancel">
             <CloseOutlined onClick={() => setIsEditing(false)} style={{ color: '#dc3545', cursor: 'pointer' }} />

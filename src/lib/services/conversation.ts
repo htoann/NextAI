@@ -8,15 +8,15 @@ export const getConversations = () =>
     .then((res) => res)
     .catch((err: AxiosError) => Promise.reject(err.response?.data));
 
-export const createConversation = () =>
+export const createConversation = (conversation: TConversation) =>
   apiService
-    .post<TConversation>(['conversations'])
+    .post<TConversation>(['conversations'], conversation)
     .then((res) => res)
     .catch((err: AxiosError) => Promise.reject(err.response?.data));
 
-export const updateConversationTitle = (conversationId: string, newTitle: string) =>
+export const updateConversationTitle = (conversationId: string, title: string) =>
   apiService
-    .put<TConversation>(['conversations', conversationId], { title: newTitle })
+    .put<TConversation>(['conversations', conversationId], title)
     .then((res) => res)
     .catch((err: AxiosError) => Promise.reject(err.response?.data));
 

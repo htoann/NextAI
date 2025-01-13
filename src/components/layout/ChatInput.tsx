@@ -1,20 +1,18 @@
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
+import { createConversation } from '@/lib/services/conversation';
 import { chat } from '@/lib/services/messages';
 import { generateChatName } from '@/lib/utils';
 import { TMessage } from '@/type';
 import { SendOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row } from 'antd';
-import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export const ChatInput = () => {
-  const router = useRouter();
   const { data: session } = useSession();
-  const { setMessages, setSending, selectedChat } = useAppContext();
+  const { setMessages, setSending, selectedChat, setSelectedChat } = useAppContext();
 
   const [userMessage, setUserMessage] = useState<string>('');
 
@@ -87,7 +85,7 @@ export const ChatInput = () => {
     }
   };
 
-  const handleSend = async (chatName: string, newChatId: string) => {
+  const handleSend = async (conversationId: string) => {
     if (!userMessage.trim()) return;
 
     if (!selectedChat) {
@@ -97,7 +95,7 @@ export const ChatInput = () => {
     const newUserMessage: TMessage = {
       owner: session?.user?.email || 'unknown',
       content: userMessage,
-      conversation: selectedChat?._id!,
+      conversation: conversationId,
     };
 
     handleAddMessage(newUserMessage);
@@ -116,29 +114,28 @@ export const ChatInput = () => {
 
   const sendMessage = async () => {
     setSending(true);
-    let chatName = selectedChat?.title;
-    let newChatId = selectedChat?.title;
 
-    if (!chatName) {
-      chatName = generateChatName();
+    if (!selectedChat) {
+      const chatName = generateChatName();
 
       try {
-        const response = await axios.post('/api/conversations', {
-          user: session?.user?.email,
+        const conversation = await createConversation({
+          user: session?.user?.email!,
           title: chatName,
         });
 
-        newChatId = response.data._id;
+        setSelectedChat(conversation);
 
-        router.push(`/chat/${newChatId}`);
+        await handleSend(conversation._id!);
       } catch (error) {
         console.error('Error creating conversation:', error);
         setSending(false);
         return;
       }
+    } else {
+      await handleSend(selectedChat._id!);
     }
 
-    await handleSend(chatName, newChatId!);
     setSending(false);
   };
 
@@ -151,8 +148,6 @@ export const ChatInput = () => {
       gutter={8}
       style={{
         padding: 15,
-        position: 'sticky',
-        bottom: 0,
         backgroundColor: '#f4f4f4',
         zIndex: 1,
         width: '750px',
