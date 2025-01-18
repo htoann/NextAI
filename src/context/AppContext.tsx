@@ -20,6 +20,7 @@ interface AppContextType {
   onMessagePlayed: () => void;
   selectedChat: TConversation | undefined;
   setSelectedChat: Dispatch<React.SetStateAction<TConversation | undefined>>;
+  chat: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -47,6 +48,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setChatMode(chatMode === mode ? EChatMode.Normal : mode);
   };
 
+  const chat = () => {
+    console.log('chat');
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -65,6 +70,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setLoading,
         selectedChat,
         setSelectedChat,
+        chat,
       }}
     >
       {children}

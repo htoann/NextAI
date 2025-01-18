@@ -90,7 +90,7 @@ export const Sidebar = () => {
       </div>
 
       {loadingList ? (
-        <Skeleton paragraph />
+        <Skeleton paragraph style={{ padding: 20 }} />
       ) : (
         <List
           style={{

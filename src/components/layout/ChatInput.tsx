@@ -33,13 +33,6 @@ export const ChatInput = () => {
 
   const processChatStream = async (userMessage: string, newChatId: string) => {
     try {
-      // const response = await geminiChat({
-      //   content: userMessage,
-      //   conversation: newChatId,
-      // });
-
-      // const reader = response;
-
       const response = await fetch('/api/gemini', {
         method: 'POST',
         headers: {
@@ -88,9 +81,10 @@ export const ChatInput = () => {
   const handleSend = async (conversationId: string) => {
     if (!userMessage.trim()) return;
 
-    if (!selectedChat) {
-      // setChats((prevChats) => [chatName, ...prevChats]);
-    }
+    // For case anonymous
+    // if (!selectedChat) {
+    //   setChats((prevChats) => [chatName, ...prevChats]);
+    // }
 
     const newUserMessage: TMessage = {
       owner: session?.user?.email || 'unknown',
