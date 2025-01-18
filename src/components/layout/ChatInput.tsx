@@ -2,7 +2,7 @@
 
 import { useAppContext } from '@/context/AppContext';
 import { createConversation } from '@/lib/services/conversation';
-import { chat } from '@/lib/services/messages';
+import { chat, geminiChat } from '@/lib/services/messages';
 import { generateChatName } from '@/lib/utils';
 import { TMessage } from '@/type';
 import { SendOutlined } from '@ant-design/icons';
@@ -13,128 +13,96 @@ import { useState } from 'react';
 export const ChatInput = () => {
   const { data: session } = useSession();
   const { setMessages, setSending, selectedChat, setSelectedChat } = useAppContext();
+  const [userMessage, setUserMessage] = useState('');
 
-  const [userMessage, setUserMessage] = useState<string>('');
-
-  const handleAddMessage = (newMessage: TMessage) => {
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+  const addMessage = (newMessage: TMessage) => {
+    setMessages((prev) => [...prev, newMessage]);
   };
 
-  const handleUpdateLastMessage = (updatedMessage: TMessage) => {
-    setMessages((prevMessages) => {
-      if (prevMessages.length > 0) {
-        const updatedMessages = [...prevMessages];
-        updatedMessages[prevMessages.length - 1] = { ...updatedMessages[prevMessages.length - 1], ...updatedMessage };
+  const updateLastMessage = (updatedMessage: TMessage) => {
+    setMessages((prev) => {
+      if (prev.length > 0) {
+        const updatedMessages = [...prev];
+        updatedMessages[prev.length - 1] = {
+          ...updatedMessages[prev.length - 1],
+          ...updatedMessage,
+        };
         return updatedMessages;
       }
-      return prevMessages;
+      return prev;
     });
   };
 
-  const processChatStream = async (userMessage: string, newChatId: string) => {
+  const handleAIResponse = async (message: string, chatId: string) => {
     try {
-      const response = await fetch('/api/gemini', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: {
-            content: userMessage,
-            conversation: newChatId,
-          },
-        }),
-      });
-
-      if (!response.body) {
-        return;
-      }
+      const response = await geminiChat(message, chatId);
+      if (!response.body) return;
 
       const reader = response.body.getReader();
-
       const decoder = new TextDecoder();
       let done = false;
-      let value = '';
+      let content = '';
 
       const aiMessage: TMessage = {
         owner: 'AI',
         content: '',
-        conversation: newChatId,
+        conversation: chatId,
       };
 
-      handleAddMessage(aiMessage);
+      addMessage(aiMessage);
 
       while (!done) {
-        const { done: isDone, value: chunk } = await reader.read();
+        const { done: isDone, value } = await reader.read();
         done = isDone;
-        value += decoder.decode(chunk, { stream: true });
-
-        handleUpdateLastMessage({ ...aiMessage, content: value });
+        content += decoder.decode(value, { stream: true });
+        updateLastMessage({ ...aiMessage, content });
       }
-
-      handleUpdateLastMessage({ ...aiMessage, content: value });
     } catch (error) {
-      console.error('Error in processChatStream:', error);
+      console.error(error);
     }
   };
 
   const handleSend = async (conversationId: string) => {
-    if (!userMessage.trim()) return;
-
-    // For case anonymous
-    // if (!selectedChat) {
-    //   setChats((prevChats) => [chatName, ...prevChats]);
-    // }
-
-    const newUserMessage: TMessage = {
-      owner: session?.user?.email || 'unknown',
+    const newMessage: TMessage = {
+      owner: session?.user?.email || 'anonymous@gmail.com',
       content: userMessage,
       conversation: conversationId,
     };
 
-    handleAddMessage(newUserMessage);
+    addMessage(newMessage);
     setUserMessage('');
 
     try {
-      if (session) {
-        await chat(newUserMessage);
-      }
-
-      processChatStream(userMessage, selectedChat?._id!);
+      await chat(newMessage);
+      await handleAIResponse(userMessage, conversationId);
     } catch (error) {
       console.error('Error during message handling:', error);
     }
   };
 
   const sendMessage = async () => {
+    if (!userMessage.trim()) return;
+
     setSending(true);
+    try {
+      const isNonSelectedChat = !selectedChat && session?.user?.email;
 
-    if (!selectedChat && session?.user?.email) {
-      const chatName = generateChatName();
-
-      try {
+      if (isNonSelectedChat) {
         const conversation = await createConversation({
-          user: session.user.email,
-          title: chatName,
+          user: session?.user?.email!,
+          title: generateChatName(),
         });
 
         setSelectedChat(conversation);
-
         await handleSend(conversation._id!);
-      } catch (error) {
-        console.error('Error creating conversation:', error);
-        setSending(false);
-        return;
+      } else {
+        await handleSend(selectedChat?._id!);
       }
-    } else {
-      await handleSend(selectedChat?._id!);
+    } catch (error) {
+      console.error('Error creating or sending message:', error);
+    } finally {
+      setSending(false);
     }
-
-    setSending(false);
-  };
-
-  const handlePressEnter = () => {
-    sendMessage();
   };
 
   return (
@@ -153,7 +121,7 @@ export const ChatInput = () => {
         <Input
           value={userMessage}
           onChange={(e) => setUserMessage(e.target.value)}
-          onPressEnter={handlePressEnter}
+          onPressEnter={sendMessage}
           placeholder="Type your message..."
           style={{ width: '100%', height: 40, fontSize: 16 }}
           variant="borderless"
