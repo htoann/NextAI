@@ -115,12 +115,12 @@ export const ChatInput = () => {
   const sendMessage = async () => {
     setSending(true);
 
-    if (!selectedChat) {
+    if (!selectedChat && session?.user?.email) {
       const chatName = generateChatName();
 
       try {
         const conversation = await createConversation({
-          user: session?.user?.email!,
+          user: session.user.email,
           title: chatName,
         });
 
@@ -133,7 +133,7 @@ export const ChatInput = () => {
         return;
       }
     } else {
-      await handleSend(selectedChat._id!);
+      await handleSend(selectedChat?._id!);
     }
 
     setSending(false);

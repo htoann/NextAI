@@ -13,7 +13,9 @@ export const ListMessages = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    !!messages?.length && messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (!!messages?.length) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
 
   return (

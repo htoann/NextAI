@@ -1,5 +1,5 @@
 import { CheckOutlined, CloseOutlined, EllipsisOutlined } from '@ant-design/icons';
-import { Dropdown, Input, List, Menu, Popconfirm, Tooltip } from 'antd';
+import { Dropdown, Input, List, Popconfirm, Tooltip } from 'antd';
 import { useState } from 'react';
 
 interface ConversationItemProps {

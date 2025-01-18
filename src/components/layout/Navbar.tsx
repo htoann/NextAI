@@ -2,7 +2,7 @@
 
 import { useAppContext } from '@/context/AppContext';
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Button, Dropdown, Layout, Menu, Space, Typography } from 'antd';
+import { Avatar, Button, Dropdown, Layout, Space, Typography } from 'antd';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
