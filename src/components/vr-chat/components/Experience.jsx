@@ -3,7 +3,7 @@
 import { useAppContext } from '@/context/AppContext';
 import { CameraControls, ContactShadows, Environment, Text } from '@react-three/drei';
 import { Suspense, useEffect, useRef, useState } from 'react';
-import { Avatar } from './Avatar';
+import { AIModel } from './AIModel';
 
 const Dots = (props) => {
   const { loading } = useAppContext();
@@ -61,7 +61,7 @@ export const Experience = () => {
         <Environment files="/venice_sunset_1k.hdr" background />
         <Dots position-y={1.75} position-x={-0.02} />
       </Suspense>
-      <Avatar />
+      <AIModel />
       <ContactShadows opacity={0.7} />
     </>
   );
