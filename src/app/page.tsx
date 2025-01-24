@@ -8,7 +8,7 @@ import { Leva } from 'leva';
 import { useSession } from 'next-auth/react';
 import { Experience } from './../components/vr-chat/components/Experience';
 import { UI } from './../components/vr-chat/components/UI';
-import Loading from './feed/loading';
+import Loading from './loading';
 
 export default function Home() {
   const { chatMode } = useAppContext();

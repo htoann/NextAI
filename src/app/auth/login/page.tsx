@@ -1,6 +1,6 @@
 'use client';
 
-import Loading from '@/app/feed/loading';
+import Loading from '@/app/loading';
 import { Button, Card, Col, Form, Input, notification, Row, Typography } from 'antd';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
