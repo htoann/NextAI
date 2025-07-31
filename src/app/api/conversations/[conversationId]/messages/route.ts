@@ -1,6 +1,6 @@
 import Conversation from '@/lib/api-models/Conversation';
 import Message from '@/lib/api-models/Message';
-import connect from '@/lib/mongodb';
+import { connect } from '@/lib/utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ conversationId: string }> }) {

@@ -2,7 +2,7 @@
 
 import { useAppContext } from '@/context/AppContext';
 import { getConversationMessages } from '@/lib/services/conversation';
-import { EChatMode } from '@/type';
+import { EChatMode } from '@/lib/type';
 import { Flex, Skeleton } from 'antd';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';

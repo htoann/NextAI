@@ -1,8 +1,7 @@
 import Conversation from '@/lib/api-models/Conversation';
 import Message from '@/lib/api-models/Message';
-import connect from '@/lib/mongodb';
-import { NextResponse } from 'next/server';
-import { NextRequest } from 'next/server';
+import { connect } from '@/lib/utils';
+import { NextRequest, NextResponse } from 'next/server';
 
 const handler = async (req: NextRequest, { params }: { params: Promise<{ conversationId: string }> }) => {
   const { conversationId } = await params;
@@ -47,4 +46,4 @@ const handler = async (req: NextRequest, { params }: { params: Promise<{ convers
   }
 };
 
-export { handler as PUT, handler as DELETE };
+export { handler as DELETE, handler as PUT };

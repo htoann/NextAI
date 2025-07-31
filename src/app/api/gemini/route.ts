@@ -1,5 +1,5 @@
 import Message from '@/lib/api-models/Message';
-import connect from '@/lib/mongodb';
+import { connect } from '@/lib/utils';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextRequest, NextResponse } from 'next/server';
 

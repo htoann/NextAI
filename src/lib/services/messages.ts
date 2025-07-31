@@ -1,10 +1,6 @@
-import { TMessage } from '@/type';
+import { TMessage } from '@/lib/type';
 import { AxiosError } from 'axios';
 import { apiService } from './apiService';
-
-// interface GeminiChatResponse {
-//   data: ReadableStream;
-// }
 
 export const chat = (message: Partial<TMessage>) =>
   apiService
@@ -20,12 +16,3 @@ export const geminiChat = (message: string, chatId: string) =>
       message: { content: message, conversation: chatId },
     }),
   });
-
-// export const geminiChat = (message: Partial<TMessage>) =>
-//   apiService
-//     .post<GeminiChatResponse>(['gemini'], { message })
-//     .then((res) => res)
-//     .catch((err: AxiosError) => {
-//       console.log(err);
-//       return Promise.reject(err.response?.data);
-//     });

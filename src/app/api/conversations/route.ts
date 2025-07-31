@@ -1,7 +1,6 @@
 import Conversation from '@/lib/api-models/Conversation';
-import connect from '@/lib/mongodb';
-import { NextResponse } from 'next/server';
-import { NextRequest } from 'next/server';
+import { connect } from '@/lib/utils';
+import { NextRequest, NextResponse } from 'next/server';
 
 const handler = async (req: NextRequest) => {
   await connect();
@@ -35,4 +34,4 @@ const handler = async (req: NextRequest) => {
   }
 };
 
-export { handler as POST, handler as GET };
+export { handler as GET, handler as POST };

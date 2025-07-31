@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
-import { TMessage } from '@/type';
+import { TMessage } from '@/lib/type';
 import { List } from 'antd';
 import { useEffect, useRef } from 'react';
 import Markdown from 'react-markdown';

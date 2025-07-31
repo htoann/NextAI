@@ -1,6 +1,6 @@
 'use client';
 
-import { EChatMode, TConversation, TMessage } from '@/type';
+import { EChatMode, TConversation, TMessage } from '@/lib/type';
 import { Spin } from 'antd';
 import React, { createContext, Dispatch, SetStateAction, useContext, useState } from 'react';
 

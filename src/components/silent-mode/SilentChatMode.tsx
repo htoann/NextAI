@@ -1,8 +1,8 @@
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
+import { EChatMode } from '@/lib/type';
 import { getEmojiForExpression } from '@/lib/utils';
-import { EChatMode } from '@/type';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Card, Flex, Typography } from 'antd';
 import { useState } from 'react';
