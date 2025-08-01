@@ -52,6 +52,18 @@ export const NavBar = () => {
         NextAI
       </Title>
 
+      <Title
+        level={3}
+        style={{
+          margin: 0,
+          color: '#fff',
+          cursor: 'pointer',
+        }}
+        onClick={() => router.push('/booking')}
+      >
+        Booking
+      </Title>
+
       {session ? (
         <Dropdown menu={{ items: menuItems }} trigger={['click']}>
           <Space style={{ cursor: 'pointer' }}>

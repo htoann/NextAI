@@ -1,9 +1,9 @@
 import Conversation from '@/lib/api-models/Conversation';
-import { connect } from '@/lib/utils';
+import { connectMongoDB } from '@/lib/utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 const handler = async (req: NextRequest) => {
-  await connect();
+  await connectMongoDB();
 
   switch (req.method) {
     case 'GET':

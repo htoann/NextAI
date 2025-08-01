@@ -1,5 +1,5 @@
 import Message from '@/lib/api-models/Message';
-import { connect } from '@/lib/utils';
+import { connectMongoDB } from '@/lib/utils';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -9,7 +9,7 @@ const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 export async function POST(req: NextRequest) {
   const { message } = await req.json();
 
-  await connect();
+  await connectMongoDB();
 
   try {
     const result = await model.generateContentStream(message.content);
