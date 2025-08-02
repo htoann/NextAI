@@ -1,3 +1,5 @@
+export const QUEUE_NAME = 'booking_queue';
+
 export const generateChatName = () => `chat_${new Date().getTime()}`;
 
 export const getEmojiForExpression = (expression: string): string => {
@@ -25,3 +27,5 @@ export const metadata = {
   title: 'Next.js 15 Gemini AI',
   description: 'Chat with Gemini AI',
 };
+
+export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));

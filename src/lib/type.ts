@@ -28,3 +28,12 @@ export enum EChatMode {
   Silent = 1,
   VR = 2,
 }
+
+export type TBookingMessage = {
+  bookingId?: string;
+  email: string;
+  seatId: string;
+  showtimeId: string;
+  messageId?: string;
+  retry?: number;
+};
