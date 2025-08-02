@@ -1,12 +1,9 @@
 import Conversation from '@/lib/api-models/Conversation';
 import Message from '@/lib/api-models/Message';
-import { connectMongoDB } from '@/lib/utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 const handler = async (req: NextRequest, { params }: { params: Promise<{ conversationId: string }> }) => {
   const { conversationId } = await params;
-
-  await connectMongoDB();
 
   switch (req.method) {
     case 'PUT':

@@ -17,6 +17,7 @@
     "@react-three/fiber": "^9.3.0",
     "@react-three/xr": "^6.6.20",
     "@tensorflow/tfjs-backend-webgl": "^4.22.0",
+    "@upstash/redis": "^1.35.3",
     "amqplib": "^0.10.8",
     "antd": "^5.26.7",
     "axios": "^1.11.0",

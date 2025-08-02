@@ -1,6 +1,5 @@
 import Conversation from '@/lib/api-models/Conversation';
 import Message from '@/lib/api-models/Message';
-import { connectMongoDB } from '@/lib/utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ conversationId: string }> }) {
@@ -11,8 +10,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ conv
   }
 
   try {
-    await connectMongoDB();
-
     const conversation = await Conversation.findById(conversationId);
     if (!conversation) {
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });

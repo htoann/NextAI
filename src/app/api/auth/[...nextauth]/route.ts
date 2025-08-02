@@ -6,7 +6,7 @@ const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        username: { label: 'Username', type: 'text' },
+        email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize()
@@ -17,7 +17,7 @@ const authOptions: NextAuthOptions = {
         //   return { id: '1', name: 'Admin', email: 'admin@example.com' };
         // }
 
-        return { id: '1', name: 'Admin', email: 'admin@example.com' };
+        return { id: '1', name: 'Admin', email: 'admin@admin.com' };
 
         // throw new Error('Invalid username or password');
       },

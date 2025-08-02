@@ -1,10 +1,7 @@
 import Message from '@/lib/api-models/Message';
-import { connectMongoDB } from '@/lib/utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 const handler = async (req: NextRequest) => {
-  await connectMongoDB();
-
   switch (req.method) {
     case 'POST':
       try {
