@@ -2,7 +2,7 @@
 
 import { useAppContext } from '@/context/AppContext';
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Button, Dropdown, Layout, Space, Typography } from 'antd';
+import { Avatar, Button, Dropdown, Layout, Menu, Space, Typography } from 'antd';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -17,29 +17,35 @@ export const NavBar = () => {
   const handleLogout = async () => {
     setLoading(true);
     await signOut();
-    setLoading(true);
+    setLoading(false);
   };
 
-  const menuItems = [
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: 'Logout',
-      onClick: handleLogout,
-    },
-  ];
+  const menu = (
+    <Menu
+      items={[
+        {
+          key: 'logout',
+          icon: <LogoutOutlined />,
+          label: 'Logout',
+          onClick: handleLogout,
+        },
+      ]}
+    />
+  );
 
   return (
     <Header
       style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        position: 'relative',
         backgroundColor: '#8231D3',
-        padding: '0 20px',
         height: 56,
+        padding: '0 20px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
       }}
     >
+      {/* Left - Logo */}
       <Title
         level={3}
         style={{
@@ -52,52 +58,54 @@ export const NavBar = () => {
         NextAI
       </Title>
 
-      <Title
-        level={3}
+      {/* Center - Booking */}
+      <div
         style={{
-          margin: 0,
-          color: '#fff',
-          cursor: 'pointer',
+          position: 'absolute',
+          left: '50%',
+          transform: 'translateX(-50%)',
         }}
-        onClick={() => router.push('/booking')}
       >
-        Booking
-      </Title>
-
-      {session ? (
-        <Dropdown menu={{ items: menuItems }} trigger={['click']}>
-          <Space style={{ cursor: 'pointer' }}>
-            {session?.user?.name && (
-              <Text
-                style={{
-                  color: '#fff',
-                }}
-              >
-                {session.user.name}
-              </Text>
-            )}
-            <Avatar
-              icon={<UserOutlined />}
-              style={{
-                backgroundColor: '#fff',
-                color: '#8231D3',
-              }}
-            />
-          </Space>
-        </Dropdown>
-      ) : (
         <Button
-          type="primary"
-          onClick={() => router.push('/auth/login')}
+          type="default"
+          onClick={() => router.push('/booking')}
           style={{
             backgroundColor: '#fff',
             color: '#8231D3',
-            borderColor: '#fff',
+            fontWeight: 600,
+            borderRadius: 20,
+            padding: '0 24px',
+            height: 36,
           }}
         >
-          Login
+          Booking
         </Button>
-      )}
+      </div>
+
+      {/* Right - Avatar / Login */}
+      <Space>
+        {session ? (
+          <Dropdown overlay={menu} trigger={['click']}>
+            <Space style={{ cursor: 'pointer' }}>
+              <Text style={{ color: '#fff', fontWeight: 500 }}>{session.user?.name}</Text>
+              <Avatar icon={<UserOutlined />} style={{ backgroundColor: '#fff', color: '#8231D3' }} />
+            </Space>
+          </Dropdown>
+        ) : (
+          <Button
+            type="primary"
+            onClick={() => router.push('/auth/login')}
+            style={{
+              backgroundColor: '#fff',
+              color: '#8231D3',
+              borderColor: '#fff',
+              fontWeight: 500,
+            }}
+          >
+            Login
+          </Button>
+        )}
+      </Space>
     </Header>
   );
 };
