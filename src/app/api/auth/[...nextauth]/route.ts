@@ -9,8 +9,7 @@ const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize()
-      {
+      async authorize() {
         // const { username, password } = credentials || {};
 
         // if (username === 'admin' && password === 'admin') {
@@ -37,6 +36,7 @@ const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session?.user) {
+        session.user.id = token.id as string;
         session.user.email = token.email;
         session.user.name = token.name;
       }
