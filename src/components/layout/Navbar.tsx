@@ -24,6 +24,12 @@ export const NavBar = () => {
     <Menu
       items={[
         {
+          key: 'profile',
+          icon: <UserOutlined />,
+          label: 'Profile',
+          onClick: () => router.push('/profile'),
+        },
+        {
           key: 'logout',
           icon: <LogoutOutlined />,
           label: 'Logout',
@@ -36,7 +42,10 @@ export const NavBar = () => {
   return (
     <Header
       style={{
-        position: 'relative',
+        position: 'fixed',
+        top: 0,
+        width: '100%',
+        zIndex: 1000,
         backgroundColor: '#8231D3',
         height: 56,
         padding: '0 20px',

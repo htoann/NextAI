@@ -38,3 +38,18 @@ export type TBookingMessage = {
   userId: string;
   retry?: number;
 };
+
+export type BookingResponse = {
+  email: string;
+  status: string;
+  success: boolean;
+  error?: string | null;
+};
+
+export type CheckoutRequest = {
+  amount: number;
+};
+
+export type CheckoutResponse = {
+  url: string;
+};
