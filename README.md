@@ -1,80 +1,109 @@
 # Next15AI
 
-A **Next.js 15** AI-powered demo integrating **Google Gemini** — built with TypeScript using the latest features of Next.js.
+A **Next.js 15** AI + Booking System app using **Google Gemini**, **RabbitMQ**, **MongoDB**, and **Redis**.
 
-Deployed live at: **`https://next15-ai.vercel.app`**
+Live: [`next15-ai.vercel.app`](https://next15-ai.vercel.app)
 
 ## Features
 
-- Powered by **Next.js 15** (React 19 support, Turbopack, App Router, async request APIs, new `<Form>`, caching semantics)
-- Integration with **Google Gemini AI** for generative tasks
-- Styled with the Geist font via `next/font` for optimization
-- Implemented in **TypeScript**, with project organized around `app/`, `src/`, and `public/`
+### ✅ Next.js 15 App (App Router)
+- React 19, Turbopack, caching, `<Form>`, and new async APIs
+- Styled with optimized `next/font` (Geist)
+- TypeScript-first
 
-## Getting Started
+### 🤖 Gemini AI Integration
+- Gemini API via REST POST endpoint (`/api/gemini`)
+- Accepts prompt input and returns model-generated responses
+- Uses `gemini-1.5-flash` model
 
-### Prerequisites
+### 🪑 Booking System (Fullstack)
+- Seats booking with unique `bookingId` + `messageId` for idempotency
+- MongoDB used for persistent bookings
+- Redis for temporary seat lock logic
+- Handles booking conflicts and concurrency
 
-- Node.js v18+ / npm or Yarn / pnpm / Bun
+### 📩 RabbitMQ + Worker
+- Bookings pushed to RabbitMQ queue
+- `worker.ts` processes each message (deduplicates, validates, stores)
+- Implements retry logic with headers
+- Failed bookings go to **dead-letter queue** (`booking_deadlockqueue`)
+- MongoDB/Redis connected in worker
 
-### Installation
-
-```bash
-git clone https://github.com/htoann/Next15AI.git
-cd Next15AI
-pnpm install    # or npm install / yarn
-```
-
-### Development
-
-```bash
-pnpm dev        # or npm run dev / yarn dev / bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to view locally.
-
-### Build & Production
-
-```bash
-pnpm build
-pnpm start
-```
+---
 
 ## Project Structure
 
 ```
 /
+├── app/                  # Next.js App Router
+│   └── api/              # API endpoints (e.g., gemini route)
+├── lib/                  # Shared modules (RabbitMQ, Redis, DB)
+├── api-models/           # Mongoose schema (Booking)
+├── worker/               # RabbitMQ booking worker (worker.ts)
 ├── public/
-├── src/
-├── app/
-│   └── page.tsx
-├── .eslintrc, .prettierrc
-├── next.config.ts
-├── tsconfig.json
-├── package.json
+├── types/                # Type definitions
+├── utils/                # Constants (e.g., queue name, delay)
+├── .env.local            # Your secrets (not committed)
 └── README.md
 ```
 
-## Integration: Google Gemini AI
+---
 
-- Use `@google/generative-ai` client or similar to call Gemini models (e.g. `gemini-2.0-flash-001`)
-- Setup a `POST` API route under `app/api/gemini/route.ts` to relay prompts and return generated responses
-- On frontend (`app/page.tsx`), fetch and display AI-generated content (potentially parsed via Markdown rendering)
+## Setup
 
-> *Note: API key and actual implementation details assumed but not verified in repo.*
+### 1. Clone & Install
 
-## Learn More
+```bash
+git clone https://github.com/htoann/Next15AI.git
+cd Next15AI
+pnpm install
+```
 
-- Next.js 15 blog and upgrade guide, covering Turbopack, async APIs, React 19, caching defaults, `<Form>`, instrumentation, etc.
-- Tutorials on integrating Gemini AI with Next.js 15 and Tailwind CSS provide sample patterns for real-time chat and translation features
+### 2. Configure `.env.local`
+
+```env
+RABBIT_URL=amqp://localhost
+MONGODB_URI=mongodb://localhost:27017/next15ai
+REDIS_URL=redis://localhost:6379
+GEMINI_API_KEY=your_google_gemini_key
+```
+
+### 3. Run Dev Server
+
+```bash
+pnpm dev
+```
+
+### 4. Start Worker
+
+```bash
+pnpm tsx worker/worker.ts
+```
+
+---
+
+## API Overview
+
+### `POST /api/book`
+Queue a booking to RabbitMQ
+
+### `worker.ts`
+Processes messages from queue with retry and DLQ fallback
+
+### `POST /api/gemini`
+Handles AI prompts, calls Gemini API
+
+---
+
+## Booking Logic Highlights
+
+- Seat IDs locked via Redis to prevent race conditions
+- Retry count tracked in message headers
+- `bookingId` and `messageId` used for idempotency
+- Errors routed to `booking_deadlockqueue` after `MAX_RETRIES`
+
+---
 
 ## License
 
 MIT
-
-## To Improve / Contribute
-
-- Verify actual Gemini model integration and API structure, update sections above with correct paths.
-- Add instructions on deploying keys and env vars (`.env.local`)
-- Implement a chat UI, state management, or storage backend if not present.
-- Polish UI/UX and add real-time features if intended.
