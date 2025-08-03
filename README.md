@@ -1,12 +1,12 @@
-# Next15AI
+# NextAI
 
-A **Next.js 15** AI + Booking System app using **Google Gemini**, **RabbitMQ**, **MongoDB**, and **Redis**.
+A **Next.js ** AI + Booking System app using **Google Gemini**, **RabbitMQ**, **MongoDB**, and **Redis**.
 
 Live: [`next15-ai.vercel.app`](https://next15-ai.vercel.app)
 
 ## Features
 
-### ✅ Next.js 15 App (Page Router)
+### ✅ Next.js App
 
 - React 19, Turbopack, caching, `<Form>`, and new async APIs
 - Styled with optimized `next/font` (Geist)
@@ -40,7 +40,7 @@ Live: [`next15-ai.vercel.app`](https://next15-ai.vercel.app)
 
 ```
 /
-├── app/                  # Next.js Page Router
+├── app/                  # Next.js
 │   └── api/              # API endpoints (e.g., gemini route)
 ├── lib/                  # Shared modules (RabbitMQ, Redis, DB)
 ├── api-models/           # Mongoose schema (Booking)
