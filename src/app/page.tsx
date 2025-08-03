@@ -2,7 +2,7 @@
 
 import { Chatbox } from '@/components/layout/chatbox/Chatbox';
 import { useAppContext } from '@/context/AppContext';
-import { EChatMode } from '@/lib/type';
+import { EChatMode } from '@/lib/types/type';
 import { Canvas } from '@react-three/fiber';
 import { Leva } from 'leva';
 import { useSession } from 'next-auth/react';

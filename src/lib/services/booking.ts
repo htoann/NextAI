@@ -1,4 +1,4 @@
-import { TBookingMessage } from '@/lib/type';
+import { TBookingMessage } from '@/lib/types/type';
 import { AxiosError } from 'axios';
 import { apiService } from './apiService';
 

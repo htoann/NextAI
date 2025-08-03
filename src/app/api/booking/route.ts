@@ -1,8 +1,7 @@
 import Booking from '@/lib/api-models/Booking';
-import { authOptions } from '@/lib/authOptions';
 import { getRabbitMQChannel } from '@/lib/RabbitMQ';
 import { redis } from '@/lib/redis';
-import { QUEUE_NAME } from '@/lib/utils';
+import { authOptions, QUEUE_NAME } from '@/lib/utils';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 

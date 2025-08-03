@@ -3,7 +3,7 @@ import 'dotenv/config';
 import Booking from '../api-models/Booking';
 import { connectMongoDB } from '../db';
 // import { redis } from '../redis';
-import { TBookingMessage } from '../type';
+import { TBookingMessage } from '../types/type';
 import { delay, QUEUE_NAME } from '../utils';
 
 const DEAD_LOCK_QUEUE = 'booking_deadlockqueue';

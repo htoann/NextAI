@@ -1,6 +1,6 @@
 import { SilentChatMode } from '@/components/silent-mode/SilentChatMode';
 import { useAppContext } from '@/context/AppContext';
-import { EChatMode } from '@/lib/type';
+import { EChatMode } from '@/lib/types/type';
 import { Button } from 'antd';
 import { Greeting } from '../Greeting';
 

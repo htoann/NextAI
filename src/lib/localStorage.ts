@@ -11,5 +11,3 @@ export const removeField = (key: AppFields) => {
 };
 
 export const getField = (key: AppFields) => localStorage.getItem(getAppKey(key));
-
-export const getNumberField = (key: AppFields) => Number(getField(key));
