@@ -81,14 +81,14 @@ pnpm dev
 ### 4. Start Worker
 
 ```bash
-pnpm tsx worker/worker.ts
+pnpm start:worker
 ```
 
 ---
 
 ## API Overview
 
-### `POST /api/book`
+### `POST /api/booking`
 
 Queue a booking to RabbitMQ
 
