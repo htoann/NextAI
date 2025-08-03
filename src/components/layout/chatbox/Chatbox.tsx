@@ -35,7 +35,7 @@ export const Chatbox = () => {
   return (
     <div className="chatbox">
       <NavBar />
-      <Flex>
+      <Flex style={{ marginTop: 56 }}>
         {session && <Sidebar />}
         <div style={{ flex: 1 }}>
           <>
