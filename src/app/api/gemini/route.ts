@@ -5,9 +5,8 @@ import { NextRequest, NextResponse } from 'next/server';
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-export async function POST(req: NextRequest) {
+export const POST = async (req: NextRequest): Promise<NextResponse> => {
   const { message } = await req.json();
-
 
   try {
     const result = await model.generateContentStream(message.content);
@@ -23,7 +22,7 @@ export async function POST(req: NextRequest) {
           }
           controller.close();
 
-          new Message({
+          await new Message({
             owner: 'AI',
             content: responseText.join(''),
             conversation: message.conversation,
@@ -42,6 +41,8 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error(err);
-    return new NextResponse(JSON.stringify({ error: 'Failed to generate response' }), { status: 500 });
+    return new NextResponse(JSON.stringify({ error: 'Failed to generate response' }), {
+      status: 500,
+    });
   }
-}
+};

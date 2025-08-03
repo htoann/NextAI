@@ -2,7 +2,10 @@ import Conversation from '@/lib/api-models/Conversation';
 import Message from '@/lib/api-models/Message';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ conversationId: string }> }) {
+export const GET = async (
+  req: NextRequest,
+  { params }: { params: Promise<{ conversationId: string }> },
+): Promise<NextResponse> => {
   const { conversationId } = await params;
 
   if (!conversationId) {
@@ -22,4 +25,4 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ conv
     console.error(error);
     return NextResponse.json({ error: 'Failed to fetch conversation messages' }, { status: 500 });
   }
-}
+};
