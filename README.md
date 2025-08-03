@@ -32,6 +32,7 @@ Live: [`next15-ai.vercel.app`](https://next15-ai.vercel.app)
 - Implements retry logic with headers
 - Failed bookings go to **dead-letter queue** (`booking_deadlockqueue`)
 - MongoDB/Redis connected in worker
+- Upstash Redis, Cloudamqp
 
 ---
 
