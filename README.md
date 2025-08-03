@@ -6,23 +6,27 @@ Live: [`next15-ai.vercel.app`](https://next15-ai.vercel.app)
 
 ## Features
 
-### ✅ Next.js 15 App (App Router)
+### ✅ Next.js 15 App (Page Router)
+
 - React 19, Turbopack, caching, `<Form>`, and new async APIs
 - Styled with optimized `next/font` (Geist)
 - TypeScript-first
 
 ### 🤖 Gemini AI Integration
+
 - Gemini API via REST POST endpoint (`/api/gemini`)
 - Accepts prompt input and returns model-generated responses
 - Uses `gemini-1.5-flash` model
 
 ### 🪑 Booking System (Fullstack)
+
 - Seats booking with unique `bookingId` + `messageId` for idempotency
 - MongoDB used for persistent bookings
 - Redis for temporary seat lock logic
 - Handles booking conflicts and concurrency
 
 ### 📩 RabbitMQ + Worker
+
 - Bookings pushed to RabbitMQ queue
 - `worker.ts` processes each message (deduplicates, validates, stores)
 - Implements retry logic with headers
@@ -35,7 +39,7 @@ Live: [`next15-ai.vercel.app`](https://next15-ai.vercel.app)
 
 ```
 /
-├── app/                  # Next.js App Router
+├── app/                  # Next.js Page Router
 │   └── api/              # API endpoints (e.g., gemini route)
 ├── lib/                  # Shared modules (RabbitMQ, Redis, DB)
 ├── api-models/           # Mongoose schema (Booking)
@@ -85,12 +89,15 @@ pnpm tsx worker/worker.ts
 ## API Overview
 
 ### `POST /api/book`
+
 Queue a booking to RabbitMQ
 
 ### `worker.ts`
+
 Processes messages from queue with retry and DLQ fallback
 
 ### `POST /api/gemini`
+
 Handles AI prompts, calls Gemini API
 
 ---
