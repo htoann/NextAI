@@ -2,7 +2,6 @@
 
 import { booking } from '@/lib/services/booking';
 import { Button, Card, Divider, message, Space, Tag, Typography } from 'antd';
-import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 const { Title } = Typography;
@@ -22,10 +21,9 @@ const initialBookedMap: Record<string, string[]> = {
 };
 
 export default function BookingPage() {
-  const { data: session } = useSession();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [bookedMap, setBookedMap] = useState(initialBookedMap);
   const [loading, setLoading] = useState(false);
 
@@ -33,30 +31,29 @@ export default function BookingPage() {
 
   const handleSelectSeat = (seatId: string) => {
     if (!showtimeKey || bookedMap[showtimeKey]?.includes(seatId)) return;
-    setSelectedSeat(seatId);
+    setSelectedSeats((prev) => (prev.includes(seatId) ? prev.filter((id) => id !== seatId) : [...prev, seatId]));
   };
 
   const handleBooking = async () => {
-    if (!selectedDate || !selectedTime || !selectedSeat) {
-      message.warning('Select date, time and seat first.');
+    if (!selectedDate || !selectedTime || selectedSeats.length === 0) {
+      message.warning('Select date, time and at least one seat.');
       return;
     }
 
     setLoading(true);
     try {
       const res = await booking({
-        email: session?.user?.email || '',
-        seatId: selectedSeat,
+        seatIds: selectedSeats,
         showtimeId: `${selectedDate}|${selectedTime}`,
       });
 
       if (res.success) {
-        message.success(`Seat ${selectedSeat} booked!`);
+        message.success(`Booked: ${selectedSeats.join(', ')}`);
         setBookedMap((prev) => ({
           ...prev,
-          [showtimeKey!]: [...(prev[showtimeKey!] || []), selectedSeat],
+          [showtimeKey!]: [...(prev[showtimeKey!] || []), ...selectedSeats],
         }));
-        setSelectedSeat(null);
+        setSelectedSeats([]);
       } else {
         message.error(res.error || 'Booking failed.');
       }
@@ -68,7 +65,7 @@ export default function BookingPage() {
 
   const renderSeat = (seatId: string) => {
     const isBooked = showtimeKey ? bookedMap[showtimeKey]?.includes(seatId) : false;
-    const isSelected = selectedSeat === seatId;
+    const isSelected = selectedSeats.includes(seatId);
 
     const seatColors = {
       booked: { background: '#ffccc7', border: undefined },
@@ -97,6 +94,7 @@ export default function BookingPage() {
       </Button>
     );
   };
+
   return (
     <div style={{ padding: '24px', background: '#f9f9f9', minHeight: 'calc(100vh - 56px)' }}>
       <Card style={{ maxWidth: 600, margin: '0 auto' }}>
@@ -114,7 +112,7 @@ export default function BookingPage() {
                 onClick={() => {
                   setSelectedDate(date);
                   setSelectedTime(null);
-                  setSelectedSeat(null);
+                  setSelectedSeats([]);
                 }}
               >
                 {date}
@@ -131,7 +129,7 @@ export default function BookingPage() {
                   type={selectedTime === time ? 'primary' : 'default'}
                   onClick={() => {
                     setSelectedTime(time);
-                    setSelectedSeat(null);
+                    setSelectedSeats([]);
                   }}
                 >
                   {time}
@@ -163,16 +161,22 @@ export default function BookingPage() {
                 </Space>
               </div>
 
-              {selectedSeat && (
+              {selectedSeats.length > 0 && (
                 <div style={{ textAlign: 'center' }}>
                   <Tag color="green" style={{ fontSize: 16 }}>
-                    Seat: {selectedSeat}
+                    Seats: {selectedSeats.join(', ')}
                   </Tag>
                 </div>
               )}
 
-              <Button type="primary" block disabled={!selectedSeat} loading={loading} onClick={handleBooking}>
-                {selectedSeat ? `Book Seat ${selectedSeat}` : 'Select a seat'}
+              <Button
+                type="primary"
+                block
+                disabled={selectedSeats.length === 0}
+                loading={loading}
+                onClick={handleBooking}
+              >
+                {selectedSeats.length > 0 ? `Book ${selectedSeats.length} seat(s)` : 'Select seat(s)'}
               </Button>
             </>
           )}

@@ -30,10 +30,11 @@ export enum EChatMode {
 }
 
 export type TBookingMessage = {
-  bookingId?: string;
-  email: string;
-  seatId: string;
+  bookingId: string;
+  seatIds: string[];
   showtimeId: string;
-  messageId?: string;
+  status: 'pending' | 'success' | 'failed';
+  messageId: string;
+  userId: string;
   retry?: number;
 };

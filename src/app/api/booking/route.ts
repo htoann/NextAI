@@ -6,72 +6,89 @@ import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { authOptions } from '../auth/[...nextauth]/route';
 
+const seatKey = (showtimeId: string, seatId: string) => `lock:${showtimeId}:${seatId}`;
+
 const lockSeatOrFail = async (seatKey: string, bookingId: string) => {
   const locked = await redis.lockSeat(seatKey, bookingId);
   if (!locked) {
     const holder = await redis.get(seatKey);
     console.warn(`❌ Seat already locked by ${holder}`);
-    return {
-      locked: false,
-      response: NextResponse.json({ message: 'Seat already locked' }, { status: 409 }),
-    };
+    return false;
   }
-
   console.log(`✅ Seat locked: ${seatKey} by ${bookingId}`);
-  return { locked: true };
+  return true;
 };
 
 const sendToQueue = async (msg: any, messageId: string) => {
-  try {
-    const channel = await getRabbitMQChannel();
-    channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(msg)), {
-      persistent: true,
-      messageId,
-    });
-    console.log(`📤 Message queued: ${QUEUE_NAME}`, msg);
-  } catch (error) {
-    console.error(`❌ Failed to queue message: ${messageId}`, error);
-    throw error;
-  }
+  const channel = await getRabbitMQChannel();
+  channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(msg)), {
+    persistent: true,
+    messageId,
+  });
+  console.log(`📤 Message queued: ${QUEUE_NAME}`, msg);
 };
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { seatId, showtimeId } = await req.json();
+    const { seatIds, showtimeId } = await req.json();
 
-    const messageId = new Date().toISOString();
-    const bookingId = `booking_${Date.now()}`;
-    const seatKey = `lock:${showtimeId}:${seatId}`;
-
-    const lockResult = await lockSeatOrFail(seatKey, bookingId);
-    if (!lockResult.locked) return lockResult.response;
+    if (!Array.isArray(seatIds) || seatIds.length === 0 || typeof showtimeId !== 'string') {
+      return NextResponse.json({ message: 'Invalid payload' }, { status: 400 });
+    }
 
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id || 'anonymous';
 
-    const bookingPayload = {
-      bookingId,
-      seatId,
-      showtimeId,
-      status: 'pending',
-      messageId,
-      userId,
-    };
+    const bookingId = `booking_${Date.now()}`;
+    const messageId = new Date().toISOString();
 
-    try {
-      await Booking.create(bookingPayload);
-      await sendToQueue({ ...bookingPayload, retry: 0 }, messageId);
-    } catch (queueError) {
-      try {
-        await Booking.deleteOne({ bookingId });
-        await redis.del(seatKey);
-      } catch (compensationError) {
-        console.error('❌ Failed to compensate for queue error:', compensationError);
-      }
-      throw queueError;
+    // Lock seats in parallel
+    const lockResults = await Promise.all(
+      seatIds.map(async (seatId) => {
+        const key = seatKey(showtimeId, seatId);
+        const locked = await lockSeatOrFail(key, bookingId);
+        return { seatId, locked };
+      }),
+    );
+
+    const failed = lockResults.find((r) => !r.locked);
+    if (failed) {
+      await Promise.all(lockResults.filter((r) => r.locked).map((r) => redis.del(seatKey(showtimeId, r.seatId))));
+      return NextResponse.json({ message: `Seat ${failed.seatId} is already locked` }, { status: 409 });
     }
 
-    return NextResponse.json({ status: 'queued', bookingId, success: true });
+    // Book and queue in parallel
+    const bookingPayloads: any[] = [];
+
+    await Promise.all(
+      seatIds.map(async (seatId) => {
+        const booking = {
+          bookingId: `${bookingId}_${seatId}`,
+          seatId,
+          showtimeId,
+          status: 'pending',
+          messageId,
+          userId,
+        };
+
+        try {
+          await Booking.create(booking);
+          await sendToQueue({ ...booking, retry: 0 }, `${messageId}_${seatId}`);
+          bookingPayloads.push(booking);
+        } catch (err) {
+          await Booking.deleteOne({ bookingId: booking.bookingId });
+          await redis.del(seatKey(showtimeId, seatId));
+          console.error(`❌ Failed to queue booking for seat ${seatId}:`, err);
+          throw new Error('Booking failed');
+        }
+      }),
+    );
+
+    return NextResponse.json({
+      status: 'queued',
+      success: true,
+      bookingIds: bookingPayloads.map((b) => b.bookingId),
+    });
   } catch (error) {
     console.error('❌ Booking POST error:', (error as Error).message);
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
