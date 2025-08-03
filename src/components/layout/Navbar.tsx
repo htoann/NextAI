@@ -59,28 +59,30 @@ export const NavBar = () => {
       </Title>
 
       {/* Center - Booking */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '50%',
-          transform: 'translateX(-50%)',
-        }}
-      >
-        <Button
-          type="default"
-          onClick={() => router.push('/booking')}
+      {session && (
+        <div
           style={{
-            backgroundColor: '#fff',
-            color: '#8231D3',
-            fontWeight: 600,
-            borderRadius: 20,
-            padding: '0 24px',
-            height: 36,
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)',
           }}
         >
-          Booking
-        </Button>
-      </div>
+          <Button
+            type="default"
+            onClick={() => router.push('/booking')}
+            style={{
+              backgroundColor: '#fff',
+              color: '#8231D3',
+              fontWeight: 600,
+              borderRadius: 20,
+              padding: '0 24px',
+              height: 36,
+            }}
+          >
+            Booking
+          </Button>
+        </div>
+      )}
 
       {/* Right - Avatar / Login */}
       <Space>

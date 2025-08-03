@@ -9,17 +9,18 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-const eslintConfig = [
+export default [
+  {
+    ignores: ['.next/', 'node_modules/', 'dist/', 'public/', '.turbo/'],
+  },
+
   ...compat.extends('next'),
 
   {
     files: ['**/*.{js,ts,jsx,tsx}'],
-    ignores: ['.next/', 'node_modules/', 'dist/', 'build/'],
     rules: {
       'react-hooks/exhaustive-deps': 'off',
       '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
     },
   },
 ];
-
-export default eslintConfig;
