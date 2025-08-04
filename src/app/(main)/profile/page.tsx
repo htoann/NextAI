@@ -2,14 +2,9 @@
 
 import { CreditCardOutlined, UserOutlined } from '@ant-design/icons';
 import { Card, List, Space, Tabs, Tag, Typography } from 'antd';
+import { useSession } from 'next-auth/react';
 
 const { Title, Text } = Typography;
-
-const mockUser = {
-  name: 'John Doe',
-  email: 'johndoe@example.com',
-  phone: '+84 909123456',
-};
 
 const paymentHistory = [
   { id: 'TXN001', amount: 90000, status: 'success', date: '2025-08-01', seats: ['B5', 'B6'] },
@@ -17,6 +12,8 @@ const paymentHistory = [
 ];
 
 export default function ProfilePage() {
+  const { data } = useSession();
+
   return (
     <div style={{ padding: 32, maxWidth: 800, margin: '0 auto' }}>
       <Title level={2}>Profile</Title>
@@ -35,13 +32,10 @@ export default function ProfilePage() {
               children: (
                 <Space direction="vertical" size="middle">
                   <Text>
-                    <strong>Full Name:</strong> {mockUser.name}
+                    <strong>Full Name:</strong> {data?.user?.name || 'N/A'}
                   </Text>
                   <Text>
-                    <strong>Email:</strong> {mockUser.email}
-                  </Text>
-                  <Text>
-                    <strong>Phone:</strong> {mockUser.phone}
+                    <strong>Email:</strong> {data?.user?.email || 'N/A'}
                   </Text>
                 </Space>
               ),

@@ -36,7 +36,7 @@ export type TBookingMessage = {
   status: 'pending' | 'success' | 'failed';
   messageId: string;
   userId: string;
-  retry?: number;
+  retry: number;
 };
 
 export type BookingResponse = {
