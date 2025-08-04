@@ -1,4 +1,4 @@
-import { BookingResponse, CheckoutRequest, CheckoutResponse, TBookingMessage } from '@/lib/types/type';
+import { BookingResponse, CheckoutRequest, CheckoutResponse, TBookingMessage } from '@/types';
 import { AxiosError } from 'axios';
 import { apiService } from './apiService';
 

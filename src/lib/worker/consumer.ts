@@ -1,10 +1,10 @@
+import { TBookingMessage } from '@/types';
 import amqp, { Channel, ConsumeMessage } from 'amqplib';
 import 'dotenv/config';
 import Booking from '../api-models/Booking';
 import { connectMongoDB } from '../db';
-// import { redis } from '../redis';
-import { TBookingMessage } from '../types/type';
 import { delay, QUEUE_NAME } from '../utils';
+// import { redis } from '../redis';
 
 const DEAD_LOCK_QUEUE = 'booking_deadlockqueue';
 const MAX_RETRIES = 3;

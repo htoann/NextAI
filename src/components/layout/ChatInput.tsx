@@ -3,8 +3,8 @@
 import { useAppContext } from '@/context/AppContext';
 import { createConversation } from '@/lib/services/conversation';
 import { chat, geminiChat } from '@/lib/services/messages';
-import { TMessage } from '@/lib/types/type';
 import { generateChatName } from '@/lib/utils';
+import { TMessage } from '@/types';
 import { SendOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row } from 'antd';
 import { useSession } from 'next-auth/react';

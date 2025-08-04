@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "start:worker": "rmdir /s /q dist && tsc -p tsconfig.worker.json && node dist/worker/consumer.js"
+    "start:worker": "rmdir /s /q dist && tsc -p tsconfig.worker.json && node dist/lib/worker/consumer.js"
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",

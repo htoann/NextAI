@@ -39,6 +39,15 @@ export type TBookingMessage = {
   retry: number;
 };
 
+export type BookingPayload = {
+  bookingId: string;
+  seatId: string;
+  showtimeId: string;
+  status: 'pending';
+  messageId: string;
+  userId: string;
+};
+
 export type BookingResponse = {
   email: string;
   status: string;

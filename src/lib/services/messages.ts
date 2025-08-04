@@ -1,4 +1,4 @@
-import { TMessage } from '@/lib/types/type';
+import { TMessage } from '@/types';
 import { AxiosError } from 'axios';
 import { apiService } from './apiService';
 

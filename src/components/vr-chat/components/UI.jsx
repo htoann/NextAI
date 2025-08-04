@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
-import { EChatMode } from '@/lib/types/type';
+import { EChatMode } from '@/types';
 import { ArrowLeftOutlined, ZoomInOutlined, ZoomOutOutlined } from '@ant-design/icons';
 import { Button, Card, Space, Typography } from 'antd';
 import './UI.scss';
