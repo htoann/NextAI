@@ -89,7 +89,7 @@ pnpm start:worker
 
 ## API Overview
 
-### `POST /api/booking`
+### `POST /api/bookings`
 
 Queue a booking to RabbitMQ
 

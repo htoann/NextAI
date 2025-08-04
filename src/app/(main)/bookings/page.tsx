@@ -44,7 +44,7 @@ export default function BookingPage() {
     try {
       const res = await booking({
         seatIds: selectedSeats,
-        showtimeId: `${selectedDate}|${selectedTime}`,
+        showtimeId: `${selectedTime} | ${selectedDate}`,
       });
 
       if (res.success) {

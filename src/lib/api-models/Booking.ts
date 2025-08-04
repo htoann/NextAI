@@ -33,6 +33,7 @@ const bookingSchema = new Schema(
       type: String,
       required: true,
     },
+    totalPrice: Number,
   },
   {
     timestamps: true,

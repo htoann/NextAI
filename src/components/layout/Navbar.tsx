@@ -78,7 +78,7 @@ export const NavBar = () => {
         >
           <Button
             type="default"
-            onClick={() => router.push('/booking')}
+            onClick={() => router.push('/bookings')}
             style={{
               backgroundColor: '#fff',
               color: '#8231D3',

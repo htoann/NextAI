@@ -1,21 +1,59 @@
 'use client';
 
-import { CreditCardOutlined, UserOutlined } from '@ant-design/icons';
-import { Card, List, Space, Tabs, Tag, Typography } from 'antd';
+import { deleteBooking, getBookingList } from '@/lib/services/booking';
+import { BookingResponse } from '@/types';
+import { CalendarOutlined, DeleteOutlined, ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Card, Divider, List, Modal, Space, Spin, Tabs, Tag, Typography, message } from 'antd';
 import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 
 const { Title, Text } = Typography;
-
-const paymentHistory = [
-  { id: 'TXN001', amount: 90000, status: 'success', date: '2025-08-01', seats: ['B5', 'B6'] },
-  { id: 'TXN002', amount: 50000, status: 'pending', date: '2025-08-03', seats: ['C1'] },
-];
+const { confirm } = Modal;
 
 export default function ProfilePage() {
   const { data } = useSession();
+  const [bookings, setBookings] = useState<BookingResponse[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchBookings = async () => {
+    try {
+      setLoading(true);
+      const res = await getBookingList();
+      setBookings(res);
+    } catch (err) {
+      console.error('❌ Failed to load bookings:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  const handleDelete = (bookingId: string) => {
+    confirm({
+      title: 'Delete this booking?',
+      icon: <ExclamationCircleOutlined />,
+      content: 'This action cannot be undone.',
+      okType: 'danger',
+      onOk: async () => {
+        const key = 'deleteMsg';
+        try {
+          await deleteBooking(bookingId);
+          setBookings((prev) => prev.filter((b) => b.bookingId !== bookingId));
+          message.success({ content: 'Deleted successfully', key });
+        } catch (err) {
+          console.error('❌ Delete failed:', err);
+          message.error({ content: 'Failed to delete', key });
+        }
+      },
+      centered: true,
+    });
+  };
 
   return (
-    <div style={{ padding: 32, maxWidth: 800, margin: '0 auto' }}>
+    <div style={{ padding: 32, maxWidth: 900, margin: '0 auto' }}>
       <Title level={2}>Profile</Title>
 
       <Card>
@@ -41,37 +79,52 @@ export default function ProfilePage() {
               ),
             },
             {
-              key: 'payment',
+              key: 'booking',
               label: (
                 <span>
-                  <CreditCardOutlined /> Payments
+                  <CalendarOutlined /> Booking History
                 </span>
               ),
-              children: (
+              children: loading ? (
+                <Spin />
+              ) : (
                 <div>
-                  <Title level={4}>Payment History</Title>
+                  <Title level={4}>Booking History</Title>
+                  <Divider />
                   <List
+                    dataSource={bookings}
                     itemLayout="vertical"
-                    dataSource={paymentHistory}
                     renderItem={(item) => (
-                      <List.Item key={item.id}>
-                        <Card>
-                          <Space direction="vertical" style={{ width: '100%' }}>
+                      <List.Item key={item.bookingId}>
+                        <Card bodyStyle={{ padding: 16 }} style={{ borderRadius: 10 }}>
+                          <Space direction="vertical" style={{ width: '100%' }} size="middle">
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                              <div>
+                                <Text>
+                                  <strong>Booking ID:</strong> {item.bookingId}
+                                </Text>
+                                <Tag color={item.status === 'success' ? 'green' : 'orange'} style={{ marginLeft: 8 }}>
+                                  {item.status === 'success' ? 'Paid' : 'Pending'}
+                                </Tag>
+                              </div>
+                              <Button
+                                type="link"
+                                danger
+                                icon={<DeleteOutlined />}
+                                onClick={() => handleDelete(item.bookingId)}
+                              >
+                                Delete
+                              </Button>
+                            </div>
                             <Text>
-                              <strong>Transaction ID:</strong> {item.id}
+                              <strong>Showtime:</strong> {item.showtimeId}
                             </Text>
                             <Text>
-                              <strong>Date:</strong> {item.date}
+                              <strong>Seats:</strong> {item.seatIds?.join(', ') || 'N/A'}
                             </Text>
                             <Text>
-                              <strong>Seats:</strong> {item.seats.join(', ')}
+                              <strong>Amount:</strong> {item.amount?.toLocaleString() ?? '0'} ₫
                             </Text>
-                            <Text>
-                              <strong>Amount:</strong> {item.amount.toLocaleString()} ₫
-                            </Text>
-                            <Tag color={item.status === 'success' ? 'green' : 'orange'}>
-                              {item.status === 'success' ? 'Paid' : 'Pending'}
-                            </Tag>
                           </Space>
                         </Card>
                       </List.Item>

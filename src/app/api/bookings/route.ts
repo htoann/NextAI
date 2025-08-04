@@ -1,7 +1,25 @@
+import Booking from '@/lib/api-models/Booking';
 import { authOptions } from '@/lib/utils';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { createAndQueueBookings, lockSeats, rollbackSeats } from './utils';
+
+export const GET = async () => {
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+
+    const bookings = await Booking.find({ userId }).sort({ createdAt: -1 });
+
+    return NextResponse.json(bookings);
+  } catch (error) {
+    console.error('❌ Booking List GET error:', (error as Error).message);
+    return NextResponse.json(
+      { message: error instanceof Error ? error.message : 'Internal server error' },
+      { status: 500 },
+    );
+  }
+};
 
 export const POST = async (req: NextRequest) => {
   try {

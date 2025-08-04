@@ -29,11 +29,13 @@ export enum EChatMode {
   VR = 2,
 }
 
+export type BookingStatus = 'pending' | 'success' | 'failed';
+
 export type TBookingMessage = {
   bookingId: string;
   seatIds: string[];
   showtimeId: string;
-  status: 'pending' | 'success' | 'failed';
+  status: BookingStatus;
   messageId: string;
   userId: string;
   retry: number;
@@ -49,8 +51,14 @@ export type BookingPayload = {
 };
 
 export type BookingResponse = {
-  email: string;
-  status: string;
+  bookingId: string;
+  seatIds: string[];
+  showtimeId: string;
+  status: BookingStatus;
+  userId: string;
+  amount: number;
+  createdAt: string;
+  updatedAt: string;
   success: boolean;
   error?: string | null;
 };
