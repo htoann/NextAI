@@ -2,6 +2,7 @@
 
 import { booking } from '@/lib/services/booking';
 import { Button, Card, Divider, message, Space, Tag, Typography } from 'antd';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 const { Title } = Typography;
@@ -21,6 +22,8 @@ const initialBookedMap: Record<string, string[]> = {
 };
 
 export default function BookingPage() {
+  const router = useRouter();
+
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
@@ -57,6 +60,8 @@ export default function BookingPage() {
           [showtimeKey!]: [...(prev[showtimeKey!] || []), ...selectedSeats],
         }));
         setSelectedSeats([]);
+
+        router.push('/profile?tab=bookings');
       } else {
         message.error(res.error || 'Booking failed.');
       }

@@ -1,8 +1,9 @@
 import Booking from '@/lib/api-models/Booking';
+import { lockSeats, rollbackSeats } from '@/lib/redis';
 import { authOptions } from '@/lib/utils';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { createAndQueueBookings, lockSeats, rollbackSeats } from './utils';
+import { createAndQueueBookings } from './utils';
 
 export const GET = async () => {
   try {
