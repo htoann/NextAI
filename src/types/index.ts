@@ -38,27 +38,11 @@ export type TBookingMessage = {
   status: BookingStatus;
   messageId: string;
   userId: string;
-  retry: number;
+  retry?: number;
+  price: number;
 };
 
-export type BookingPayload = {
-  bookingId: string;
-  seatId: string;
-  showtimeId: string;
-  status: 'pending';
-  messageId: string;
-  userId: string;
-};
-
-export type BookingResponse = {
-  bookingId: string;
-  seatIds: string[];
-  showtimeId: string;
-  status: BookingStatus;
-  userId: string;
-  amount: number;
-  createdAt: string;
-  updatedAt: string;
+export type BookingResponse = TBookingMessage & {
   success: boolean;
   error?: string | null;
 };

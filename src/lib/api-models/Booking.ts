@@ -13,10 +13,9 @@ const bookingSchema = new Schema(
       required: true,
       index: true,
     },
-    seatId: {
-      type: String,
+    seatIds: {
+      type: [String],
       required: true,
-      index: true,
     },
     showtimeId: {
       type: String,
@@ -33,7 +32,10 @@ const bookingSchema = new Schema(
       type: String,
       required: true,
     },
-    totalPrice: Number,
+    price: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,

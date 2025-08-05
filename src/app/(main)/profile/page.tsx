@@ -123,7 +123,7 @@ export default function ProfilePage() {
                               <strong>Seats:</strong> {item.seatIds?.join(', ') || 'N/A'}
                             </Text>
                             <Text>
-                              <strong>Amount:</strong> {item.amount?.toLocaleString() ?? '0'} ₫
+                              <strong>Price:</strong> {item.price?.toLocaleString() ?? '0'} ₫
                             </Text>
                           </Space>
                         </Card>

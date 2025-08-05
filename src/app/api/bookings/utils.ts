@@ -2,7 +2,7 @@ import Booking from '@/lib/api-models/Booking';
 import { getRabbitMQChannel } from '@/lib/RabbitMQ';
 import { redis } from '@/lib/redis';
 import { QUEUE_NAME } from '@/lib/utils';
-import { BookingPayload } from '@/types';
+import { TBookingMessage } from '@/types';
 
 export const getSeatKey = (showtimeId: string, seatId: string) => `lock:${showtimeId}:${seatId}`;
 
@@ -17,7 +17,7 @@ export const lockSeatOrFail = async (seatKey: string, bookingId: string) => {
   return true;
 };
 
-export const sendToQueue = async (msg: any, messageId: string) => {
+export const sendToQueue = async (msg: TBookingMessage, messageId: string) => {
   const channel = await getRabbitMQChannel();
   channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(msg)), {
     persistent: true,
@@ -26,7 +26,7 @@ export const sendToQueue = async (msg: any, messageId: string) => {
   console.log(`📤 Message queued: ${QUEUE_NAME}`, msg);
 };
 
-export function validatePayload(seatIds: any, showtimeId: any): seatIds is string[] {
+export function validatePayload(seatIds: string[], showtimeId: string): seatIds is string[] {
   return Array.isArray(seatIds) && seatIds.length > 0 && typeof showtimeId === 'string';
 }
 
@@ -59,29 +59,26 @@ export async function createAndQueueBookings(
   bookingId: string,
   messageId: string,
   userId: string,
-): Promise<BookingPayload[]> {
-  const results = await Promise.all(
-    seatIds.map(async (seatId) => {
-      const booking: BookingPayload = {
-        bookingId: `${bookingId}_${seatId}`,
-        seatId,
-        showtimeId,
-        status: 'pending',
-        messageId,
-        userId,
-      };
+  price: number,
+): Promise<TBookingMessage[]> {
+  const booking: TBookingMessage = {
+    bookingId,
+    seatIds,
+    showtimeId,
+    status: 'pending',
+    messageId,
+    userId,
+    price,
+  };
 
-      try {
-        await Booking.create(booking);
-        await sendToQueue({ ...booking, retry: 0 }, `${messageId}_${seatId}`);
-        return booking;
-      } catch (err) {
-        await Booking.deleteOne({ bookingId: booking.bookingId });
-        await redis.del(getSeatKey(showtimeId, seatId));
-        throw new Error(`Booking failed for seat ${seatId}`);
-      }
-    }),
-  );
-
-  return results;
+  try {
+    await Booking.create(booking);
+    await sendToQueue({ ...booking, retry: 0 }, messageId);
+    return [booking];
+  } catch (err) {
+    console.error(err);
+    await Booking.deleteOne({ bookingId });
+    await rollbackSeats(seatIds, showtimeId);
+    throw new Error(`Booking failed for seats: ${seatIds.join(', ')}`);
+  }
 }

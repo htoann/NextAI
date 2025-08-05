@@ -10,7 +10,7 @@ const DEAD_LOCK_QUEUE = 'booking_deadlockqueue';
 const MAX_RETRIES = 3;
 
 const handleBookingMessage = async (channel: Channel, msg: ConsumeMessage): Promise<void> => {
-  let data: TBookingMessage & { seatId: string };
+  let data: TBookingMessage;
 
   try {
     data = JSON.parse(msg.content.toString());
@@ -20,9 +20,9 @@ const handleBookingMessage = async (channel: Channel, msg: ConsumeMessage): Prom
     return;
   }
 
-  const { bookingId, seatId, showtimeId, retry = 0 } = data;
+  const { bookingId, seatIds, showtimeId, retry = 0 } = data;
 
-  if (!bookingId || !seatId || !showtimeId) {
+  if (!bookingId || !seatIds || !Array.isArray(seatIds) || seatIds.length === 0 || !showtimeId) {
     console.warn('⚠️ Missing required fields. Acking and skipping.');
     channel.ack(msg);
     return;
@@ -49,7 +49,10 @@ const handleBookingMessage = async (channel: Channel, msg: ConsumeMessage): Prom
     if (Math.random() < 0.2) throw new Error('Fake fail');
 
     await Booking.updateOne({ bookingId }, { status: 'success' });
-    // await redis.del(`lock:${showtimeId}:${seatId}`);
+
+    // Optional: release locks
+    // await Promise.all(seatIds.map(seatId => redis.del(`lock:${showtimeId}:${seatId}`)));
+
     console.log(`✅ Booking success: ${bookingId}`);
     channel.ack(msg);
   } catch (err) {
