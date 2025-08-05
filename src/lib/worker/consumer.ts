@@ -48,7 +48,7 @@ const handleBookingMessage = async (channel: Channel, msg: ConsumeMessage): Prom
     // Simulate failure
     if (Math.random() < 0.2) throw new Error('Fake fail');
 
-    await Booking.updateOne({ bookingId }, { status: 'success' });
+    // await Booking.updateOne({ bookingId }, { status: 'success' });
 
     // Optional: release locks
     // await Promise.all(seatIds.map(seatId => redis.del(`lock:${showtimeId}:${seatId}`)));

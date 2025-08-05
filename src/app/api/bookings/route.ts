@@ -52,3 +52,28 @@ export const POST = async (req: NextRequest) => {
     );
   }
 };
+
+export const DELETE = async (req: NextRequest) => {
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+
+    const { bookingIds } = await req.json();
+
+    const result = await Booking.deleteMany({
+      bookingId: { $in: bookingIds },
+      userId,
+    });
+
+    return NextResponse.json({
+      success: true,
+      deletedCount: result.deletedCount,
+    });
+  } catch (error) {
+    console.error('❌ Booking DELETE error:', (error as Error).message);
+    return NextResponse.json(
+      { message: error instanceof Error ? error.message : 'Internal server error' },
+      { status: 500 },
+    );
+  }
+};

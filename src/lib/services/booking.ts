@@ -38,9 +38,9 @@ export const getBookingDetail = async (id: string): Promise<BookingResponse> => 
   }
 };
 
-export const deleteBooking = async (id: string): Promise<void> => {
+export const bulkDeleteBookings = async (bookingIds: string[]): Promise<{ deletedCount: number }> => {
   try {
-    await apiService.delete(['bookings', id]);
+    return await apiService.delete<{ deletedCount: number }>(['bookings'], { bookingIds });
   } catch (err) {
     const error = err as AxiosError;
     throw error.response?.data ?? error.message;

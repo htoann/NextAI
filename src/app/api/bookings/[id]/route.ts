@@ -29,25 +29,3 @@ export const GET = async (req: NextRequest, { params }: { params: Promise<{ id: 
     );
   }
 };
-
-export const DELETE = async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
-  try {
-    const session = await getServerSession(authOptions);
-    const userId = session?.user?.id;
-    const { id } = await params;
-
-    const deleted = await Booking.findOneAndDelete({ bookingId: id, userId });
-
-    if (!deleted) {
-      return NextResponse.json({ message: 'Booking not found or not authorized' }, { status: 404 });
-    }
-
-    return NextResponse.json({ message: 'Booking deleted successfully' });
-  } catch (error) {
-    console.error('❌ Booking DELETE error:', (error as Error).message);
-    return NextResponse.json(
-      { message: error instanceof Error ? error.message : 'Internal server error' },
-      { status: 500 },
-    );
-  }
-};
