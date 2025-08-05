@@ -1,3 +1,4 @@
+import Booking from '@/lib/api-models/Booking';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
@@ -8,7 +9,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 
 export const POST = async (req: NextRequest): Promise<NextResponse> => {
   try {
-    const { amount } = await req.json();
+    const { amount, bookingId } = await req.json();
     const sessionData = await getServerSession();
 
     const session = await stripe.checkout.sessions.create({
@@ -25,9 +26,11 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
       ],
       mode: 'payment',
       customer_email: sessionData?.user?.email!,
-      success_url: 'https://localhost:3000/payment',
-      cancel_url: 'https://localhost:3000/payment',
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/profile?tab=bookings`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/profile?tab=bookings`,
     });
+
+    await Booking.updateOne({ bookingId }, { status: 'success' });
 
     return NextResponse.json({ url: session.url });
   } catch (err) {

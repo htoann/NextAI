@@ -49,8 +49,14 @@ export type BookingResponse = TBookingMessage & {
 
 export type CheckoutRequest = {
   amount: number;
+  bookingId: string;
 };
 
 export type CheckoutResponse = {
   url: string;
 };
+
+export enum ProfileTab {
+  Info = 'info',
+  Booking = 'bookings',
+}

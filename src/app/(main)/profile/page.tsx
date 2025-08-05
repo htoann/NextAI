@@ -1,10 +1,11 @@
 'use client';
 
 import { bulkDeleteBookings, getBookingList } from '@/lib/services/booking';
-import { BookingResponse } from '@/types';
+import { BookingResponse, ProfileTab } from '@/types';
 import { CalendarOutlined, DeleteOutlined, ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Card, Checkbox, Divider, List, Modal, Space, Spin, Tabs, Tag, Typography, message } from 'antd';
 import { useSession } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import PaymentModal from './components/payment';
 
@@ -13,11 +14,26 @@ const { confirm } = Modal;
 
 export default function ProfilePage() {
   const { data } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [bookings, setBookings] = useState<BookingResponse[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [openPayment, setOpenPayment] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<BookingResponse | null>(null);
+  const [activeTab, setActiveTab] = useState<ProfileTab>(ProfileTab.Info);
+
+  useEffect(() => {
+    const tabFromUrl = searchParams.get('tab') as ProfileTab | null;
+    if (tabFromUrl && Object.values(ProfileTab).includes(tabFromUrl)) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (key: string) => {
+    setActiveTab(key as ProfileTab);
+    router.push(`?tab=${key}`, { scroll: false });
+  };
 
   const fetchBookings = useCallback(async () => {
     setLoading(true);
@@ -65,10 +81,11 @@ export default function ProfilePage() {
       <Title level={2}>Profile</Title>
       <Card>
         <Tabs
-          defaultActiveKey="info"
+          activeKey={activeTab}
+          onChange={handleTabChange}
           items={[
             {
-              key: 'info',
+              key: ProfileTab.Info,
               label: (
                 <>
                   <UserOutlined /> Personal Info
@@ -86,14 +103,16 @@ export default function ProfilePage() {
               ),
             },
             {
-              key: 'booking',
+              key: ProfileTab.Booking,
               label: (
                 <>
                   <CalendarOutlined /> Booking History
                 </>
               ),
               children: loading ? (
-                <Spin />
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+                  <Spin />
+                </div>
               ) : (
                 <div>
                   <Title level={4}>Booking History</Title>
@@ -121,7 +140,12 @@ export default function ProfilePage() {
                       <List.Item key={item.bookingId}>
                         <Card bodyStyle={{ padding: 16 }} style={{ borderRadius: 10 }}>
                           <Space direction="vertical" style={{ width: '100%' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                              }}
+                            >
                               <div>
                                 <Text>
                                   <strong>Booking ID:</strong> {item.bookingId}
@@ -174,6 +198,7 @@ export default function ProfilePage() {
                     open={openPayment}
                     onClose={() => setOpenPayment(false)}
                     amountVnd={selectedBooking?.price ?? 0}
+                    bookingId={selectedBooking?.bookingId!}
                   />
                 </div>
               ),

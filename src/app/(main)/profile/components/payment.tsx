@@ -13,21 +13,23 @@ export default function PaymentModal({
   open,
   onClose,
   amountVnd,
+  bookingId,
 }: {
   open: boolean;
   onClose: () => void;
   amountVnd: number;
+  bookingId: string;
 }) {
   const [loading, setLoading] = useState(false);
 
   const handlePay = async () => {
     setLoading(true);
     try {
-      const exchangeRate = 24000;
+      const exchangeRate = 27230;
       const usdAmount = amountVnd / exchangeRate;
       const stripeAmount = Math.round(usdAmount * 100);
 
-      const { url } = await checkout({ amount: stripeAmount });
+      const { url } = await checkout({ amount: stripeAmount, bookingId });
 
       const stripe = await stripePromise;
       if (stripe && url) {
