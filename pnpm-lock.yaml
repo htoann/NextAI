@@ -67,7 +67,10 @@ importers:
         version: 15.4.2-canary.24(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.89.2)
       next-auth:
         specifier: ^4.24.11
-        version: 4.24.11(next@15.4.2-canary.24(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.89.2))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.24.11(next@15.4.2-canary.24(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.89.2))(nodemailer@7.0.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      nodemailer:
+        specifier: ^7.0.5
+        version: 7.0.5
       preact:
         specifier: ^10.27.0
         version: 10.27.0
@@ -99,6 +102,9 @@ importers:
       '@types/node':
         specifier: ^20.19.9
         version: 20.19.9
+      '@types/nodemailer':
+        specifier: ^6.4.17
+        version: 6.4.17
       '@types/react':
         specifier: ^19.1.9
         version: 19.1.9
@@ -932,6 +938,9 @@ packages:
 
   '@types/node@20.19.9':
     resolution: {integrity: sha512-cuVNgarYWZqxRJDQHEB58GEONhOK79QVR/qYx4S7kcUObQvUwvFnYxJuuHUKm2aieN9X3yZB4LZsuYNU1Qphsw==}
+
+  '@types/nodemailer@6.4.17':
+    resolution: {integrity: sha512-I9CCaIp6DTldEg7vyUTZi8+9Vo0hi1/T8gv3C89yk1rSAAzoKQ8H8ki/jBYJSFoH/BisgLP8tkZMlQ91CIquww==}
 
   '@types/offscreencanvas@2019.3.0':
     resolution: {integrity: sha512-esIJx9bQg+QYF0ra8GnvfianIY8qWB0GBx54PK5Eps6m+xTj86KLavHv6qDhzKcu5UUOgNfJ2pWaIIV7TRUd9Q==}
@@ -2365,6 +2374,10 @@ packages:
   node-fetch@2.1.2:
     resolution: {integrity: sha512-IHLHYskTc2arMYsHZH82PVX8CSKT5lzb7AXeyO06QnjGDKtkv+pv3mEki6S7reB/x1QPo+YPxQRNEVgR5V/w3Q==}
     engines: {node: 4.x || >=6.0.0}
+
+  nodemailer@7.0.5:
+    resolution: {integrity: sha512-nsrh2lO3j4GkLLXoeEksAMgAOqxOv6QumNRVQTJwKH4nuiww6iC2y7GyANs9kRAxCexg3+lTWM3PZ91iLlVjfg==}
+    engines: {node: '>=6.0.0'}
 
   oauth@0.9.15:
     resolution: {integrity: sha512-a5ERWK1kh38ExDEfoO6qUHJb32rd7aYmPHuyCu3Fta/cnICvYmgd2uhuKXvPD+PXB+gCEYYEaQdIRAjCOwAKNA==}
@@ -4216,6 +4229,10 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
+  '@types/nodemailer@6.4.17':
+    dependencies:
+      '@types/node': 20.19.9
+
   '@types/offscreencanvas@2019.3.0': {}
 
   '@types/offscreencanvas@2019.7.3': {}
@@ -5946,7 +5963,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next-auth@4.24.11(next@15.4.2-canary.24(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.89.2))(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  next-auth@4.24.11(next@15.4.2-canary.24(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.89.2))(nodemailer@7.0.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       '@babel/runtime': 7.28.2
       '@panva/hkdf': 1.2.1
@@ -5960,6 +5977,8 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       uuid: 8.3.2
+    optionalDependencies:
+      nodemailer: 7.0.5
 
   next@15.4.2-canary.24(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.89.2):
     dependencies:
@@ -5989,6 +6008,8 @@ snapshots:
     optional: true
 
   node-fetch@2.1.2: {}
+
+  nodemailer@7.0.5: {}
 
   oauth@0.9.15: {}
 

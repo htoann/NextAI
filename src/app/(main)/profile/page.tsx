@@ -106,7 +106,7 @@ export default function ProfilePage() {
               key: ProfileTab.Booking,
               label: (
                 <>
-                  <CalendarOutlined /> Booking History
+                  <CalendarOutlined /> Booking Management
                 </>
               ),
               children: loading ? (
@@ -115,7 +115,7 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div>
-                  <Title level={4}>Booking History</Title>
+                  <Title level={4}>Booking Management</Title>
                   <Divider />
                   {bookings.length > 0 && (
                     <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>

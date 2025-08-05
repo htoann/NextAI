@@ -3,6 +3,7 @@ import amqp, { Channel, ConsumeMessage } from 'amqplib';
 import 'dotenv/config';
 import Booking from '../api-models/Booking';
 import { connectMongoDB } from '../db';
+import { sendBookingEmail } from '../emailService';
 import { delay, QUEUE_NAME } from '../utils';
 // import { redis } from '../redis';
 
@@ -20,9 +21,9 @@ const handleBookingMessage = async (channel: Channel, msg: ConsumeMessage): Prom
     return;
   }
 
-  const { bookingId, seatIds, showtimeId, retry = 0 } = data;
+  const { bookingId, seatIds, showtimeId, price, retry = 0 } = data;
 
-  if (!bookingId || !seatIds || !Array.isArray(seatIds) || seatIds.length === 0 || !showtimeId) {
+  if (!bookingId || !seatIds || !price || !Array.isArray(seatIds) || seatIds.length === 0 || !showtimeId) {
     console.warn('⚠️ Missing required fields. Acking and skipping.');
     channel.ack(msg);
     return;
@@ -52,6 +53,11 @@ const handleBookingMessage = async (channel: Channel, msg: ConsumeMessage): Prom
 
     // Optional: release locks
     // await Promise.all(seatIds.map(seatId => redis.del(`lock:${showtimeId}:${seatId}`)));
+
+    const bookingEmail = 'huutrantoan@gmail.com';
+
+    await sendBookingEmail(bookingEmail, bookingId, seatIds, showtimeId, price);
+    console.log(`📧 Email sent to ${bookingEmail}`);
 
     console.log(`✅ Booking success: ${bookingId}`);
     channel.ack(msg);
