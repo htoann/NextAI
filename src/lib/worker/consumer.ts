@@ -52,7 +52,7 @@ const handleBookingMessage = async (channel: Channel, msg: ConsumeMessage): Prom
     // await Booking.updateOne({ bookingId }, { status: 'success' });
 
     // Optional: release locks
-    // await Promise.all(seatIds.map(seatId => redis.del(`lock:${showtimeId}:${seatId}`)));
+    // await rollbackSeats(seatIds, showtimeId);
 
     const bookingEmail = 'huutrantoan@gmail.com';
 
