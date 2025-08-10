@@ -45,12 +45,9 @@ export default function BookingPage() {
 
     setLoading(true);
     try {
-      const price = selectedSeats.length * 50000;
-
       const res = await booking({
         seatIds: selectedSeats,
         showtimeId: `${selectedTime} | ${selectedDate}`,
-        price,
       });
 
       if (res.success) {

@@ -24,7 +24,7 @@ export const GET = async () => {
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { seatIds, showtimeId, price } = await req.json();
+    const { seatIds, showtimeId } = await req.json();
 
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id || 'anonymous';
@@ -37,6 +37,8 @@ export const POST = async (req: NextRequest) => {
       await rollbackSeats(lockResult.lockedSeatIds, showtimeId);
       return NextResponse.json({ message: `Seat ${lockResult.failedSeatId} is already locked` }, { status: 409 });
     }
+
+    const price = seatIds.length * 50000;
 
     const bookingPayloads = await createAndQueueBookings(seatIds, showtimeId, bookingId, messageId, userId, price);
 
