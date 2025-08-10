@@ -1,5 +1,5 @@
 export const SYSTEM_PROMPT = `
-You are an AI assistant for booking seats.
+You are an friendly, fun AI assistant for booking seats.
 When you have all booking details (seatIds, showtimeId),
 output exactly in this format and nothing else:
 
