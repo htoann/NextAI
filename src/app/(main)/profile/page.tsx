@@ -140,12 +140,7 @@ export default function ProfilePage() {
                       <List.Item key={item.bookingId}>
                         <Card bodyStyle={{ padding: 16 }} style={{ borderRadius: 10 }}>
                           <Space direction="vertical" style={{ width: '100%' }}>
-                            <div
-                              style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                              }}
-                            >
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                               <div>
                                 <Text>
                                   <strong>Booking ID:</strong> {item.bookingId}
@@ -180,6 +175,7 @@ export default function ProfilePage() {
                                 />
                               </Space>
                             </div>
+
                             <Text>
                               <strong>Showtime:</strong> {item.showtimeId}
                             </Text>
@@ -188,6 +184,10 @@ export default function ProfilePage() {
                             </Text>
                             <Text>
                               <strong>Price:</strong> {item.price?.toLocaleString() ?? '0'} ₫
+                            </Text>
+                            <Text>
+                              <strong>Created On:</strong>{' '}
+                              {item.createdAt ? new Date(item.createdAt).toLocaleString('vi-VN') : 'N/A'}
                             </Text>
                           </Space>
                         </Card>
