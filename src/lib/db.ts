@@ -9,18 +9,23 @@ let cached = global.mongoose as {
 };
 
 if (!cached) {
+  console.log('[MongoDB] No cache found, initializing...');
   cached = global.mongoose = { conn: null, promise: null };
+} else {
+  console.log('[MongoDB] Using existing cache.');
 }
 
 export const connectMongoDB = async () => {
-  if (cached.conn) return cached.conn;
+  if (cached.conn) {
+    console.log('✅ Using existing MongoDB connection');
+    return cached.conn;
+  }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 10000,
-      socketTimeoutMS: 30000,
-      bufferCommands: false,
-    });
+    console.log('🔄 Connecting to MongoDB...');
+    cached.promise = mongoose.connect(MONGODB_URI);
+  } else {
+    console.log('⏳ Awaiting existing connection promise...');
   }
 
   try {
