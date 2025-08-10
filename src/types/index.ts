@@ -40,8 +40,8 @@ export type TBookingMessage = {
   userId: string;
   retry?: number;
   price: number;
-  createdAt: number;
-  updatedAt: number;
+  createdAt?: number;
+  updatedAt?: number;
 };
 
 export type BookingResponse = TBookingMessage & {
