@@ -45,23 +45,18 @@ export default function BookingPage() {
 
     setLoading(true);
     try {
-      const res = await booking({
+      await booking({
         seatIds: selectedSeats,
         showtimeId: `${selectedTime} | ${selectedDate}`,
       });
+      message.success(`Booked: ${selectedSeats.join(', ')}`);
+      setBookedMap((prev) => ({
+        ...prev,
+        [showtimeKey!]: [...(prev[showtimeKey!] || []), ...selectedSeats],
+      }));
+      setSelectedSeats([]);
 
-      if (res.success) {
-        message.success(`Booked: ${selectedSeats.join(', ')}`);
-        setBookedMap((prev) => ({
-          ...prev,
-          [showtimeKey!]: [...(prev[showtimeKey!] || []), ...selectedSeats],
-        }));
-        setSelectedSeats([]);
-
-        router.push('/profile?tab=bookings');
-      } else {
-        message.error(res.error || 'Booking failed.');
-      }
+      router.push('/profile?tab=bookings');
     } catch (err) {
       message.error('Booking failed: ' + (err as Error).message);
     }

@@ -46,7 +46,7 @@ export type TBookingMessage = {
 
 export type BookingResponse = TBookingMessage & {
   success: boolean;
-  error?: string | null;
+  message?: string | null;
 };
 
 export type CheckoutRequest = {

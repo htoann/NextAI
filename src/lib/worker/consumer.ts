@@ -2,7 +2,7 @@ import { TBookingMessage } from '@/types';
 import amqp, { Channel, ConsumeMessage } from 'amqplib';
 import 'dotenv/config';
 import Booking from '../api-models/Booking';
-import { connectMongoDB } from '../db';
+import { dbConnect } from '../db';
 import { sendBookingEmail } from '../emailService';
 import { delay, QUEUE_NAME } from '../utils';
 // import { redis } from '../redis';
@@ -87,7 +87,7 @@ const handleBookingMessage = async (channel: Channel, msg: ConsumeMessage): Prom
 };
 
 const run = async (): Promise<void> => {
-  await connectMongoDB();
+  await dbConnect();
 
   const conn = await amqp.connect(process.env.RABBIT_URL!);
   console.log('✅ Connected to RabbitMQ');

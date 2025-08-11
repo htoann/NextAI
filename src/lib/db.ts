@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI!;
 
-// Use global cache to prevent multiple connections in dev or serverless
 let cached = global.mongoose as {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
@@ -15,7 +14,7 @@ if (!cached) {
   console.log('[MongoDB] Using existing cache.');
 }
 
-export const connectMongoDB = async () => {
+export const dbConnect = async () => {
   if (cached.conn) {
     console.log('✅ Using existing MongoDB connection');
     return cached.conn;
@@ -23,7 +22,7 @@ export const connectMongoDB = async () => {
 
   if (!cached.promise) {
     console.log('🔄 Connecting to MongoDB...');
-    cached.promise = mongoose.connect(MONGODB_URI);
+    cached.promise = mongoose.connect(MONGODB_URI, { bufferCommands: false });
   } else {
     console.log('⏳ Awaiting existing connection promise...');
   }
@@ -34,7 +33,7 @@ export const connectMongoDB = async () => {
     return cached.conn;
   } catch (err) {
     console.error('❌ MongoDB connect error:', (err as Error).message);
-    cached.promise = null; // reset for retry
+    cached.promise = null;
     throw err;
   }
 };
