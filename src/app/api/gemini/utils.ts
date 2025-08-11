@@ -2,8 +2,8 @@ import Message from '@/lib/api-models/Message';
 import { booking } from '@/lib/services/booking';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-export const SYSTEM_PROMPT = (conversationHistory: string, newUserMessage: string) => `
-You are a friendly, helpful AI assistant with two modes:
+export const SYSTEM_PROMPT = (conversationHistory: string, newUserMessage: string, availableSeats?: string) => `
+You are a professional AI assistant with two modes:
 
 ---
 
@@ -15,8 +15,13 @@ You are a friendly, helpful AI assistant with two modes:
 - Normalize all dates/times to this exact format (e.g., "17:00 | 02/08/2025").
 
 #### **When all details are present**
-- Respond **only**:
-  #BOOKING: {"seatIds":["A1","A2"],"showtimeId":"17:00 | 02/08/2025"}
+- Do **not** book immediately.
+- Instead, confirm with the user first by repeating the details and asking:
+  For example: “Do you want me to proceed with booking seat(s) A1, A2 for 17:00 on 02/08/2025?”
+- If the user confirms (e.g., "yes", "ok", "confirm", "book it", "go ahead"):
+  - Respond **only**:
+    #BOOKING: {"seatIds":["A1","A2"],"showtimeId":"17:00 | 02/08/2025"}
+- If the user says anything other than a confirmation, cancel booking and assist further.
 
 #### **When details are missing**
 - Ask only for the missing pieces.
@@ -37,15 +42,19 @@ You are a friendly, helpful AI assistant with two modes:
 
 ### 2. General Conversation
 - If not a booking request, respond normally and politely.
-- Never output "#BOOKING" unless 100% certain all booking details are present.
+- Never output "#BOOKING" unless 100% certain all booking details are present **and** the user has explicitly confirmed.
 
 ---
 
 ### Rules
 - Do not prefix responses with “AI:” or “User:”.
-- When booking, output **only** the booking JSON — no extra text.
 - Always normalize extracted dates/times to the exact format.
 - Remember and use context from previous turns in the same conversation.
+
+---
+
+### Available seats
+${availableSeats}
 
 ---
 
@@ -57,15 +66,19 @@ AI:
 `;
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
-export const generateAIAnswer = async (conversationId: string, newUserMessage: string) => {
-  const fullPrompt = await buildPromptWithContext(conversationId, newUserMessage);
+export const generateAIAnswer = async (conversationId: string, newUserMessage: string, availableSeats?: string) => {
+  const fullPrompt = await buildPromptWithContext(conversationId, newUserMessage, availableSeats);
   const result = await model.generateContent(fullPrompt);
   return result.response.text().trim();
 };
 
-export const buildPromptWithContext = async (conversationId: string, newUserMessage: string) => {
+export const buildPromptWithContext = async (
+  conversationId: string,
+  newUserMessage: string,
+  availableSeats?: string,
+) => {
   const history = await Message.find({ conversation: conversationId }).sort({ createdAt: 1 }).lean();
 
   const conversationHistory = history
@@ -75,7 +88,7 @@ export const buildPromptWithContext = async (conversationId: string, newUserMess
     })
     .join('\n');
 
-  return SYSTEM_PROMPT(conversationHistory, newUserMessage);
+  return SYSTEM_PROMPT(conversationHistory, newUserMessage, availableSeats);
 };
 
 export const saveMessage = async (owner: 'User' | 'AI', content: string, conversation: string) => {
