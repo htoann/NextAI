@@ -1,16 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateAIAnswer, processBookingApi, saveMessage } from './utils';
-
-const fakeBookingInfo = `
-Rows: A-D, Seats per row: 8.
-Showtimes:
-02/08/2025 → 14:00, 17:00, 20:00
-03/08/2025 → 15:00, 18:00
-Initially booked seats:
-02/08/2025 14:00 → A1, A2
-02/08/2025 17:00 → B1
-03/08/2025 15:00 → C3
-`;
+import { availableSeats, generateAIAnswer, processBookingApi, saveMessage } from './utils';
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -19,7 +8,7 @@ export const POST = async (req: NextRequest) => {
 
     await saveMessage('User', content, conversationId);
 
-    let finalAnswer = await generateAIAnswer(conversationId, content, fakeBookingInfo);
+    let finalAnswer = await generateAIAnswer(conversationId, content, availableSeats);
     if (finalAnswer.startsWith('#BOOKING:'))
       finalAnswer = (await processBookingApi(finalAnswer, conversationId)) || finalAnswer;
 
@@ -30,6 +19,9 @@ export const POST = async (req: NextRequest) => {
     });
   } catch (err) {
     console.error(err);
-    return new NextResponse(JSON.stringify({ error: 'Failed to generate response' }), { status: 500 });
+    return new NextResponse('Failed to generate response. Please try again later', {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 };
