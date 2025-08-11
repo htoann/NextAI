@@ -46,7 +46,7 @@ export default function PaymentModal({
   };
 
   return (
-    <Modal open={open} onCancel={onClose} footer={null} centered width={400} destroyOnClose>
+    <Modal open={open} onCancel={onClose} footer={null} centered width={400} destroyOnHidden>
       <div style={{ padding: 24, textAlign: 'center' }}>
         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
           <CreditCardOutlined style={{ fontSize: 36, color: '#1890ff' }} />

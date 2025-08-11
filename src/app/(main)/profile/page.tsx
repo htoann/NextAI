@@ -138,7 +138,7 @@ export default function ProfilePage() {
                     itemLayout="vertical"
                     renderItem={(item) => (
                       <List.Item key={item.bookingId}>
-                        <Card bodyStyle={{ padding: 16 }} style={{ borderRadius: 10 }}>
+                        <Card styles={{ body: { padding: 16 } }} style={{ borderRadius: 10 }}>
                           <Space direction="vertical" style={{ width: '100%' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                               <div>

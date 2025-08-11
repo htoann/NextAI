@@ -2,7 +2,7 @@
 
 import { useAppContext } from '@/context/AppContext';
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Button, Dropdown, Layout, Menu, Space, Typography } from 'antd';
+import { Avatar, Button, Dropdown, Layout, Space, Typography } from 'antd';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -20,24 +20,20 @@ export const NavBar = () => {
     setLoading(false);
   };
 
-  const menu = (
-    <Menu
-      items={[
-        {
-          key: 'profile',
-          icon: <UserOutlined />,
-          label: 'Profile',
-          onClick: () => router.push('/profile'),
-        },
-        {
-          key: 'logout',
-          icon: <LogoutOutlined />,
-          label: 'Logout',
-          onClick: handleLogout,
-        },
-      ]}
-    />
-  );
+  const menuItems = [
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: 'Profile',
+      onClick: () => router.push('/profile'),
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'Logout',
+      onClick: handleLogout,
+    },
+  ];
 
   return (
     <Header
@@ -96,7 +92,7 @@ export const NavBar = () => {
       {/* Right - Avatar / Login */}
       <Space>
         {session ? (
-          <Dropdown overlay={menu} trigger={['click']}>
+          <Dropdown menu={{ items: menuItems }} trigger={['click']}>
             <Space style={{ cursor: 'pointer' }}>
               <Text style={{ color: '#fff', fontWeight: 500 }}>{session.user?.name}</Text>
               <Avatar icon={<UserOutlined />} style={{ backgroundColor: '#fff', color: '#8231D3' }} />
