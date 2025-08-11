@@ -5,7 +5,7 @@ const handler = async (req: NextRequest) => {
   switch (req.method) {
     case 'GET':
       try {
-        const conversations = await Conversation.find();
+        const conversations = await Conversation.find().sort({ createdAt: -1 });
         return NextResponse.json(conversations);
       } catch (error) {
         console.error(error);
