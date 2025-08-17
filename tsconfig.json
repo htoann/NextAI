@@ -24,6 +24,13 @@
     "typeRoots": ["./node_modules/@types", "./global.d.ts", "./src/types"],
     "types": ["node", "next-auth"]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/types/next-auth.d.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/types/next-auth.d.ts",
+    "src/app/(main)/settings/chatbox-widget.js"
+  ],
   "exclude": ["node_modules"]
 }
