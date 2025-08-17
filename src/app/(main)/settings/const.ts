@@ -82,22 +82,15 @@ export const chatboxSnippet = `(function () {
 
     const textNode = document.createElement("div");
     textNode.textContent = text;
-
-    const timeNode = document.createElement("div");
-    timeNode.textContent = new Date(createdAt || Date.now()).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    timeNode.style.fontSize = "11px";
-    timeNode.style.opacity = "0.7";
-    timeNode.style.alignSelf = sender === "user" ? "flex-end" : "flex-start";
-
     div.appendChild(textNode);
-    div.appendChild(timeNode);
 
     const wrapper = document.createElement("div");
     wrapper.style.display = "flex";
     wrapper.style.margin = "8px 0";
+
+    // ✅ Tooltip with full date-time
+    const timeString = new Date(createdAt || Date.now()).toLocaleString();
+    wrapper.title = timeString;
 
     if (sender === "user") {
       wrapper.style.justifyContent = "flex-end";
@@ -131,6 +124,7 @@ export const chatboxSnippet = `(function () {
     messagesBox.appendChild(wrapper);
     messagesBox.scrollTop = messagesBox.scrollHeight;
   }
+
   function removeTyping() {
     const typingDiv = document.getElementById("typing");
     if (typingDiv) typingDiv.parentElement.remove();
@@ -147,11 +141,7 @@ export const chatboxSnippet = `(function () {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: {
-          content: text,
-          conversation: conversationId,
-          owner: "User",
-        },
+        message: { content: text, conversation: conversationId, owner: "User" },
       }),
     })
       .then((res) => res.text())
@@ -176,7 +166,6 @@ export const chatboxSnippet = `(function () {
     widget.style.transform = isOpen ? "scale(0)" : "scale(1)";
 
     if (!isOpen) {
-      // Fetch history when opening
       fetch(\`/api/conversations/\${conversationId}/messages\`)
         .then((res) => res.json())
         .then((data) => {
