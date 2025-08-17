@@ -61,4 +61,5 @@ export type CheckoutResponse = {
 export enum ProfileTab {
   Info = 'info',
   Booking = 'bookings',
+  Setting = 'setting',
 }
