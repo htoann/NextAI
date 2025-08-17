@@ -1,4 +1,6 @@
 export const chatboxSnippet = `(function () {
+  const conversationId = "689a07798dc0b128b02b452f";
+
   // Floating toggle button
   const toggleBtn = document.createElement("div");
   toggleBtn.innerHTML = \`
@@ -61,12 +63,12 @@ export const chatboxSnippet = `(function () {
   \`;
   document.body.appendChild(widget);
 
-  const messages = widget.querySelector("#chat-messages");
+  const messagesBox = widget.querySelector("#chat-messages");
   const input = widget.querySelector("#chat-input");
   const sendBtn = widget.querySelector("#chat-send");
   const closeBtn = widget.querySelector("#chat-close");
 
-  function addMessage(text, sender) {
+  function addMessage(text, sender, createdAt) {
     const div = document.createElement("div");
     div.style.maxWidth = "75%";
     div.style.padding = "10px 14px";
@@ -75,6 +77,23 @@ export const chatboxSnippet = `(function () {
     div.style.fontSize = "14px";
     div.style.boxShadow = "0 2px 6px rgba(0,0,0,0.08)";
     div.style.animation = "fadeInUp 0.25s ease";
+    div.style.display = "flex";
+    div.style.flexDirection = "column";
+
+    const textNode = document.createElement("div");
+    textNode.textContent = text;
+
+    const timeNode = document.createElement("div");
+    timeNode.textContent = new Date(createdAt || Date.now()).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    timeNode.style.fontSize = "11px";
+    timeNode.style.opacity = "0.7";
+    timeNode.style.alignSelf = sender === "user" ? "flex-end" : "flex-start";
+
+    div.appendChild(textNode);
+    div.appendChild(timeNode);
 
     const wrapper = document.createElement("div");
     wrapper.style.display = "flex";
@@ -92,10 +111,9 @@ export const chatboxSnippet = `(function () {
       div.style.borderBottomLeftRadius = "6px";
     }
 
-    div.textContent = text;
     wrapper.appendChild(div);
-    messages.appendChild(wrapper);
-    messages.scrollTop = messages.scrollHeight;
+    messagesBox.appendChild(wrapper);
+    messagesBox.scrollTop = messagesBox.scrollHeight;
   }
 
   function showTyping() {
@@ -110,8 +128,8 @@ export const chatboxSnippet = `(function () {
     wrapper.style.display = "flex";
     wrapper.style.justifyContent = "flex-start";
     wrapper.appendChild(typingDiv);
-    messages.appendChild(wrapper);
-    messages.scrollTop = messages.scrollHeight;
+    messagesBox.appendChild(wrapper);
+    messagesBox.scrollTop = messagesBox.scrollHeight;
   }
   function removeTyping() {
     const typingDiv = document.getElementById("typing");
@@ -121,13 +139,30 @@ export const chatboxSnippet = `(function () {
   function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
-    addMessage(text, "user");
+    addMessage(text, "user", Date.now());
     input.value = "";
     showTyping();
-    setTimeout(() => {
-      removeTyping();
-      addMessage("Echo: " + text, "bot");
-    }, 1000);
+
+    fetch("/api/gemini", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: {
+          content: text,
+          conversation: conversationId,
+          owner: "User",
+        },
+      }),
+    })
+      .then((res) => res.text())
+      .then((data) => {
+        removeTyping();
+        addMessage(data || "No response", "bot", Date.now());
+      })
+      .catch((err) => {
+        removeTyping();
+        addMessage("Error: " + err.message, "bot", Date.now());
+      });
   }
 
   sendBtn.addEventListener("click", sendMessage);
@@ -135,9 +170,23 @@ export const chatboxSnippet = `(function () {
     if (e.key === "Enter") sendMessage();
   });
   closeBtn.addEventListener("click", () => (widget.style.transform = "scale(0)"));
+
   toggleBtn.addEventListener("click", () => {
-    widget.style.transform =
-      widget.style.transform === "scale(1)" ? "scale(0)" : "scale(1)";
+    const isOpen = widget.style.transform === "scale(1)";
+    widget.style.transform = isOpen ? "scale(0)" : "scale(1)";
+
+    if (!isOpen) {
+      // Fetch history when opening
+      fetch(\`/api/conversations/\${conversationId}/messages\`)
+        .then((res) => res.json())
+        .then((data) => {
+          messagesBox.innerHTML = "";
+          (data || []).forEach((msg) => {
+            const sender = msg.owner === "User" ? "user" : "bot";
+            addMessage(msg.content, sender, msg.createdAt);
+          });
+        });
+    }
   });
 
   const style = document.createElement("style");
