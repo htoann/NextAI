@@ -3,6 +3,9 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 
 export const QUEUE_NAME = 'booking_queue';
 
+export const CHATBOX_SNIPPET =
+  'https://cdn.jsdelivr.net/gh/htoann/NextAI@master/src/app/(main)/settings/chatbox-widget.js';
+
 export const generateChatName = () => `chat_${new Date().getTime()}`;
 
 export const getEmojiForExpression = (expression: string): string => {

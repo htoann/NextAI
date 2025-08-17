@@ -1,9 +1,9 @@
 'use client';
 
+import { CHATBOX_SNIPPET } from '@/lib/utils';
 import { CodeOutlined, MailOutlined } from '@ant-design/icons';
 import { Card, List, message, Space, Switch, Typography } from 'antd';
 import { useState } from 'react';
-import { chatboxSnippet } from './const';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -42,21 +42,18 @@ export default function SettingsPage() {
         <List
           itemLayout="horizontal"
           dataSource={settings}
-          renderItem={(item, idx) => (
-            <>
-              <List.Item actions={[<Switch key={item.key} checked={item.value} onChange={item.onChange} />]}>
-                <List.Item.Meta
-                  avatar={<div style={{ fontSize: 20 }}>{item.icon}</div>}
-                  title={<Text>{item.label}</Text>}
-                  description={item.description}
-                />
-              </List.Item>
-            </>
+          renderItem={(item) => (
+            <List.Item actions={[<Switch key={item.key} checked={item.value} onChange={item.onChange} />]}>
+              <List.Item.Meta
+                avatar={<div style={{ fontSize: 20 }}>{item.icon}</div>}
+                title={<Text>{item.label}</Text>}
+                description={item.description}
+              />
+            </List.Item>
           )}
         />
       </Card>
 
-      {/* Code snippet section */}
       <Card
         title={
           <Space>
@@ -69,9 +66,19 @@ export default function SettingsPage() {
           boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
         }}
       >
-        <Paragraph copyable={{ text: chatboxSnippet }}>
-          <Text type="secondary">Click the copy icon to copy snippet</Text>
+        <Paragraph>
+          You can add the <Text code>chatbox-widget</Text> to your React/Next.js project using the following steps:
         </Paragraph>
+
+        <Paragraph>
+          <Text strong>Step 1:</Text> Add this code to your <Text code>RootLayout</Text> (or main layout) to load the
+          widget:
+        </Paragraph>
+
+        <Paragraph copyable={{ text: CHATBOX_SNIPPET }}>
+          <Text type="secondary">Copy CDN URL</Text>
+        </Paragraph>
+
         <div
           style={{
             background: '#f5f5f5',
@@ -81,10 +88,22 @@ export default function SettingsPage() {
             whiteSpace: 'pre',
             overflowX: 'auto',
             fontSize: 13,
+            marginBottom: 16,
           }}
         >
-          {chatboxSnippet}
+          {`<Script src="${CHATBOX_SNIPPET}" strategy="afterInteractive" />`}
         </div>
+
+        <Paragraph>
+          <Text strong>Step 2:</Text> Make sure to import <Text code>Script</Text> from <Text code>next/script</Text>:
+        </Paragraph>
+        <Paragraph>
+          <Text code>import Script from 'next/script';</Text>
+        </Paragraph>
+
+        <Paragraph>
+          <Text strong>Step 3:</Text> The chatbox will automatically appear as a floating widget after your page loads.
+        </Paragraph>
       </Card>
     </div>
   );

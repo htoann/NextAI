@@ -1,13 +1,12 @@
 'use client';
 
 import { AppProvider } from '@/context/AppContext';
-import { metadata, theme } from '@/lib/utils';
+import { CHATBOX_SNIPPET, metadata, theme } from '@/lib/utils';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import '@ant-design/v5-patch-for-react-19';
 import { ConfigProvider } from 'antd';
 import { SessionProvider } from 'next-auth/react';
 import Script from 'next/script';
-import { chatboxSnippet } from './(main)/settings/const';
 import './globals.scss';
 
 export default function ClientRootLayout({ children }: { children: React.ReactNode }) {
@@ -26,9 +25,7 @@ export default function ClientRootLayout({ children }: { children: React.ReactNo
           </SessionProvider>
         </AntdRegistry>
 
-        <Script id="chatbox-widget" strategy="afterInteractive">
-          {chatboxSnippet}
-        </Script>
+        <Script src={CHATBOX_SNIPPET} strategy="afterInteractive" />
       </body>
     </html>
   );
