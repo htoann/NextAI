@@ -1,6 +1,6 @@
 'use client';
 
-import { BulbOutlined, CodeOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { CodeOutlined, MailOutlined } from '@ant-design/icons';
 import { Card, Divider, List, Switch, Typography, message } from 'antd';
 import { useState } from 'react';
 import { chatboxSnippet } from './const';
@@ -8,22 +8,9 @@ import { chatboxSnippet } from './const';
 const { Title, Paragraph } = Typography;
 
 export default function SettingsPage() {
-  const [darkMode, setDarkMode] = useState(false);
   const [emailNotif, setEmailNotif] = useState(true);
-  const [privacyMode, setPrivacyMode] = useState(false);
 
   const settings = [
-    {
-      key: 'darkMode',
-      label: 'Dark Mode',
-      description: 'Enable dark theme for the application',
-      icon: <BulbOutlined style={{ color: '#faad14' }} />,
-      value: darkMode,
-      onChange: (checked: boolean) => {
-        setDarkMode(checked);
-        message.success(`Dark mode ${checked ? 'enabled' : 'disabled'}`);
-      },
-    },
     {
       key: 'emailNotif',
       label: 'Email Notifications',
@@ -33,17 +20,6 @@ export default function SettingsPage() {
       onChange: (checked: boolean) => {
         setEmailNotif(checked);
         message.success(`Email notifications ${checked ? 'enabled' : 'disabled'}`);
-      },
-    },
-    {
-      key: 'privacyMode',
-      label: 'Privacy Mode',
-      description: 'Hide profile details from other users',
-      icon: <LockOutlined style={{ color: '#722ed1' }} />,
-      value: privacyMode,
-      onChange: (checked: boolean) => {
-        setPrivacyMode(checked);
-        message.success(`Privacy mode ${checked ? 'enabled' : 'disabled'}`);
       },
     },
   ];
