@@ -5,7 +5,16 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const GEMINI_MODEL = 'gemini-2.5-flash-lite';
 const DATETIME_FORMAT = 'HH:mm | dd/MM/yyyy';
 
-export const SYSTEM_PROMPT = (conversationHistory: string, newUserMessage: string, availableSeats?: string) => `
+export const SYSTEM_PROMPT = (
+  conversationHistory: string,
+  newUserMessage: string,
+  optionalContext: { [key: string]: any } = {},
+) => {
+  const contextLines = Object.entries(optionalContext)
+    .map(([key, value]) => `${key}: ${typeof value === 'object' ? JSON.stringify(value) : value}`)
+    .join('\n');
+
+  return `
 You are a professional AI assistant for booking and conversation. Follow these instructions:
 
 ---
@@ -50,16 +59,17 @@ You are a professional AI assistant for booking and conversation. Follow these i
 - Use context from previous turns in the same conversation.
 - Be concise, friendly, and professional.
 
-${availableSeats ? `\nAvailable seats:\n${availableSeats}\n` : ''}
+${contextLines ? `\n---\n${contextLines}\n` : ''}
 
 ---
-
 Conversation history:
 ${conversationHistory}
 
+New message from user:
 User: ${newUserMessage}
 AI:
 `;
+};
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
@@ -67,17 +77,21 @@ const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
 export const buildPromptWithContext = async (
   conversationId: string,
   newUserMessage: string,
-  availableSeats?: string,
+  optionalContext?: { [key: string]: any },
 ) => {
   const history = await Message.find({ conversation: conversationId }).sort({ createdAt: 1 }).lean();
+  const conversationHistory = history.map((msg) => `${msg.owner === 'AI' ? 'AI' : 'User'}: ${msg.content}`).join('\n');
 
-  const conversationHistory = history.map((msg) => `${msg.owner}: ${msg.content}`).join('\n');
-
-  return SYSTEM_PROMPT(conversationHistory, newUserMessage, availableSeats);
+  console.log(SYSTEM_PROMPT(conversationHistory, newUserMessage, optionalContext));
+  return SYSTEM_PROMPT(conversationHistory, newUserMessage, optionalContext);
 };
 
-export const generateAIAnswer = async (conversationId: string, newUserMessage: string, availableSeats?: string) => {
-  const fullPrompt = await buildPromptWithContext(conversationId, newUserMessage, availableSeats);
+export const generateAIAnswer = async (
+  conversationId: string,
+  newUserMessage: string,
+  optionalContext?: { [key: string]: any },
+) => {
+  const fullPrompt = await buildPromptWithContext(conversationId, newUserMessage, optionalContext);
   const result = await model.generateContent(fullPrompt);
   return result.response.text().trim();
 };

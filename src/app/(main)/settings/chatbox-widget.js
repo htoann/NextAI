@@ -91,7 +91,7 @@
     const timeString = new Date(createdAt || Date.now()).toLocaleString();
     wrapper.title = timeString;
 
-    if (sender === 'user') {
+    if (sender === 'User') {
       wrapper.style.justifyContent = 'flex-end';
       div.style.background = 'linear-gradient(135deg,#8231D3,#5b1b97)';
       div.style.color = 'white';
@@ -132,7 +132,7 @@
   const sendMessage = () => {
     const text = input.value.trim();
     if (!text) return;
-    addMessage(text, 'user', Date.now());
+    addMessage(text, 'User', Date.now());
     input.value = '';
     showTyping();
 
@@ -146,11 +146,11 @@
       .then((res) => res.text())
       .then((data) => {
         removeTyping();
-        addMessage(data || 'No response', 'bot', Date.now());
+        addMessage(data || 'No response', 'AI', Date.now());
       })
       .catch((err) => {
         removeTyping();
-        addMessage('Error: ' + err.message, 'bot', Date.now());
+        addMessage('Error: ' + err.message, 'AI', Date.now());
       });
   };
 
@@ -183,7 +183,7 @@
         .then((data) => {
           messagesBox.innerHTML = '';
           (data || []).forEach((msg) => {
-            const sender = msg.owner === 'User' ? 'user' : 'bot';
+            const sender = msg.owner === 'AI' ? 'AI' : 'User';
             addMessage(msg.content, sender, msg.createdAt);
           });
         })

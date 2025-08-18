@@ -11,7 +11,7 @@ export const POST = async (req: NextRequest) => {
 
     await saveMessage('User', content, conversationId);
 
-    let finalAnswer = await generateAIAnswer(conversationId, content, availableSeats);
+    let finalAnswer = await generateAIAnswer(conversationId, content, { 'Available seats': availableSeats });
     if (finalAnswer.startsWith('#BOOKING:'))
       finalAnswer = (await processBookingApi(finalAnswer, conversationId)) || finalAnswer;
 
