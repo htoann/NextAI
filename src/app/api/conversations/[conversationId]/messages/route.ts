@@ -1,11 +1,14 @@
 import Conversation from '@/lib/api-models/Conversation';
 import Message from '@/lib/api-models/Message';
+import { dbConnect } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (
   req: NextRequest,
   { params }: { params: Promise<{ conversationId: string }> },
 ): Promise<NextResponse> => {
+  await dbConnect();
+
   const { conversationId } = await params;
 
   if (!conversationId) {

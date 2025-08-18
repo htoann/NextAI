@@ -1,8 +1,11 @@
+import { dbConnect } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { availableSeats, generateAIAnswer, processBookingApi, saveMessage } from './utils';
 
 export const POST = async (req: NextRequest) => {
   try {
+    await dbConnect();
+
     const { message } = await req.json();
     const { conversation: conversationId, content } = message;
 
