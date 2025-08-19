@@ -1,6 +1,6 @@
 class NextAIWidget {
   constructor() {
-    this.conversationId = "689a07798dc0b128b02b452f";
+    this.conversationId = "689a07798dc0b128b02b452f"; // Fake for now
     this.messagesBox = null;
     this.input = null;
     this.sendBtn = null;
