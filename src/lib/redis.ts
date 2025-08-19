@@ -1,6 +1,6 @@
 import { Redis } from '@upstash/redis';
 
-const TIME_TO_LIVE = 60 * 5; // 5 minutes
+const TIME_TO_LIVE = 60 * 1; // 1 minutes
 
 const client = Redis.fromEnv();
 
