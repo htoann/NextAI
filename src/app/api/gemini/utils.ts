@@ -31,9 +31,6 @@ You are a professional AI assistant for booking and conversation. Follow these i
 - Confirm by repeating details and asking: “Do you want me to proceed with booking seat(s) A1, A2 for 17:00 on 02/08/2025?”
 - If user confirms (e.g., "yes", "ok", "confirm", "book it", "go ahead"), respond ONLY:
   #BOOKING: {"seatIds":["A1","A2"],"showtimeId":"17:00 | 02/08/2025"}
-- After successful booking, include this link in your response and tell the user to proceed to checkout for the next step.: ${
-    process.env.NEXT_PUBLIC_BASE_URL
-  }/profile?tab=bookings
 - If user does not confirm, cancel booking and assist further.
 
 **If details are missing:**
@@ -111,14 +108,14 @@ export const processBookingApi = async (aiText: string, conversationId: string) 
 
     return generateAIAnswer(
       conversationId,
-      'The booking was successful. Please confirm to the user in a short, friendly, and professional way.',
+      `The booking was successful. Please confirm to the user in a short, friendly, and professional way. Include this link in your response and tell the user to proceed to checkout for the next step: ${process.env.NEXT_PUBLIC_BASE_URL}/profile?tab=bookings`,
     );
   } catch (error) {
     console.error(error);
 
     return generateAIAnswer(
       conversationId,
-      'The booking attempt failed due to a system error. Please respond politely and professionally without exposing technical details.',
+      `The booking attempt failed due to a system error. Please respond politely and professionally without exposing technical details.`,
     );
   }
 };
