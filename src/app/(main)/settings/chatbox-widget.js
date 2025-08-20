@@ -1,6 +1,9 @@
 class NextAIWidget {
   constructor() {
-    this.conversationId = "689a07798dc0b128b02b452f"; // Fake for now
+    const user = localStorage.getItem("NextAI_user");
+    if (!user?.id) return;
+
+    this.conversationId = user.id;
     this.messagesBox = null;
     this.input = null;
     this.sendBtn = null;
@@ -250,16 +253,30 @@ class NextAIWidget {
   loadMessages() {
     this.showLoading();
     fetch(`/api/conversations/${this.conversationId}/messages`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Conversation not found");
+        return res.json();
+      })
       .then((data) => {
         this.messagesBox.innerHTML = "";
-        (data || []).forEach((msg) => {
-          const sender = msg.owner === "AI" ? "AI" : "User";
-          this.addMessage(msg.content, sender, msg.createdAt);
-        });
+        if (!data || !data.length) {
+          this.addMessage("Hello! How can I help you today?", "AI", Date.now());
+        } else {
+          data.forEach((msg) => {
+            const sender = msg.owner === "AI" ? "AI" : "User";
+            this.addMessage(msg.content, sender, msg.createdAt);
+          });
+        }
       })
       .catch(() => {
-        this.messagesBox.innerHTML = `<div class="nextai-error">Failed to load messages.</div>`;
+        this.messagesBox.innerHTML = "";
+        this.addMessage("Hello! How can I help you today?", "AI", Date.now());
+
+        fetch(`/api/conversations`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: user.id, title: "Chatbox Widget" }),
+        }).catch((err) => console.error("Failed to create conversation:", err));
       });
   }
 }

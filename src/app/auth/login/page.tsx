@@ -1,8 +1,9 @@
 'use client';
 
 import Loading from '@/app/loading';
+import { setField } from '@/lib/localStorage';
 import { Button, Card, Col, Form, Input, notification, Row, Typography } from 'antd';
-import { signIn, useSession } from 'next-auth/react';
+import { getSession, signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -35,6 +36,12 @@ export default function Login() {
     });
 
     setLoading(false);
+
+    const session = await getSession();
+    if (session?.user) {
+      setField('user', JSON.stringify(session.user));
+    }
+
     if (res?.error) {
       notification.error({
         message: 'Login',

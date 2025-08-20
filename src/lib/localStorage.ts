@@ -1,4 +1,4 @@
-type AppFields = 'access-token';
+type AppFields = 'user';
 
 const getAppKey = (key: AppFields) => `NextAI_${key}`;
 
