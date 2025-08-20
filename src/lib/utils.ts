@@ -3,8 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 
 export const QUEUE_NAME = 'booking_queue';
 
-export const CHATBOX_SNIPPET =
-  'https://cdn.jsdelivr.net/gh/htoann/NextAI@master/src/app/(main)/settings/chatbox-widget.js';
+export const CHATBOX_SNIPPET = 'https://cdn.jsdelivr.net/gh/htoann/NextAI@master/public/chatbox-widget.js';
 
 export const generateChatName = () => `chat_${new Date().getTime()}`;
 
@@ -36,6 +35,12 @@ export const metadata = {
 
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
+export const generateObjectId = (): string => {
+  const timestamp = Math.floor(new Date().getTime() / 1000).toString(16);
+  const random = 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, () => Math.floor(Math.random() * 16).toString(16));
+  return timestamp + random;
+};
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -45,7 +50,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize() {
-        return { id: '1', name: 'Admin', email: 'admin@admin.com' };
+        return { id: generateObjectId(), name: 'Admin', email: 'admin@admin.com' };
       },
     }),
   ],
@@ -68,4 +73,8 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+};
+
+export const sanitizeMessage = (content: string) => {
+  return content.replace(/<a\s+href="([^"]+)"[^>]*>(.*?)<\/a>/gi, (_match, href, text) => `[${text}](${href})`);
 };

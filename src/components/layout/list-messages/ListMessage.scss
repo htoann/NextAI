@@ -14,4 +14,14 @@
       margin-right: 1rem;
     }
   }
+
+  a {
+    color: #722ed1;
+    font-weight: 600;
+    text-decoration: underline;
+
+    &:hover {
+      color: #531dab;
+    }
+  }
 }

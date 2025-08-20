@@ -1,6 +1,7 @@
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
+import { sanitizeMessage } from '@/lib/utils';
 import { TMessage } from '@/types';
 import { List } from 'antd';
 import { useEffect, useRef } from 'react';
@@ -9,7 +10,6 @@ import './ListMessage.scss';
 
 export const ListMessages = () => {
   const { messages } = useAppContext();
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,14 +37,35 @@ export const ListMessages = () => {
                 style={{
                   display: 'inline-block',
                   backgroundColor: message.owner === 'AI' ? '#f0f0f0' : '#1890ff',
-                  color: message.owner === 'AI' ? '#000' : '#fff',
+                  color: message.owner === 'AI' ? '#272626ff' : '#fff',
                   padding: '5px 15px',
                   borderRadius: '10px',
                   maxWidth: '70%',
                   fontSize: '16px',
                 }}
               >
-                <Markdown>{message.content}</Markdown>
+                <Markdown
+                  components={{
+                    a: ({ node, ...props }) => (
+                      <a
+                        {...props}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: '#1677ff', textDecoration: 'underline' }}
+                      />
+                    ),
+                    p: ({ node, ...props }) => (
+                      <p
+                        {...props}
+                        style={{
+                          textAlign: 'left',
+                        }}
+                      />
+                    ),
+                  }}
+                >
+                  {sanitizeMessage(message.content)}
+                </Markdown>
               </div>
             </List.Item>
           )}

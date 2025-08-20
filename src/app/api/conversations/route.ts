@@ -14,8 +14,9 @@ const handler = async (req: NextRequest) => {
 
     case 'POST':
       try {
-        const { user, title } = await req.json();
+        const { user, title, _id } = await req.json();
         const newConversation = new Conversation({
+          ...(_id ? { _id } : {}),
           user,
           title,
         });

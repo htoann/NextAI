@@ -109,8 +109,8 @@ export const processBookingApi = async (aiText: string, conversationId: string) 
     return generateAIAnswer(
       conversationId,
       `The booking was successful. Please confirm to the user in a short, friendly, and professional way. 
-  Must include this clickable link in your response and tell the user to proceed to checkout for the next step: 
-  <a href="${process.env.NEXT_PUBLIC_BASE_URL}/profile?tab=bookings" target="_blank" rel="noopener noreferrer">Go to Checkout</a>`,
+      Must include this clickable link in your response and tell the user to proceed to checkout for the next step: 
+      <a href="${process.env.NEXT_PUBLIC_BASE_URL}/profile?tab=bookings" target="_blank" rel="noopener noreferrer">Go to Checkout</a>`,
     );
   } catch (error) {
     console.error(error);

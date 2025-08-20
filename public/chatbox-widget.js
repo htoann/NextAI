@@ -1,8 +1,12 @@
 class NextAIWidget {
   constructor() {
-    const user = localStorage.getItem("NextAI_user");
-    if (!user?.id) return;
+    console.log('Initializing NextAI Widget...');
 
+    const user = JSON.parse(localStorage.getItem("NextAI_user") || "{}");
+    console.log("User " + JSON.stringify(user));
+    if (!user.id) return;
+
+    this.user = user;
     this.conversationId = user.id;
     this.messagesBox = null;
     this.input = null;
@@ -79,6 +83,16 @@ class NextAIWidget {
         margin-right:auto; background:#e5e7eb; color:#111827;
         border-bottom-left-radius:6px;
       }
+      .nextai-msg a {
+        color: #8231D3;
+        font-weight: 500;
+        text-decoration: underline;
+        word-break: break-word;
+        transition: color 0.2s;
+      }
+      .nextai-msg a:hover {
+        color: #5b1b97;
+      }
   
       /* typing */
       .nextai-typing { margin:8px 0; }
@@ -146,10 +160,10 @@ class NextAIWidget {
     this.widget.innerHTML = this.createHTML(`
       <div class="nextai-header">
         <span style="display:flex;align-items:center;gap:6px">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="20" height="20">
-            <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="28" height="28">
+            <path d="M12 2c-1.1 0-2 .9-2 2v1.09c-4.39.49-7.85 4.2-7.99 8.63-.02.48.33.9.81.9h18.36c.48 0 .83-.42.81-.9-.14-4.43-3.6-8.14-7.99-8.63V4c0-1.1-.9-2-2-2zm-6 12c-.83 0-1.5.67-1.5 1.5S5.17 17 6 17s1.5-.67 1.5-1.5S6.83 14 6 14zm12 0c-.83 0-1.5.67-1.5 1.5S17.17 17 18 17s1.5-.67 1.5-1.5S18.83 14 18 14zM8 19h8c0 1.66-2.69 3-4 3s-4-1.34-4-3z"/>
           </svg>
-          Chat Assistant
+          AI Assistant
         </span>
         <span id="chat-close" style="cursor:pointer;display:flex;align-items:center;opacity:0.85;transition:opacity 0.2s">
           <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="24" height="24">
@@ -193,7 +207,8 @@ class NextAIWidget {
   addMessage(text, sender, createdAt) {
     const div = document.createElement("div");
     div.className = `nextai-msg ${sender === "User" ? "user" : "ai"}`;
-    div.textContent = text;
+
+    div.innerHTML = this.createHTML(text);
 
     const wrapper = document.createElement("div");
     wrapper.className = "nextai-msg-wrapper";
@@ -203,6 +218,7 @@ class NextAIWidget {
     this.messagesBox.appendChild(wrapper);
     this.messagesBox.scrollTop = this.messagesBox.scrollHeight;
   }
+
 
   showTyping() {
     const typingDiv = document.createElement("div");
@@ -253,8 +269,8 @@ class NextAIWidget {
   loadMessages() {
     this.showLoading();
     fetch(`/api/conversations/${this.conversationId}/messages`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Conversation not found");
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
       .then((data) => {
@@ -269,13 +285,14 @@ class NextAIWidget {
         }
       })
       .catch(() => {
+        console.log('Error loading messages, creating new conversation...');
         this.messagesBox.innerHTML = "";
         this.addMessage("Hello! How can I help you today?", "AI", Date.now());
 
         fetch(`/api/conversations`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: user.id, title: "Chatbox Widget" }),
+          body: JSON.stringify({ _id: this.conversationId, user: this.user.id, title: "Chatbox Widget" }),
         }).catch((err) => console.error("Failed to create conversation:", err));
       });
   }

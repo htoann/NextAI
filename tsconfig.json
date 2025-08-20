@@ -30,7 +30,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/types/next-auth.d.ts",
-    "src/app/(main)/settings/chatbox-widget.js"
+    "public/chatbox-widget.js"
   ],
   "exclude": ["node_modules"]
 }

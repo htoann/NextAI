@@ -1,4 +1,5 @@
 import Booking from '@/lib/api-models/Booking';
+import { getField } from '@/lib/localStorage';
 import { lockSeats, rollbackSeats } from '@/lib/redis';
 import { authOptions } from '@/lib/utils';
 import { getServerSession } from 'next-auth';
@@ -27,7 +28,7 @@ export const POST = async (req: NextRequest) => {
     const { seatIds, showtimeId } = await req.json();
 
     const session = await getServerSession(authOptions);
-    const userId = session?.user?.id || 'anonymous';
+    const userId = session?.user?.id || getField('user') || 'anonymous';
 
     const bookingId = `booking_${Date.now()}`;
     const messageId = new Date().toISOString();
