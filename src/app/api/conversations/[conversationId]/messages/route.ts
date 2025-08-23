@@ -1,6 +1,6 @@
 import Conversation from '@/lib/api-models/Conversation';
 import Message from '@/lib/api-models/Message';
-import { dbConnect } from '@/lib/db';
+import { dbConnect } from '@/lib/dbConnect';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (

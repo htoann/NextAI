@@ -1,12 +1,11 @@
 import Booking from '@/lib/api-models/Booking';
-import { authOptions } from '@/lib/utils';
+import { getServerSessionWithAuthOptions } from '@/lib/serverUtils';
 import mongoose from 'mongoose';
-import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSessionWithAuthOptions();
     const userId = session?.user?.id;
     const { id } = await params;
 

@@ -1,4 +1,4 @@
-import { dbConnect } from '@/lib/db';
+import { dbConnect } from '@/lib/dbConnect';
 import { NextRequest, NextResponse } from 'next/server';
 import { availableSeats, generateAIAnswer, processBookingApi, saveMessage } from './utils';
 

@@ -1,4 +1,4 @@
-import { dbConnect } from '@/lib/db';
+import { dbConnect } from '@/lib/dbConnect';
 import ClientRootLayout from './client-root-layout';
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

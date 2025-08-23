@@ -2,9 +2,9 @@ import { TBookingMessage } from '@/types';
 import amqp, { Channel, ConsumeMessage } from 'amqplib';
 import 'dotenv/config';
 import Booking from '../api-models/Booking';
-import { dbConnect } from '../db';
-import { sendBookingEmail } from '../emailService';
+import { dbConnect } from '../dbConnect';
 import { delay, QUEUE_NAME } from '../utils';
+import { sendBookingEmail } from './emailService';
 // import { redis } from '../redis';
 
 const DEAD_LOCK_QUEUE = 'booking_deadlockqueue';

@@ -1,14 +1,13 @@
 import Booking from '@/lib/api-models/Booking';
 import { getField } from '@/lib/localStorage';
 import { lockSeats, rollbackSeats } from '@/lib/redis';
-import { authOptions } from '@/lib/utils';
-import { getServerSession } from 'next-auth';
+import { getServerSessionWithAuthOptions } from '@/lib/serverUtils';
 import { NextRequest, NextResponse } from 'next/server';
 import { createAndQueueBookings } from './utils';
 
 export const GET = async () => {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSessionWithAuthOptions();
     const userId = session?.user?.id;
 
     const bookings = await Booking.find({ userId }).sort({ createdAt: -1 });
@@ -27,7 +26,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const { seatIds, showtimeId } = await req.json();
 
-    const session = await getServerSession(authOptions);
+    const session = await getServerSessionWithAuthOptions();
     const userId = session?.user?.id || getField('user') || 'anonymous';
 
     const bookingId = `booking_${Date.now()}`;
@@ -59,7 +58,7 @@ export const POST = async (req: NextRequest) => {
 
 export const DELETE = async (req: NextRequest) => {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSessionWithAuthOptions();
     const userId = session?.user?.id;
 
     const { bookingIds } = await req.json();
