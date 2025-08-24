@@ -9,14 +9,12 @@ import Markdown from 'react-markdown';
 import './ListMessage.scss';
 
 export const ListMessages = () => {
-  const { messages } = useAppContext();
+  const { messages, isAIResponding } = useAppContext();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!!messages?.length) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages]);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isAIResponding]);
 
   return (
     <div className="list-message">
@@ -33,20 +31,22 @@ export const ListMessages = () => {
                 border: 'none',
               }}
             >
-              <div
-                style={{
-                  display: 'inline-block',
-                  backgroundColor: message.owner === 'AI' ? '#f0f0f0' : '#1890ff',
-                  color: message.owner === 'AI' ? '#272626ff' : '#fff',
-                  padding: '5px 15px',
-                  borderRadius: '10px',
-                  maxWidth: '70%',
-                  fontSize: '16px',
-                }}
-              >
-                {message.metadata?.type === 'image' ? (
-                  <img src={message.content} alt="AI generated" style={{ maxWidth: '100%', borderRadius: '8px' }} />
-                ) : (
+              {message.metadata?.type === 'image' ? (
+                <div>
+                  <img src={message.content} alt="AI generated" style={{ maxWidth: '500px', borderRadius: 10 }} />
+                </div>
+              ) : (
+                <div
+                  style={{
+                    display: 'inline-block',
+                    backgroundColor: message.owner === 'AI' ? '#f0f0f0' : '#1890ff',
+                    color: message.owner === 'AI' ? '#272626ff' : '#fff',
+                    padding: '5px 15px',
+                    borderRadius: '10px',
+                    maxWidth: '70%',
+                    fontSize: '16px',
+                  }}
+                >
                   <Markdown
                     components={{
                       a: ({ node, ...props }) => (
@@ -57,23 +57,34 @@ export const ListMessages = () => {
                           style={{ color: '#1677ff', textDecoration: 'underline' }}
                         />
                       ),
-                      p: ({ node, ...props }) => (
-                        <p
-                          {...props}
-                          style={{
-                            textAlign: 'left',
-                          }}
-                        />
-                      ),
+                      p: ({ node, ...props }) => <p {...props} style={{ textAlign: 'left' }} />,
                     }}
                   >
                     {sanitizeMessage(message.content)}
                   </Markdown>
-                )}
-              </div>
+                </div>
+              )}
             </List.Item>
           )}
         />
+
+        {isAIResponding && (
+          <List.Item
+            style={{
+              textAlign: 'left',
+              display: 'flex',
+              justifyContent: 'flex-start',
+              padding: '5px 0',
+              border: 'none',
+            }}
+          >
+            <div className="ai-typing-bubble">
+              <span className="dot"></span>
+              <span className="dot"></span>
+              <span className="dot"></span>
+            </div>
+          </List.Item>
+        )}
 
         <div ref={messagesEndRef} />
       </div>

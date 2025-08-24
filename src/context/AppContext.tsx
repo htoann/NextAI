@@ -19,6 +19,8 @@ interface AppContextType {
   setCameraZoomed: Dispatch<SetStateAction<boolean>>;
   selectedChat: TConversation | undefined;
   setSelectedChat: Dispatch<React.SetStateAction<TConversation | undefined>>;
+  isAIResponding: boolean;
+  setIsAIResponding: Dispatch<SetStateAction<boolean>>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -32,6 +34,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [cameraZoomed, setCameraZoomed] = useState(true);
   const [sending, setSending] = useState(false);
   const [selectedChat, setSelectedChat] = useState<TConversation | undefined>();
+  const [isAIResponding, setIsAIResponding] = useState<boolean>(false);
 
   const toggleChatMode = (mode: EChatMode) => {
     setChatMode(chatMode === mode ? EChatMode.Normal : mode);
@@ -54,6 +57,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setLoading,
         selectedChat,
         setSelectedChat,
+        isAIResponding,
+        setIsAIResponding,
       }}
     >
       {children}

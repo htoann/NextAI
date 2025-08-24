@@ -12,7 +12,7 @@ import { useState } from 'react';
 
 export const ChatInput = () => {
   const { data: session } = useSession();
-  const { setMessages, setSending, selectedChat, setSelectedChat } = useAppContext();
+  const { setMessages, setSending, selectedChat, setSelectedChat, setIsAIResponding } = useAppContext();
   const [userMessage, setUserMessage] = useState('');
 
   const addMessage = (newMessage: TMessage) => {
@@ -30,6 +30,8 @@ export const ChatInput = () => {
   };
 
   const handleSend = async (conversation: string) => {
+    setIsAIResponding(true);
+
     const newMessage: TMessage = {
       owner: session?.user?.email || 'anonymous@gmail.com',
       content: userMessage,
@@ -44,6 +46,8 @@ export const ChatInput = () => {
       await handleAIResponse(userMessage, conversation);
     } catch (error) {
       console.error('Error during message handling:', error);
+    } finally {
+      setIsAIResponding(false);
     }
   };
 
