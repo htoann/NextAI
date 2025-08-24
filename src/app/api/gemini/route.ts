@@ -18,15 +18,15 @@ export const POST = async (req: NextRequest) => {
     let aiResponse = '';
 
     if (requestType.text === 'image') {
-      aiResponse = await generateAIImage(conversationId, buildRequestTypePrompt(content));
+      aiResponse = await generateAIImage(conversationId, content);
+      await saveMessage('AI', aiResponse, conversationId, { metadata: { type: 'image' } });
     } else {
       aiResponse = await generateAIAnswer(conversationId, content, { 'Available seats': availableSeats });
       if (aiResponse.startsWith('#BOOKING:')) {
         aiResponse = await processBookingApi(aiResponse, conversationId);
       }
+      await saveMessage('AI', aiResponse, conversationId);
     }
-
-    await saveMessage('AI', aiResponse, conversationId);
 
     return new NextResponse(aiResponse, {
       headers: { 'Content-Type': 'application/json' },

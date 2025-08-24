@@ -44,28 +44,32 @@ export const ListMessages = () => {
                   fontSize: '16px',
                 }}
               >
-                <Markdown
-                  components={{
-                    a: ({ node, ...props }) => (
-                      <a
-                        {...props}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: '#1677ff', textDecoration: 'underline' }}
-                      />
-                    ),
-                    p: ({ node, ...props }) => (
-                      <p
-                        {...props}
-                        style={{
-                          textAlign: 'left',
-                        }}
-                      />
-                    ),
-                  }}
-                >
-                  {sanitizeMessage(message.content)}
-                </Markdown>
+                {message.metadata?.type === 'image' ? (
+                  <img src={message.content} alt="AI generated" style={{ maxWidth: '100%', borderRadius: '8px' }} />
+                ) : (
+                  <Markdown
+                    components={{
+                      a: ({ node, ...props }) => (
+                        <a
+                          {...props}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: '#1677ff', textDecoration: 'underline' }}
+                        />
+                      ),
+                      p: ({ node, ...props }) => (
+                        <p
+                          {...props}
+                          style={{
+                            textAlign: 'left',
+                          }}
+                        />
+                      ),
+                    }}
+                  >
+                    {sanitizeMessage(message.content)}
+                  </Markdown>
+                )}
               </div>
             </List.Item>
           )}

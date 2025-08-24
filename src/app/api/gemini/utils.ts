@@ -1,3 +1,4 @@
+import cloudinary from '@/lib/cloudinary';
 import { booking } from '@/lib/services/booking';
 import { GoogleGenAI, Modality } from '@google/genai';
 import { getConversationHistory } from './conversation';
@@ -49,7 +50,6 @@ export const generateAIImage = async (
   optionalContext?: { [key: string]: any },
 ) => {
   const prompt = await buildPromptWithContext(conversationId, newUserMessage, optionalContext);
-
   const response = await generateAIContent({
     model: GEMINI_IMAGE_MODEL,
     prompt,
@@ -60,35 +60,15 @@ export const generateAIImage = async (
     },
   });
 
-  // for (const part of response.candidates[0].content.parts) {
-  //   // Based on the part type, either show the text or save the image
-  //   if (part.text) {
-  //     console.log(part.text);
-  //   } else if (part.inlineData) {
-  //     const imageData = part.inlineData.data;
-  //     const buffer = Buffer.from(imageData, 'base64');
-  //     fs.writeFileSync('gemini-native-image.png', buffer);
-  //     console.log('Image saved as gemini-native-image.png');
-  //   }
-  // }
+  const parts = response?.candidates?.[0]?.content?.parts ?? [];
+  const base64 = parts.find((p: any) => p?.inlineData?.data)?.inlineData?.data;
 
-  // const parts = result?.candidates?.[0]?.content?.parts ?? [];
-  // const base64 = parts.find((p: any) => p?.inlineData?.data)?.inlineData?.data;
+  if (!base64) {
+    return 'Image generation failed: no base64 data returned.';
+  }
 
-  // if (!base64) {
-  //   throw new Error('Image generation failed: no base64 data returned.');
-  // }
-
-  // const upload = await cloudinary.uploader.upload(`data:image/png;base64,${base64}`, { folder: 'gemini' });
-
-  // await dbConnect();
-  // await saveMessage('AI', upload.secure_url, conversationId, {
-  //   metadata: { type: 'image' },
-  // });
-
-  // return upload.secure_url;
-
-  return 'Test';
+  const upload = await cloudinary.uploader.upload(`data:image/png;base64,${base64}`, { folder: 'gemini' });
+  return upload.secure_url;
 };
 
 export const processBookingApi = async (aiText: string, conversationId: string) => {

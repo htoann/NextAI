@@ -19,7 +19,6 @@ interface AppContextType {
   setCameraZoomed: Dispatch<SetStateAction<boolean>>;
   selectedChat: TConversation | undefined;
   setSelectedChat: Dispatch<React.SetStateAction<TConversation | undefined>>;
-  chat: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -36,10 +35,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const toggleChatMode = (mode: EChatMode) => {
     setChatMode(chatMode === mode ? EChatMode.Normal : mode);
-  };
-
-  const chat = () => {
-    console.log('chat');
   };
 
   return (
@@ -59,7 +54,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setLoading,
         selectedChat,
         setSelectedChat,
-        chat,
       }}
     >
       {children}
