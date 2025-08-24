@@ -1,7 +1,7 @@
 import Message from '@/lib/api-models/Message';
 import { booking } from '@/lib/services/booking';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { buildBookingPrompt } from './prompts/bookingPrompt';
+import { buildBookingPrompt, failedBookingPrompt, successfulBookingPrompt } from './prompts/bookingPrompt';
 
 const GEMINI_MODEL = 'gemini-2.5-flash-lite';
 
@@ -37,23 +37,11 @@ export const saveMessage = async (owner: 'User' | 'AI', content: string, convers
 export const processBookingApi = async (aiText: string, conversationId: string) => {
   try {
     const bookingData = JSON.parse(aiText.replace('#BOOKING:', '').trim());
-    console.log('Start to booking', bookingData);
-
     await booking(bookingData);
-
-    return generateAIAnswer(
-      conversationId,
-      `The booking was successful. Please confirm to the user in a short, friendly, and professional way. 
-      Must include this clickable link in your response and tell the user to proceed to checkout for the next step: 
-      <a href="${process.env.NEXT_PUBLIC_BASE_URL}/profile?tab=bookings" target="_blank" rel="noopener noreferrer">Go to Checkout</a>`,
-    );
+    return generateAIAnswer(conversationId, successfulBookingPrompt);
   } catch (error) {
     console.error(error);
-
-    return generateAIAnswer(
-      conversationId,
-      `The booking attempt failed due to a system error. Please respond politely and professionally without exposing technical details.`,
-    );
+    return generateAIAnswer(conversationId, failedBookingPrompt);
   }
 };
 
