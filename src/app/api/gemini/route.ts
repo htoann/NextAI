@@ -1,6 +1,7 @@
 import { dbConnect } from '@/lib/dbConnect';
 import { NextRequest, NextResponse } from 'next/server';
-import { availableSeats, generateAIAnswer, processBookingApi, saveMessage } from './utils';
+import { saveMessage } from './conversation';
+import { availableSeats, generateAIAnswer, processBookingApi } from './utils';
 
 export const POST = async (req: NextRequest) => {
   try {

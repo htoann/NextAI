@@ -1,6 +1,6 @@
-import Message from '@/lib/api-models/Message';
 import { booking } from '@/lib/services/booking';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { getConversationHistory } from './conversation';
 import { buildBookingPrompt, failedBookingPrompt, successfulBookingPrompt } from './prompts/bookingPrompt';
 
 const GEMINI_MODEL = 'gemini-2.5-flash-lite';
@@ -13,8 +13,7 @@ export const buildPromptWithContext = async (
   newUserMessage: string,
   optionalContext?: { [key: string]: any },
 ) => {
-  const history = await Message.find({ conversation: conversationId }).sort({ createdAt: 1 }).lean();
-  const conversationHistory = history.map((msg) => `${msg.owner === 'AI' ? 'AI' : 'User'}: ${msg.content}`).join('\n');
+  const conversationHistory = await getConversationHistory(conversationId);
 
   return buildBookingPrompt(conversationHistory, newUserMessage, optionalContext);
 };
@@ -28,10 +27,6 @@ export const generateAIAnswer = async (
   const result = await model.generateContent(fullPrompt);
 
   return result.response.text().trim();
-};
-
-export const saveMessage = async (owner: 'User' | 'AI', content: string, conversation: string) => {
-  await new Message({ owner, content, conversation }).save();
 };
 
 export const processBookingApi = async (aiText: string, conversationId: string) => {
