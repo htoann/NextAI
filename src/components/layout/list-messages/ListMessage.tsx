@@ -33,7 +33,7 @@ export const ListMessages = () => {
             >
               {message.metadata?.type === 'image' ? (
                 <div>
-                  <img src={message.content} alt="AI generated" style={{ maxWidth: '500px', borderRadius: 10 }} />
+                  <img src={message.content} alt="AI generated" style={{ maxWidth: '400px', borderRadius: 10 }} />
                 </div>
               ) : (
                 <div
