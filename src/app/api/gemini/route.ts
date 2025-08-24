@@ -1,9 +1,10 @@
 import { dbConnect } from '@/lib/dbConnect';
 import { TMessage } from '@/types';
 import { NextRequest, NextResponse } from 'next/server';
-import { saveMessage } from './conversation';
+import { processBookingApi, saveMessage } from './conversation';
+import { generateAIContent, generateAIImage, generateAIText } from './generate';
 import { buildRequestTypePrompt } from './prompts/requestTypePrompt';
-import { availableSeats, generateAIAnswer, generateAIContent, generateAIImage, processBookingApi } from './utils';
+import { availableSeats } from './utils';
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -30,7 +31,7 @@ export const POST = async (req: NextRequest) => {
         break;
       }
       default: {
-        aiResponseContent = await generateAIAnswer(conversationId, content, {
+        aiResponseContent = await generateAIText(conversationId, content, {
           'Available seats': availableSeats,
         });
 
