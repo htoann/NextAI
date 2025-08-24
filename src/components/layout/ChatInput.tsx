@@ -20,12 +20,16 @@ export const ChatInput = () => {
   };
 
   const handleAIResponse = async (message: string, chatId: string) => {
-    try {
-      const response = await geminiChat(message, chatId);
-      const aiMessage = await response?.json();
+    const response = await geminiChat(message, chatId);
+    const aiMessage = await response?.json();
+    if (aiMessage?.content) {
       addMessage(aiMessage);
-    } catch (error) {
-      console.error('handleAIResponse error:', error);
+    } else {
+      addMessage({
+        owner: 'AI',
+        content: aiMessage?.error || 'Error: No response from AI',
+        conversation: chatId,
+      });
     }
   };
 

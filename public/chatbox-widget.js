@@ -236,7 +236,7 @@ class NextAIWidget {
     if (typingDiv) typingDiv.remove();
   }
 
-  sendMessage() {
+  async sendMessage() {
     const text = this.input.value.trim();
     if (!text) return;
 
@@ -244,22 +244,28 @@ class NextAIWidget {
     this.input.value = "";
     this.showTyping();
 
-    fetch("/api/gemini", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: { content: text, conversation: this.conversationId, owner: "User" },
-      }),
-    })
-      .then((res) => res.json())
-      .then((message) => {
-        this.removeTyping();
-        this.addMessage(message.content, "AI", message.createdAt);
-      })
-      .catch((err) => {
-        this.removeTyping();
-        this.addMessage("Error: " + err.message, "AI", Date.now());
+    try {
+      const res = await fetch("/api/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: { content: text, conversation: this.conversationId, owner: "User" },
+        }),
       });
+
+      if (!res.ok) {
+        const errorBody = await res.json().catch(() => ({}));
+        throw new Error(errorBody.error || `HTTP error ${res.status}`);
+      }
+
+      const message = await res.json();
+      this.removeTyping();
+      this.addMessage(message.content, "AI", message.createdAt);
+    } catch (err) {
+      console.error(err);
+      this.removeTyping();
+      this.addMessage(err.message, "AI", Date.now());
+    }
   }
 
   showLoading() {
