@@ -1,12 +1,11 @@
 import { booking } from '@/lib/services/booking';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI, Modality } from '@google/genai';
 import { getConversationHistory } from './conversation';
 import { buildBookingPrompt, failedBookingPrompt, successfulBookingPrompt } from './prompts/bookingPrompt';
 
 const GEMINI_MODEL = 'gemini-2.5-flash-lite';
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+const GEMINI_IMAGE_MODEL = 'gemini-2.0-flash-preview-image-generation';
+const genAI = new GoogleGenAI({});
 
 export const buildPromptWithContext = async (
   conversationId: string,
@@ -14,8 +13,24 @@ export const buildPromptWithContext = async (
   optionalContext?: { [key: string]: any },
 ) => {
   const conversationHistory = await getConversationHistory(conversationId);
-
   return buildBookingPrompt(conversationHistory, newUserMessage, optionalContext);
+};
+
+export const generateAIContent = async ({
+  prompt,
+  requestOptions = {},
+  model = GEMINI_MODEL,
+}: {
+  prompt: string;
+  requestOptions?: { [key: string]: any };
+  model?: string;
+}) => {
+  const response = await genAI.models.generateContent({
+    model,
+    contents: prompt,
+    ...requestOptions,
+  });
+  return response;
 };
 
 export const generateAIAnswer = async (
@@ -23,10 +38,57 @@ export const generateAIAnswer = async (
   newUserMessage: string,
   optionalContext?: { [key: string]: any },
 ) => {
-  const fullPrompt = await buildPromptWithContext(conversationId, newUserMessage, optionalContext);
-  const result = await model.generateContent(fullPrompt);
+  const prompt = await buildPromptWithContext(conversationId, newUserMessage, optionalContext);
+  const response = await generateAIContent({ prompt });
+  return response.text?.trim() || '';
+};
 
-  return result.response.text().trim();
+export const generateAIImage = async (
+  conversationId: string,
+  newUserMessage: string,
+  optionalContext?: { [key: string]: any },
+) => {
+  const prompt = await buildPromptWithContext(conversationId, newUserMessage, optionalContext);
+
+  const response = await generateAIContent({
+    model: GEMINI_IMAGE_MODEL,
+    prompt,
+    requestOptions: {
+      config: {
+        responseModalities: [Modality.TEXT, Modality.IMAGE],
+      },
+    },
+  });
+
+  // for (const part of response.candidates[0].content.parts) {
+  //   // Based on the part type, either show the text or save the image
+  //   if (part.text) {
+  //     console.log(part.text);
+  //   } else if (part.inlineData) {
+  //     const imageData = part.inlineData.data;
+  //     const buffer = Buffer.from(imageData, 'base64');
+  //     fs.writeFileSync('gemini-native-image.png', buffer);
+  //     console.log('Image saved as gemini-native-image.png');
+  //   }
+  // }
+
+  // const parts = result?.candidates?.[0]?.content?.parts ?? [];
+  // const base64 = parts.find((p: any) => p?.inlineData?.data)?.inlineData?.data;
+
+  // if (!base64) {
+  //   throw new Error('Image generation failed: no base64 data returned.');
+  // }
+
+  // const upload = await cloudinary.uploader.upload(`data:image/png;base64,${base64}`, { folder: 'gemini' });
+
+  // await dbConnect();
+  // await saveMessage('AI', upload.secure_url, conversationId, {
+  //   metadata: { type: 'image' },
+  // });
+
+  // return upload.secure_url;
+
+  return 'Test';
 };
 
 export const processBookingApi = async (aiText: string, conversationId: string) => {

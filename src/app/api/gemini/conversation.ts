@@ -5,6 +5,6 @@ export const getConversationHistory = async (conversationId: string) => {
   return history.map((msg) => `${msg.owner === 'AI' ? 'AI' : 'User'}: ${msg.content}`).join('\n');
 };
 
-export const saveMessage = async (owner: 'User' | 'AI', content: string, conversation: string) => {
-  await new Message({ owner, content, conversation }).save();
+export const saveMessage = async (owner: 'User' | 'AI', content: string, conversation: string, optional?: any) => {
+  await new Message({ owner, content, conversation, ...optional }).save();
 };

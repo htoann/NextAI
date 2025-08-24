@@ -1,7 +1,8 @@
 import { dbConnect } from '@/lib/dbConnect';
 import { NextRequest, NextResponse } from 'next/server';
 import { saveMessage } from './conversation';
-import { availableSeats, generateAIAnswer, processBookingApi } from './utils';
+import { buildRequestTypePrompt } from './prompts/requestTypePrompt';
+import { availableSeats, generateAIAnswer, generateAIContent, generateAIImage, processBookingApi } from './utils';
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -12,13 +13,22 @@ export const POST = async (req: NextRequest) => {
 
     await saveMessage('User', content, conversationId);
 
-    let finalAnswer = await generateAIAnswer(conversationId, content, { 'Available seats': availableSeats });
-    if (finalAnswer.startsWith('#BOOKING:'))
-      finalAnswer = (await processBookingApi(finalAnswer, conversationId)) || finalAnswer;
+    const requestType = await generateAIContent({ prompt: buildRequestTypePrompt(content) });
 
-    await saveMessage('AI', finalAnswer, conversationId);
+    let aiResponse = '';
 
-    return new NextResponse(finalAnswer, {
+    if (requestType.text === 'image') {
+      aiResponse = await generateAIImage(conversationId, buildRequestTypePrompt(content));
+    } else {
+      aiResponse = await generateAIAnswer(conversationId, content, { 'Available seats': availableSeats });
+      if (aiResponse.startsWith('#BOOKING:')) {
+        aiResponse = await processBookingApi(aiResponse, conversationId);
+      }
+    }
+
+    await saveMessage('AI', aiResponse, conversationId);
+
+    return new NextResponse(aiResponse, {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (err) {
