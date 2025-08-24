@@ -14,6 +14,7 @@ class NextAIWidget {
     this.closeBtn = null;
     this.widget = null;
     this.toggleBtn = null;
+    this.isLoadingMessages = false;
 
     this.init();
   }
@@ -58,13 +59,24 @@ class NextAIWidget {
         flex:1;border:1px solid #d1d5db;border-radius:20px;padding:10px 14px;outline:none;font-size:14px;
         transition:border 0.2s, box-shadow 0.2s;
       }
+      .nextai-input input:disabled {
+        background-color: #f3f4f6;
+        color: #9ca3af;
+        cursor: not-allowed;
+      }
       .nextai-input input:focus { border-color:#8231D3; box-shadow:0 0 0 2px rgba(130,49,211,0.2); }
       .nextai-input button {
         border:none;background:linear-gradient(135deg,#8231D3,#5b1b97);color:white;
         padding:0 14px;cursor:pointer;border-radius:20px;box-shadow:0 3px 8px rgba(0,0,0,0.15);
         display:flex;align-items:center;justify-content:center;transition:transform 0.2s ease
       }
-      .nextai-input button:hover { transform: scale(1.1); }
+      .nextai-input button:hover:not(:disabled) { transform: scale(1.1); }
+      .nextai-input button:disabled {
+        background: #d1d5db;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
       #chat-close:hover { opacity:1; }
   
       /* message bubbles */
@@ -238,7 +250,7 @@ class NextAIWidget {
 
   async sendMessage() {
     const text = this.input.value.trim();
-    if (!text) return;
+    if (!text || this.isLoadingMessages) return;
 
     this.addMessage(text, "User", Date.now());
     this.input.value = "";
@@ -268,7 +280,14 @@ class NextAIWidget {
     }
   }
 
+  setInputState(disabled) {
+    this.input.disabled = disabled;
+    this.sendBtn.disabled = disabled;
+  }
+
   showLoading() {
+    this.isLoadingMessages = true;
+    this.setInputState(true);
     this.messagesBox.innerHTML = `<div class="nextai-loading">Loading messages...</div>`;
   }
 
@@ -300,6 +319,10 @@ class NextAIWidget {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ _id: this.conversationId, user: this.user.id, title: "Chatbox Widget" }),
         }).catch((err) => console.error("Failed to create conversation:", err));
+      })
+      .finally(() => {
+        this.isLoadingMessages = false;
+        this.setInputState(false);
       });
   }
 }
