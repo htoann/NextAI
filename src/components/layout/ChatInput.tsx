@@ -19,54 +19,21 @@ export const ChatInput = () => {
     setMessages((prev) => [...prev, newMessage]);
   };
 
-  const updateLastMessage = (updatedMessage: TMessage) => {
-    setMessages((prev) => {
-      if (prev.length > 0) {
-        const updatedMessages = [...prev];
-        updatedMessages[prev.length - 1] = {
-          ...updatedMessages[prev.length - 1],
-          ...updatedMessage,
-        };
-        return updatedMessages;
-      }
-      return prev;
-    });
-  };
-
   const handleAIResponse = async (message: string, chatId: string) => {
     try {
       const response = await geminiChat(message, chatId);
-      if (!response.body) return;
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let done = false;
-      let content = '';
-
-      const aiMessage: TMessage = {
-        owner: 'AI',
-        content: '',
-        conversation: chatId,
-      };
-
+      const aiMessage = await response?.json();
       addMessage(aiMessage);
-
-      while (!done) {
-        const { done: isDone, value } = await reader.read();
-        done = isDone;
-        content += decoder.decode(value, { stream: true });
-        updateLastMessage({ ...aiMessage, content });
-      }
     } catch (error) {
-      console.error(error);
+      console.error('handleAIResponse error:', error);
     }
   };
 
-  const handleSend = async (conversationId: string) => {
+  const handleSend = async (conversation: string) => {
     const newMessage: TMessage = {
       owner: session?.user?.email || 'anonymous@gmail.com',
       content: userMessage,
-      conversation: conversationId,
+      conversation,
     };
 
     addMessage(newMessage);
@@ -74,15 +41,13 @@ export const ChatInput = () => {
 
     try {
       await chat(newMessage);
-      await handleAIResponse(userMessage, conversationId);
+      await handleAIResponse(userMessage, conversation);
     } catch (error) {
       console.error('Error during message handling:', error);
     }
   };
 
   const sendMessage = async () => {
-    if (!userMessage.trim()) return;
-
     setSending(true);
     try {
       const isNonSelectedChat = !selectedChat && session?.user?.email;

@@ -251,10 +251,10 @@ class NextAIWidget {
         message: { content: text, conversation: this.conversationId, owner: "User" },
       }),
     })
-      .then((res) => res.text())
-      .then((data) => {
+      .then((res) => res.json())
+      .then((message) => {
         this.removeTyping();
-        this.addMessage(data || "No response", "AI", Date.now());
+        this.addMessage(message.content, "AI", message.createdAt);
       })
       .catch((err) => {
         this.removeTyping();

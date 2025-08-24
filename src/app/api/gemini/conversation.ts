@@ -6,5 +6,5 @@ export const getConversationHistory = async (conversationId: string) => {
 };
 
 export const saveMessage = async (owner: 'User' | 'AI', content: string, conversation: string, optional?: any) => {
-  await new Message({ owner, content, conversation, ...optional }).save();
+  return await new Message({ owner, content, conversation, ...optional }).save();
 };

@@ -1,4 +1,5 @@
 import { dbConnect } from '@/lib/dbConnect';
+import { TMessage } from '@/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { saveMessage } from './conversation';
 import { buildRequestTypePrompt } from './prompts/requestTypePrompt';
@@ -13,29 +14,38 @@ export const POST = async (req: NextRequest) => {
 
     await saveMessage('User', content, conversationId);
 
-    const requestType = await generateAIContent({ prompt: buildRequestTypePrompt(content) });
+    const { text: requestType } = await generateAIContent({
+      prompt: buildRequestTypePrompt(content),
+    });
 
-    let aiResponse = '';
+    let aiResponseContent: string;
+    let aiResponseMessage: Partial<TMessage>;
 
-    if (requestType.text === 'image') {
-      aiResponse = await generateAIImage(conversationId, content);
-      await saveMessage('AI', aiResponse, conversationId, { metadata: { type: 'image' } });
-    } else {
-      aiResponse = await generateAIAnswer(conversationId, content, { 'Available seats': availableSeats });
-      if (aiResponse.startsWith('#BOOKING:')) {
-        aiResponse = await processBookingApi(aiResponse, conversationId);
+    switch (requestType) {
+      case 'image': {
+        aiResponseContent = await generateAIImage(conversationId, content);
+        aiResponseMessage = await saveMessage('AI', aiResponseContent, conversationId, {
+          metadata: { type: 'image' },
+        });
+        break;
       }
-      await saveMessage('AI', aiResponse, conversationId);
+      default: {
+        aiResponseContent = await generateAIAnswer(conversationId, content, {
+          'Available seats': availableSeats,
+        });
+
+        if (aiResponseContent.startsWith('#BOOKING:')) {
+          aiResponseContent = await processBookingApi(aiResponseContent, conversationId);
+        }
+
+        aiResponseMessage = await saveMessage('AI', aiResponseContent, conversationId);
+        break;
+      }
     }
 
-    return new NextResponse(aiResponse, {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return NextResponse.json(aiResponseMessage);
   } catch (err) {
-    console.error(err);
-    return new NextResponse('Failed to generate response. Please try again later', {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    console.error('Error in POST /api:', err);
+    return NextResponse.json({ error: 'Failed to generate response. Please try again later' }, { status: 500 });
   }
 };
