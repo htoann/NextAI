@@ -3,6 +3,7 @@ export type TMessage = {
   owner: string;
   content: string;
   conversation: string;
+  metadata?: Record<string, any>;
   createdAt?: Date;
   updatedAt?: Date;
 };
