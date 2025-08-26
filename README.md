@@ -1,117 +1,86 @@
 # NextAI
 
-A **Next.js ** AI + Booking System app using **Google Gemini**, **RabbitMQ**, **MongoDB**, and **Redis**.
-
-Live: [`next15-ai.vercel.app`](https://next15-ai.vercel.app)
+This project showcases how to build a modern AI-powered web application using Next.js and OpenAI's API. It provides a user-friendly interface for interacting with AI models, enabling various applications like text generation, code completion, and more.
 
 ## Features
 
-### ✅ Next.js App
+*   **AI Chat Interface:** Engage in conversational AI interactions.
+*   **Text Generation:** Generate creative text, summaries, and more.
+*   **Code Completion:** Get assistance with writing code.
+*   **Modern UI:** Built with a clean and responsive user interface.
+*   **Next.js Architecture:** Leverages the power and flexibility of Next.js for server-side rendering and API routes.
+*   **Environment Variable Configuration:** Securely manage your OpenAI API key.
 
-- React 19, Turbopack, caching, `<Form>`, and new async APIs
-- Styled with optimized `next/font` (Geist)
-- TypeScript-first
+## Getting Started
 
-### 🤖 Gemini AI Integration
+### Prerequisites
 
-- Gemini API via REST POST endpoint (`/api/gemini`)
-- Accepts prompt input and returns model-generated responses
-- Uses `gemini-1.5-flash` model
+*   Node.js (v18 or later recommended)
+*   npm or yarn
 
-### 🪑 Booking System (Fullstack)
+### Installation
 
-- Seats booking with unique `bookingId` + `messageId` for idempotency
-- MongoDB used for persistent bookings
-- Redis for temporary seat lock logic
-- Handles booking conflicts and concurrency
+1.  **Clone the repository:**
 
-### 📩 RabbitMQ + Worker
+    ```bash
+    git clone https://github.com/htoann/NextAI.git
+    cd NextAI
+    ```
 
-- Bookings pushed to RabbitMQ queue
-- `worker.ts` processes each message (deduplicates, validates, stores)
-- Implements retry logic with headers
-- Failed bookings go to **dead-letter queue** (`booking_deadlockqueue`)
-- MongoDB/Redis connected in worker
-- Upstash Redis, Cloudamqp
+2.  **Install dependencies:**
 
----
+    ```bash
+    npm install
+    # or
+    yarn install
+    ```
 
-## Project Structure
+3.  **Set up environment variables:**
 
-```
-/
-├── app/                  # Next.js
-│   └── api/              # API endpoints (e.g., gemini route)
-├── lib/                  # Shared modules (RabbitMQ, Redis, DB)
-├── api-models/           # Mongoose schema (Booking)
-├── worker/               # RabbitMQ booking worker (worker.ts)
-├── public/
-├── types/                # Type definitions
-├── utils/                # Constants (e.g., queue name, delay)
-├── .env.local            # Your secrets (not committed)
-└── README.md
-```
+    Create a `.env.local` file in the root of your project and add your OpenAI API key:
 
----
+    ```env
+    OPENAI_API_KEY=your_openai_api_key_here
+    ```
 
-## Setup
+    Replace `your_openai_api_key_here` with your actual OpenAI API key.
 
-### 1. Clone & Install
+4.  **Run the development server:**
 
-```bash
-git clone https://github.com/htoann/Next15AI.git
-cd Next15AI
-pnpm install
-```
+    ```bash
+    npm run dev
+    # or
+    yarn dev
+    ```
 
-### 2. Configure `.env.local`
+5.  **Open in your browser:**
 
-```env
-RABBIT_URL=amqp://localhost
-MONGODB_URI=mongodb://localhost:27017/next15ai
-REDIS_URL=redis://localhost:6379
-GEMINI_API_KEY=your_google_gemini_key
-```
+    The application will be running at `http://localhost:3000`.
 
-### 3. Run Dev Server
+## Usage
 
-```bash
-pnpm dev
-```
+Once the application is running, you can interact with the AI through the provided interface.
 
-### 4. Start Worker
+*   **Chat:** Type your messages in the chat input and receive AI responses.
+*   **Text Generation:** Select options or provide prompts for text generation tasks.
+*   **Code Completion:** Use the code editor to get AI-assisted code suggestions.
 
-```bash
-pnpm start:worker
-```
+## Contributing
 
----
+Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
 
-## API Overview
-
-### `POST /api/bookings`
-
-Queue a booking to RabbitMQ
-
-### `worker.ts`
-
-Processes messages from queue with retry and DLQ fallback
-
-### `POST /api/gemini`
-
-Handles AI prompts, calls Gemini API
-
----
-
-## Booking Logic Highlights
-
-- Seat IDs locked via Redis to prevent race conditions
-- Retry count tracked in message headers
-- `bookingId` and `messageId` used for idempotency
-- Errors routed to `booking_deadlockqueue` after `MAX_RETRIES`
-
----
+1.  Fork the repository.
+2.  Create a new branch for your feature or bug fix.
+3.  Make your changes and commit them.
+4.  Push your branch to your fork.
+5.  Open a Pull Request.
 
 ## License
 
-MIT
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+## Contact
+
+If you have any questions or feedback, feel free to reach out to the author:
+
+*   **Htoann:** [https://github.com/htoann](https://github.com/htoann)
