@@ -66,9 +66,7 @@ jobs:
           path: |
             ~/.npm
             ${{ github.workspace }}/.next/cache
-          # Generate a new cache whenever packages or source files change.
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
@@ -76,19 +74,19 @@ jobs:
         run: pnpm build
 
       # -------------------------------
-      # Auto summarize README
+      # Auto summarize README using @google/genai
       # -------------------------------
-      - name: Install OpenAI SDK
-        run: pnpm add openai --store ~/.pnpm-store
+      - name: Install @google/genai
+        run: pnpm add @google/genai --store ~/.pnpm-store
 
       - name: Generate README summary with Gemini
         run: |
           node -e "
           import fs from 'fs';
           import path from 'path';
-          import OpenAI from 'openai';
+          import { TextServiceClient } from '@google/genai';
 
-          const client = new OpenAI({ apiKey: process.env.GEMINI_API_KEY });
+          const client = new TextServiceClient({ apiKey: process.env.GEMINI_API_KEY });
 
           function getAllFiles(dir, fileList = []) {
             const files = fs.readdirSync(dir);
@@ -105,21 +103,26 @@ jobs:
             return fileList;
           }
 
-          const files = getAllFiles('./');
-          let codeContent = '';
-          for (const file of files) {
-            codeContent += fs.readFileSync(file, 'utf-8') + '\n';
+          async function generateSummary() {
+            const files = getAllFiles('./');
+            let codeContent = '';
+            for (const file of files) {
+              codeContent += fs.readFileSync(file, 'utf-8') + '\n';
+            }
+
+            const prompt = \`Summarize this project for a README.md in concise format:\n\${codeContent}\`;
+
+            const response = await client.generateText({
+              model: 'gemini-1.5-t',
+              prompt,
+              maxOutputTokens: 1000
+            });
+
+            fs.writeFileSync('README.md', '# Project Summary\n\n' + response.outputText);
+            console.log('README.md updated!');
           }
 
-          const prompt = \`Summarize this project for a README.md in concise format:\n\${codeContent}\`;
-
-          const response = await client.chat.completions.create({
-            model: 'gemini-1.5-t',
-            messages: [{ role: 'user', content: prompt }]
-          });
-
-          fs.writeFileSync('README.md', '# Project Summary\n\n' + response.choices[0].message.content);
-          console.log('README.md updated!');
+          generateSummary();
           "
 
       - name: Commit and push README
