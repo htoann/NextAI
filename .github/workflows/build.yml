@@ -1,4 +1,4 @@
-name: Build on Push
+name: Build & Auto Summarize README
 
 on:
   push:
@@ -45,7 +45,7 @@ jobs:
         run: npm install -g pnpm
 
       # -------------------------------
-      # Remote caching for pnpm
+      # pnpm remote caching
       # -------------------------------
       - name: Restore pnpm store cache
         uses: actions/cache@v3
@@ -69,3 +69,42 @@ jobs:
 
       - name: Build Next.js
         run: npm run build
+
+      # -------------------------------
+      # Auto summarize README
+      # -------------------------------
+      - name: Install OpenAI for README summarization
+        run: npm install openai
+
+      - name: Generate README summary with Gemini
+        run: |
+          node -e "
+          import fs from 'fs';
+          import OpenAI from 'openai';
+
+          const client = new OpenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+          const files = fs.readdirSync('./').filter(f => f.endsWith('.js') || f.endsWith('.ts'));
+          let codeContent = '';
+          for (const file of files) {
+            codeContent += fs.readFileSync(file, 'utf-8') + '\n';
+          }
+
+          const prompt = \`Summarize this project for a README.md in concise format:\n\${codeContent}\`;
+
+          const response = await client.chat.completions.create({
+            model: 'gemini-1.5-t',
+            messages: [{ role: 'user', content: prompt }]
+          });
+
+          fs.writeFileSync('README.md', '# Project Summary\n\n' + response.choices[0].message.content);
+          console.log('README.md updated!');
+          "
+
+      - name: Commit and push README
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Auto-update README summary" || echo "No changes to commit"
+          git push
