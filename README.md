@@ -1,86 +1,68 @@
 # NextAI
 
-This project showcases how to build a modern AI-powered web application using Next.js and OpenAI's API. It provides a user-friendly interface for interacting with AI models, enabling various applications like text generation, code completion, and more.
+NextAI is a Next.js application that integrates AI capabilities to provide a user-friendly interface for interacting with advanced language models. It's designed to be a modern, AI-powered chatbot experience built with the latest web technologies.
 
-## Features
+## Description
 
-*   **AI Chat Interface:** Engage in conversational AI interactions.
-*   **Text Generation:** Generate creative text, summaries, and more.
-*   **Code Completion:** Get assistance with writing code.
-*   **Modern UI:** Built with a clean and responsive user interface.
-*   **Next.js Architecture:** Leverages the power and flexibility of Next.js for server-side rendering and API routes.
-*   **Environment Variable Configuration:** Securely manage your OpenAI API key.
+This repository contains the source code for NextAI, a web application leveraging the power of AI. Users can engage in conversational interactions, ask questions, and receive intelligent responses. The project focuses on a clean user interface and seamless integration with AI APIs.
 
-## Getting Started
-
-### Prerequisites
-
-*   Node.js (v18 or later recommended)
-*   npm or yarn
-
-### Installation
+## Installation
 
 1.  **Clone the repository:**
-
     ```bash
     git clone https://github.com/htoann/NextAI.git
+    ```
+2.  **Navigate to the project directory:**
+    ```bash
     cd NextAI
     ```
-
-2.  **Install dependencies:**
-
+3.  **Install dependencies:**
     ```bash
     npm install
     # or
     yarn install
     ```
-
-3.  **Set up environment variables:**
-
-    Create a `.env.local` file in the root of your project and add your OpenAI API key:
-
+4.  **Set up environment variables:**
+    Create a `.env` file in the root of the project and add your API keys. For example, if using OpenAI:
     ```env
     OPENAI_API_KEY=your_openai_api_key_here
+    # Other necessary environment variables can be added here.
     ```
+    *Note: Refer to the project's specific AI integration for required environment variables.*
 
-    Replace `your_openai_api_key_here` with your actual OpenAI API key.
-
-4.  **Run the development server:**
-
+5.  **Run the development server:**
     ```bash
     npm run dev
     # or
     yarn dev
     ```
 
-5.  **Open in your browser:**
-
-    The application will be running at `http://localhost:3000`.
+6.  **Open your browser** and navigate to `http://localhost:3000` to view the application.
 
 ## Usage
 
-Once the application is running, you can interact with the AI through the provided interface.
+Once the development server is running, open the application in your web browser. You will be presented with an interface to interact with the AI.
 
-*   **Chat:** Type your messages in the chat input and receive AI responses.
-*   **Text Generation:** Select options or provide prompts for text generation tasks.
-*   **Code Completion:** Use the code editor to get AI-assisted code suggestions.
+*   Type your messages or questions in the input field.
+*   Press Enter or click the send button to submit your query.
+*   The AI's response will be displayed in the chat history.
 
-## Contributing
+## Features
 
-Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
+*   **Conversational AI:** Engage in natural language conversations with an AI model.
+*   **User-friendly Interface:** Clean and intuitive design for easy interaction.
+*   **Responsive Design:** Adapts to different screen sizes for a seamless experience on desktop and mobile.
+*   **AI Integration:** Built to integrate with various AI APIs (e.g., OpenAI, Google AI).
+*   **Modern Web Technologies:** Developed using Next.js for a fast and efficient web application.
 
-1.  Fork the repository.
-2.  Create a new branch for your feature or bug fix.
-3.  Make your changes and commit them.
-4.  Push your branch to your fork.
-5.  Open a Pull Request.
+## Technologies Used
+
+*   **Next.js:** A React framework for building fast, server-rendered applications.
+*   **React:** A JavaScript library for building user interfaces.
+*   **TypeScript:** A statically typed superset of JavaScript that enhances code quality.
+*   **Tailwind CSS:** A utility-first CSS framework for rapidly building custom designs.
+*   **AI APIs:** (Specific API depends on implementation, e.g., OpenAI API, Google AI API).
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
-## Contact
-
-If you have any questions or feedback, feel free to reach out to the author:
-
-*   **Htoann:** [https://github.com/htoann](https://github.com/htoann)
+This project is not explicitly licensed. Please refer to the original repository for any licensing information or contact the author for clarification.
