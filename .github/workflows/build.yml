@@ -1,4 +1,4 @@
-name: Build & Auto Summarize README
+name: Build Next.js
 
 on:
   push:
@@ -44,9 +44,6 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
-      # -------------------------------
-      # pnpm store cache
-      # -------------------------------
       - name: Restore pnpm store cache
         uses: actions/cache@v4
         with:
@@ -57,55 +54,13 @@ jobs:
       - name: Install dependencies using pnpm store
         run: pnpm install --store ~/.pnpm-store --prefer-offline
 
-      # -------------------------------
-      # Next.js build cache
-      # -------------------------------
       - name: Restore Next.js cache
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.pnpm-store
-            ${{ github.workspace }}/.next/cache
-          # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.ts', '**/*.tsx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
       - name: Build Next.js
         run: pnpm build
-
-      # -------------------------------
-      # Auto summarize README with @google/genai
-      # -------------------------------
-      - name: Install @google/genai
-        run: pnpm add @google/genai --store ~/.pnpm-store
-
-      - name: Generate README summary with Gemini
-        run: |
-          node -e "
-            (async () => {
-              const fs = await import('fs');
-              const { GoogleGenAI } = await import('@google/genai');
-
-              const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-              const prompt = 'Generate a README.md in Markdown format for the GitHub repository at the following URL: https://github.com/htoann/NextAI. Analyze the repository structure, code, and purpose, then create a clear and complete README including: Project Title, Description, Installation, Usage, Features, Technologies Used, and License (if available). Output only the content of README.md without extra explanation.';
-
-              const response = await genAI.models.generateContent({
-                model: 'gemini-2.5-flash-lite',
-                contents: prompt,
-              });
-
-              fs.writeFileSync('README.md', response?.text || '');
-              console.log('README.md updated!');
-            })();
-          "
-
-      - name: Commit and push README
-        run: |
-          git config --global user.name "htoann"
-          git config --global user.email "huutrantoan@gmail.com"
-          git remote set-url origin https://x-access-token:${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git add README.md
-          git commit -m "Auto-update README summary" || echo "No changes to commit"
-          git push origin HEAD:master

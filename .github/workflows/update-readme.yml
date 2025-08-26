@@ -1,0 +1,54 @@
+name: Auto Summarize README
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install @google/genai
+        run: pnpm add @google/genai
+
+      - name: Generate README summary with Gemini
+        run: |
+          node -e "
+            (async () => {
+              const fs = await import('fs');
+              const { GoogleGenAI } = await import('@google/genai');
+              const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+              const prompt = 'Generate a README.md in Markdown format for the GitHub repository at the following URL: https://github.com/htoann/NextAI. Analyze the repository structure, code, and purpose, then create a clear and complete README including: Project Title, Description, Installation, Usage, Features, Technologies Used, and License (if available). Output only the content of README.md without extra explanation.';
+              const response = await genAI.models.generateContent({
+                model: 'gemini-2.5-flash-lite',
+                contents: prompt,
+              });
+              fs.writeFileSync('README.md', response?.text || '');
+              console.log('README.md updated!');
+            })();
+          "
+
+      - name: Commit and push README
+        run: |
+          git config --global user.name "htoann"
+          git config --global user.email "huutrantoan@gmail.com"
+          git remote set-url origin https://x-access-token:${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git add README.md
+          git commit -m "Auto-update README summary" || echo "No changes to commit"
+          git push origin HEAD:master
