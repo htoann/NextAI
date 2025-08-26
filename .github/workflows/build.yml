@@ -74,7 +74,7 @@ jobs:
         run: pnpm build
 
       # -------------------------------
-      # Auto summarize README using @google/genai
+      # Auto summarize README with @google/genai
       # -------------------------------
       - name: Install @google/genai
         run: pnpm add @google/genai --store ~/.pnpm-store
@@ -84,9 +84,9 @@ jobs:
           node -e "
           import fs from 'fs';
           import path from 'path';
-          import { TextServiceClient } from '@google/genai';
+          import { GoogleGenAI, Modality } from '@google/genai';
 
-          const client = new TextServiceClient({ apiKey: process.env.GEMINI_API_KEY });
+          const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
           function getAllFiles(dir, fileList = []) {
             const files = fs.readdirSync(dir);
@@ -112,13 +112,12 @@ jobs:
 
             const prompt = \`Summarize this project for a README.md in concise format:\n\${codeContent}\`;
 
-            const response = await client.generateText({
+            const response = await genAI.models.generateContent({
               model: 'gemini-1.5-t',
-              prompt,
-              maxOutputTokens: 1000
+              contents: prompt,
             });
 
-            fs.writeFileSync('README.md', '# Project Summary\n\n' + response.outputText);
+            fs.writeFileSync('README.md', '# Project Summary\n\n' + response?.text || '');
             console.log('README.md updated!');
           }
 
