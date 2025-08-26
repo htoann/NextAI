@@ -60,18 +60,20 @@ jobs:
       # -------------------------------
       # Next.js build cache
       # -------------------------------
-      - name: Restore Next.js cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.npm
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+      # - name: Restore Next.js cache
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: |
+      #       ~/.pnpm-store
+      #       ${{ github.workspace }}/.next/cache
+      #     # Generate a new cache whenever packages or source files change.
+      #     key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+      #     # If source files changed but packages didn't, rebuild from a prior cache.
+      #     restore-keys: |
+      #       ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
-      - name: Build Next.js
-        run: pnpm build
+      # - name: Build Next.js
+      #   run: pnpm build
 
       # -------------------------------
       # Auto summarize README with @google/genai
@@ -113,7 +115,7 @@ jobs:
             const prompt = \`Summarize this project for a README.md in concise format:\n\${codeContent}\`;
 
             const response = await genAI.models.generateContent({
-              model: 'gemini-1.5-t',
+              model: 'gemini-2.5-flash-lite',
               contents: prompt,
             });
 
