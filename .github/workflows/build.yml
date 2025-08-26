@@ -84,23 +84,21 @@ jobs:
       - name: Generate README summary with Gemini
         run: |
           node -e "
-          import fs from 'fs';
-          import { GoogleGenAI } from '@google/genai';
+            (async () => {
+              const fs = await import('fs');
+              const { GoogleGenAI } = await import('@google/genai');
 
-          const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+              const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+              const prompt = 'Write README.md in markdown format for the following github url source code: https://github.com/htoann/NextAI. Only respond content directly for README.md';
 
-          async function generateSummary() {
-            const prompt = "Write README.md in markdown format for the following github url source code: https://github.com/htoann/NextAI. Only response content directly for README.md";
-            const response = await genAI.models.generateContent({
-              model: 'gemini-2.5-flash-lite',
-              contents: prompt,
-            });
+              const response = await genAI.models.generateContent({
+                model: 'gemini-2.5-flash-lite',
+                contents: prompt,
+              });
 
-            fs.writeFileSync('README.md', response?.text || '');
-            console.log('README.md updated!');
-          }
-
-          generateSummary();
+              fs.writeFileSync('README.md', response?.text || '');
+              console.log('README.md updated!');
+            })();
           "
 
       - name: Commit and push README
