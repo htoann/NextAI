@@ -89,7 +89,7 @@ jobs:
               const { GoogleGenAI } = await import('@google/genai');
 
               const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-              const prompt = 'Write README.md in markdown format for the following github url source code: https://github.com/htoann/NextAI. Only respond content directly for README.md';
+              const prompt = 'Generate a README.md in Markdown format for the GitHub repository at the following URL: https://github.com/htoann/NextAI. Analyze the repository structure, code, and purpose, then create a clear and complete README including: Project Title, Description, Installation, Usage, Features, Technologies Used, and License (if available). Output only the content of README.md without extra explanation.';
 
               const response = await genAI.models.generateContent({
                 model: 'gemini-2.5-flash-lite',
