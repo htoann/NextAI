@@ -85,41 +85,18 @@ jobs:
         run: |
           node -e "
           import fs from 'fs';
-          import path from 'path';
-          import { GoogleGenAI, Modality } from '@google/genai';
+          import { GoogleGenAI } from '@google/genai';
 
           const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-          function getAllFiles(dir, fileList = []) {
-            const files = fs.readdirSync(dir);
-            for (const file of files) {
-              const fullPath = path.join(dir, file);
-              const stat = fs.statSync(fullPath);
-              if (stat.isDirectory()) {
-                if (file === 'node_modules' || file === '.next') continue;
-                getAllFiles(fullPath, fileList);
-              } else {
-                fileList.push(fullPath);
-              }
-            }
-            return fileList;
-          }
-
           async function generateSummary() {
-            const files = getAllFiles('./');
-            let codeContent = '';
-            for (const file of files) {
-              codeContent += fs.readFileSync(file, 'utf-8') + '\n';
-            }
-
-            const prompt = \`Summarize this project for a README.md in concise format:\n\${codeContent}\`;
-
+            const prompt = `Write README.md in markdown format for the following github url source code: https://github.com/htoann/NextAI. Only response content directly for README.md`;
             const response = await genAI.models.generateContent({
-              model: 'gemini-2.5-pro',
+              model: 'gemini-2.5-flash-lite',
               contents: prompt,
             });
 
-            fs.writeFileSync('README.md', '# Project Summary\n\n' + response?.text || '');
+            fs.writeFileSync('README.md', response?.text || '');
             console.log('README.md updated!');
           }
 
