@@ -9,9 +9,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      NODE_ENV: production
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
-      NODE_ENV: production
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       FACEBOOK_CLEINT_ID: ${{ secrets.FACEBOOK_CLEINT_ID }}
@@ -44,8 +44,28 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
-      - name: Install dependencies
-        run: pnpm install
+      # -------------------------------
+      # Remote caching for pnpm
+      # -------------------------------
+      - name: Restore pnpm store cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: pnpm-remote-v20-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: pnpm-remote-v20-
+
+      - name: Install dependencies using pnpm store
+        run: pnpm install --store ~/.pnpm-store --prefer-offline
+
+      # -------------------------------
+      # Next.js incremental build caching
+      # -------------------------------
+      - name: Restore Next.js cache
+        uses: actions/cache@v3
+        with:
+          path: .next/cache
+          key: next-cache-v20-${{ hashFiles('**/*.ts') }}-${{ hashFiles('**/*.tsx') }}-${{ hashFiles('**/*.js') }}
+          restore-keys: next-cache-v20-
 
       - name: Build Next.js
         run: npm run build
