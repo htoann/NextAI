@@ -90,7 +90,7 @@ jobs:
           const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
           async function generateSummary() {
-            const prompt = `Write README.md in markdown format for the following github url source code: https://github.com/htoann/NextAI. Only response content directly for README.md`;
+            const prompt = "Write README.md in markdown format for the following github url source code: https://github.com/htoann/NextAI. Only response content directly for README.md";
             const response = await genAI.models.generateContent({
               model: 'gemini-2.5-flash-lite',
               contents: prompt,
