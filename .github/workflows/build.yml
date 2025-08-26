@@ -105,7 +105,7 @@ jobs:
         run: |
           git config --global user.name "htoann"
           git config --global user.email "huutrantoan@gmail.com"
-          git remote set-url origin https://x-access-token:$PAT@github.com/${{ github.repository }}.git
+          git remote set-url origin https://x-access-token:$MY_GITHUB_TOKEN@github.com/${{ github.repository }}.git
           git add README.md
           git commit -m "Auto-update README summary" || echo "No changes to commit"
           git push origin HEAD:master
