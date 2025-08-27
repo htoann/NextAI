@@ -56,11 +56,15 @@ jobs:
         with:
           version: 9
 
+      - run: pnpm install --frozen-lockfile
+
+      # ===================== Fix TypeScript for next.config.ts =====================
+      - run: pnpm add -D typescript
+
       - uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
 
-      - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
       - uses: github/codeql-action/analyze@v3
@@ -71,15 +75,15 @@ jobs:
   #   runs-on: ubuntu-latest
   #   steps:
   #     - uses: actions/checkout@v4
-
+  #
   #     - uses: actions/setup-node@v4
   #       with:
   #         node-version: 20
-
+  #
   #     - uses: pnpm/action-setup@v4
   #       with:
   #         version: 9
-
+  #
   #     - run: pnpm install --frozen-lockfile
   #     - run: |
   #         pnpm audit --json > audit.json
