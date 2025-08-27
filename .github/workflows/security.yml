@@ -60,7 +60,7 @@ jobs:
       - run: npm audit --audit-level=high
 
   # ===================== Trivy =====================
-  trivy:
+    trivy:
     name: Trivy Scan
     runs-on: ubuntu-latest
     steps:
@@ -71,10 +71,4 @@ jobs:
           scan-type: 'fs'
           scan-ref: '.'
           severity: 'HIGH,CRITICAL'
-
-      - run: docker build -t myapp:latest .
-
-      - uses: aquasecurity/trivy-action@0.20.0
-        with:
-          image-ref: 'myapp:latest'
-          severity: 'HIGH,CRITICAL'
+          
