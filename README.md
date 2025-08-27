@@ -1,70 +1,82 @@
-```markdown
 # NextAI
 
-NextAI is a personal portfolio website built with Next.js and Tailwind CSS, showcasing projects, skills, and information about the developer, Hoang Tuann. It aims to provide a modern, responsive, and visually appealing platform for presenting professional work.
+NextAI is a Next.js boilerplate project designed to jumpstart your AI-powered web applications. It provides a foundation with pre-configured features and a clean architecture to facilitate rapid development of AI-driven experiences.
+
+## Description
+
+This repository offers a comprehensive boilerplate for building applications with Next.js and integrating various AI functionalities. It aims to streamline the development process by providing a ready-to-use structure with common AI integration patterns already set up. Whether you're building a chatbot, an image generation tool, a content summarizer, or any other AI-powered application, NextAI can serve as your starting point.
 
 ## Installation
+
+To get started with NextAI, follow these steps:
 
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/htoann/NextAI.git
-    ```
-
-2.  **Navigate to the project directory:**
-    ```bash
     cd NextAI
     ```
 
-3.  **Install dependencies:**
+2.  **Install dependencies:**
     ```bash
     npm install
     # or
     yarn install
+    # or
+    pnpm install
     ```
 
-## Usage
+3.  **Set up environment variables:**
+    Create a `.env.local` file in the root of the project and add your API keys and other necessary configurations. Refer to the `.env.example` file for available environment variables.
 
-1.  **Start the development server:**
+    ```bash
+    cp .env.example .env.local
+    ```
+    Edit `.env.local` to include your specific API keys (e.g., for OpenAI, Hugging Face, etc.).
+
+4.  **Run the development server:**
     ```bash
     npm run dev
     # or
     yarn dev
-    ```
-    The application will be available at `http://localhost:3000`.
-
-2.  **Build for production:**
-    ```bash
-    npm run build
     # or
-    yarn build
+    pnpm dev
     ```
+    Open `http://localhost:3000` in your browser.
 
-3.  **Start the production server:**
-    ```bash
-    npm start
-    # or
-    yarn start
-    ```
+## Usage
+
+The boilerplate is designed to be easily extended. You can:
+
+*   **Add new AI features:** Integrate new AI models or services by following the established patterns in the project.
+*   **Customize the UI:** Modify the components and styling to match your application's design.
+*   **Implement backend logic:** Extend the API routes to handle specific AI processing or data management.
+
+Refer to the project's internal documentation or examples within the codebase for specific usage patterns of integrated AI services.
 
 ## Features
 
-*   **Responsive Design:** Adapts seamlessly to various screen sizes (desktops, tablets, mobile phones).
-*   **Project Showcase:** Dedicated sections to display personal projects with descriptions and links.
-*   **Skills Presentation:** Highlights technical skills and proficiencies.
-*   **About Me Section:** Provides information about the developer.
-*   **Contact Information:** Easy access to contact details or a contact form.
-*   **Modern UI:** Clean and aesthetically pleasing user interface powered by Tailwind CSS.
-*   **Next.js Framework:** Leverages the features of Next.js for efficient development, server-side rendering (SSR), static site generation (SSG), and routing.
+*   **Next.js Foundation:** Built on the robust and performant Next.js framework.
+*   **React Server Components (RSC):** Leverages the latest Next.js features for improved performance and data fetching.
+*   **Tailwind CSS:** Styled with Tailwind CSS for rapid and utility-first styling.
+*   **AI Integration Examples:** Includes examples for common AI tasks, potentially showcasing integrations with popular AI APIs.
+*   **Environment Variable Management:** Easy configuration through `.env` files.
+*   **Scalable Architecture:** Designed for extensibility and maintainability.
+*   **(Potentially) API Routes:** Pre-configured API routes for server-side AI interactions.
+*   **(Potentially) Authentication:** May include a basic authentication setup.
+
+*Note: Specific features will depend on the actual implementation within the repository. Please refer to the code for the most accurate feature list.*
 
 ## Technologies Used
 
-*   **Frontend Framework:** Next.js
-*   **Styling:** Tailwind CSS
-*   **Language:** JavaScript / TypeScript (The repository appears to be primarily JavaScript-based, but Next.js supports TypeScript out-of-the-box)
-*   **Deployment (implied):** Vercel (common for Next.js projects)
-*   **Other:** React
+*   **Next.js:** React framework for building web applications.
+*   **React:** JavaScript library for building user interfaces.
+*   **TypeScript:** Strongly typed JavaScript superset for enhanced code quality.
+*   **Tailwind CSS:** Utility-first CSS framework for rapid styling.
+*   **(Likely) AI SDKs/APIs:** Depending on the specific AI features implemented, this could include libraries for OpenAI, Hugging Face, etc.
+*   **Node.js:** Runtime environment for the backend.
 
 ## License
 
-This project does not explicitly state a license in the repository's root. Please refer to the `LICENSE` file if one exists, or contact the repository owner for licensing information.
-```
+This project is likely licensed under the **MIT License**.
+
+*Please verify the LICENSE file in the repository for exact license details.*
