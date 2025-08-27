@@ -1,0 +1,57 @@
+name: Security Scan
+
+on:
+  pull_request:
+    branches: ['master']
+  push:
+    branches: ['master']
+  schedule:
+    - cron: '0 3 * * 1' # Every Monday at 3 AM UTC
+
+jobs:
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+      - run: pnpm install
+      - run: pnpm build --if-present
+      - uses: github/codeql-action/analyze@v3
+
+  npm_audit:
+    name: npm Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: pnpm install
+      - run: npm audit --audit-level=high
+
+  trivy:
+    name: Trivy Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          severity: 'HIGH,CRITICAL'
+      - run: docker build -t myapp:latest .
+      - uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: 'myapp:latest'
+          severity: 'HIGH,CRITICAL'
