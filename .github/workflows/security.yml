@@ -37,13 +37,13 @@ jobs:
           languages: ${{ matrix.language }}
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build --if-present
+      - run: pnpm build
 
       - uses: github/codeql-action/analyze@v3
 
   # ===================== npm audit =====================
   npm_audit:
-    name: npm Audit
+    name: pnpm Audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
           version: 9
 
       - run: pnpm install --frozen-lockfile
-      - run: npm audit --audit-level=high
+      - run: pnpm audit --level high
 
   # ===================== Trivy =====================
   trivy:
