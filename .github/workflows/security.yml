@@ -14,7 +14,6 @@ jobs:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
     env:
-      NODE_ENV: production
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
@@ -56,10 +55,10 @@ jobs:
         with:
           version: 9
 
+      # ===================== Install dependencies =====================
       - run: pnpm install --frozen-lockfile
-
-      # ===================== Fix TypeScript for next.config.ts =====================
-      - run: pnpm add -D typescript
+        env:
+          NODE_ENV: development # ensure devDependencies like typescript are installed
 
       - uses: github/codeql-action/init@v3
         with:
