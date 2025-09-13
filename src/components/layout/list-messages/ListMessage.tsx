@@ -4,6 +4,7 @@ import { useAppContext } from '@/context/AppContext';
 import { sanitizeMessage } from '@/lib/utils';
 import { TMessage } from '@/types';
 import { List } from 'antd';
+import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import Markdown from 'react-markdown';
 import './ListMessage.scss';
@@ -33,7 +34,7 @@ export const ListMessages = () => {
             >
               {message.metadata?.type === 'image' ? (
                 <div>
-                  <img src={message.content} alt="AI generated" style={{ maxWidth: '400px', borderRadius: 10 }} />
+                  <Image src={message.content} alt="AI generated" style={{ maxWidth: '400px', borderRadius: 10 }} />
                 </div>
               ) : (
                 <div

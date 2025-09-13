@@ -98,7 +98,7 @@ export default function SettingsPage() {
           <Text strong>Step 2:</Text> Make sure to import <Text code>Script</Text> from <Text code>next/script</Text>:
         </Paragraph>
         <Paragraph>
-          <Text code>import Script from 'next/script';</Text>
+          <Text code>import Script from &apos;next/script&apos;;</Text>
         </Paragraph>
 
         <Paragraph>
